@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+if [ -n "$CI" ] ; then
+  npm ci
+elif [ ! -d "node_modules" ] ; then
+  npm install
+fi
+
 task=$1
 case $task in
   clean) npm run clean ;;
