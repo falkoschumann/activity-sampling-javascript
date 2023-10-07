@@ -1,0 +1,20 @@
+{
+  "name": "activity-sampling",
+  "version": "0.1.0",
+  "description": "",
+  "author": "Falko Schumann",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "npm run test && npm run check",
+    "test": "node --no-warnings=ExperimentalWarning --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "check": "prettier . --check && eslint src tests",
+    "format": "prettier . --write && eslint --fix src tests"
+  },
+  "devDependencies": {
+    "@jest/globals": "29.7.0",
+    "eslint": "8.51.0",
+    "jest": "29.7.0",
+    "prettier": "3.0.3"
+  }
+}
