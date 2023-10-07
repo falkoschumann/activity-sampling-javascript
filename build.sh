@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 if [ -n "$CI" ] ; then
+  echo "Build in CI environment"
   npm ci
 elif [ ! -d "node_modules" ] ; then
   npm install
