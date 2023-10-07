@@ -6,12 +6,11 @@ Periodically ask the user about their current activity and log it for analysis.
 
 ![Domain](domain.png)
 
-TODO write only story titles
-
 ### Log Activity
 
 -   Periodically ask what I'm working on
 -   Log the activity
+-   Select the activity from a list
 
 ### Recent Activities
 
