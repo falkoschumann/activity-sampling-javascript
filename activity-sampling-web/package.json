@@ -1,0 +1,22 @@
+{
+  "name": "activity-sampling-web",
+  "version": "0.1.0",
+  "description": "",
+  "author": "Falko Schumann",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dist": "rollup -c",
+    "dev": "rollup -c -w"
+  },
+  "dependencies": {
+    "lit-html": "2.8.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "15.2.2",
+    "@rollup/plugin-terser": "0.4.4",
+    "postcss": "8.4.31",
+    "rollup": "4.0.2",
+    "rollup-plugin-postcss": "4.0.2"
+  }
+}

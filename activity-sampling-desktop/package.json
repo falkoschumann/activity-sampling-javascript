@@ -1,0 +1,8 @@
+{
+  "name": "activity-sampling-desktop",
+  "version": "0.1.0",
+  "description": "",
+  "author": "Falko Schumann",
+  "license": "MIT",
+  "type": "module"
+}

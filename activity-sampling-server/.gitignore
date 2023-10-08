@@ -1,4 +1,4 @@
-coverage/
-data/
+/data/*
+!/data/.gitkeep
 activitysampling.css
 activitysampling.js
