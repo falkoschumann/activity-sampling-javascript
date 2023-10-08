@@ -1,5 +1,7 @@
 # see also https://gitignore.io
 
+public/app.css
+public/app.js
 tmp/
 
 # Gradle
