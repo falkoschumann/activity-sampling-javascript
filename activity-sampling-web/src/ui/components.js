@@ -35,7 +35,7 @@ class RecentActivities extends HTMLElement {
     let recentActivities = await getRecentActivities(repository);
     let template = html`
       <section class="recent-activities">
-        ${recentActivities.map(({ date, activities }) =>
+        ${recentActivities.workingDays.map(({ date, activities }) =>
           this.#renderActivities({
             date,
             activities,
