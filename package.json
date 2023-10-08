@@ -13,6 +13,9 @@
     "check": "prettier . --check && eslint src tests",
     "format": "prettier . --write && eslint --fix src tests"
   },
+  "dependencies": {
+    "lit-html": "2.8.0"
+  },
   "devDependencies": {
     "@jest/globals": "29.7.0",
     "@rollup/plugin-node-resolve": "15.2.2",
