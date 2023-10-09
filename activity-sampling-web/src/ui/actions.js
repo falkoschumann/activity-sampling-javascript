@@ -28,6 +28,6 @@ let repository = new FakeRepository([
   },
 ]);
 
-export async function getRecentActivities() {
+export async function getRecentActivitiesAction() {
   return await getRecentActivities(repository);
 }

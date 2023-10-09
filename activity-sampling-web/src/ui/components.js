@@ -1,10 +1,10 @@
 import { html, render } from 'lit-html';
 
-import { getRecentActivities } from './actions.js';
+import { getRecentActivitiesAction } from './actions.js';
 
 class RecentActivities extends HTMLElement {
   async connectedCallback() {
-    let recentActivities = await getRecentActivities();
+    let recentActivities = await getRecentActivitiesAction();
     let template = html`
       <section class="recent-activities">
         ${recentActivities.workingDays.map(({ date, activities }) =>
