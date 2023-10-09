@@ -1,7 +1,14 @@
-export class FakeRepository {
+export class AbstractRepository {
+  async findAll() {
+    return [];
+  }
+}
+
+export class FakeRepository extends AbstractRepository {
   #activityLog;
 
-  constructor(activityLog) {
+  constructor(activityLog = []) {
+    super();
     this.#activityLog = activityLog;
   }
 
