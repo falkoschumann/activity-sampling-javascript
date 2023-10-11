@@ -1,11 +1,14 @@
 import express from 'express';
 
+import { getRecentActivities } from '../application/services.js';
+import { Repository } from '../infrastructure/repository.js';
+
 export class ExpressApp {
   #app;
 
-  constructor({ publicPath = './public' } = {}) {
+  constructor({ publicPath = './public', repository = new Repository() } = {}) {
     this.#app = this.#createApp(publicPath);
-    this.#createRoutes();
+    this.#createRoutes(repository);
   }
 
   get app() {
@@ -26,41 +29,9 @@ export class ExpressApp {
     return app;
   }
 
-  #createRoutes() {
-    this.#app.get('/api/get-recent-activities', (request, response) => {
-      let recentActivties = {
-        workingDays: [
-          {
-            date: '2023-10-07T00:00:00Z',
-            activities: [
-              {
-                client: 'Muspellheim',
-                duration: 'PT30M',
-                notes: 'Show my recent activities',
-                project: 'Activity Sampling',
-                task: 'Recent Activities',
-                timestamp: '2023-10-07T13:00:00Z',
-              },
-              {
-                client: 'Muspellheim',
-                duration: 'PT30M',
-                notes: 'Show my recent activities',
-                project: 'Activity Sampling',
-                task: 'Recent Activities',
-                timestamp: '2023-10-07T12:30:00Z',
-              },
-              {
-                client: 'Muspellheim',
-                duration: 'PT30M',
-                notes: 'Show my recent activities',
-                project: 'Activity Sampling',
-                task: 'Recent Activities',
-                timestamp: '2023-10-07T12:00:00Z',
-              },
-            ],
-          },
-        ],
-      };
+  #createRoutes(repository) {
+    this.#app.get('/api/get-recent-activities', async (request, response) => {
+      let recentActivties = await getRecentActivities(repository);
       response
         .status(200)
         .header({ 'Content-Type': 'application/json' })
@@ -68,32 +39,3 @@ export class ExpressApp {
     });
   }
 }
-
-/*
-let activities = [
-  {
-    timestamp: new Date('2023-10-07T13:00:00Z'),
-    duration: 'PT30M',
-    client: 'Muspellheim',
-    project: 'Activity Sampling',
-    task: 'Recent Activities',
-    notes: 'Show my recent activities',
-  },
-  {
-    timestamp: new Date('2023-10-07T12:30:00Z'),
-    duration: 'PT30M',
-    client: 'Muspellheim',
-    project: 'Activity Sampling',
-    task: 'Recent Activities',
-    notes: 'Show my recent activities',
-  },
-  {
-    timestamp: new Date('2023-10-07T12:00:00Z'),
-    duration: 'PT30M',
-    client: 'Muspellheim',
-    project: 'Activity Sampling',
-    task: 'Recent Activities',
-    notes: 'Show my recent activities',
-  },
-];
-*/

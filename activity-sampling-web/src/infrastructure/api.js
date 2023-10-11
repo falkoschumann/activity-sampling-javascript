@@ -14,12 +14,12 @@ export class Api extends AbstractApi {
 
   async getRecentActivities() {
     let response = await fetch(`${this.#baseUrl}/get-recent-activities`);
-    let json = await response.json();
-    return mapRecentActivities(json);
+    let dto = await response.json();
+    return mapRecentActivitiesDto(dto);
   }
 }
 
-function mapRecentActivities(raw) {
+function mapRecentActivitiesDto(raw) {
   return {
     workingDays: raw.workingDays.map((rawDay) => ({
       date: new Date(rawDay.date),
