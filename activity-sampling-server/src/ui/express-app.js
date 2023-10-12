@@ -6,9 +6,13 @@ import { Repository } from '../infrastructure/repository.js';
 export class ExpressApp {
   #app;
 
-  constructor({ publicPath = './public', repository = new Repository() } = {}) {
+  constructor({
+    publicPath = './public',
+    today = new Date(),
+    repository = new Repository(),
+  } = {}) {
     this.#app = this.#createApp(publicPath);
-    this.#createRoutes(repository);
+    this.#createRoutes(today, repository);
   }
 
   get app() {
@@ -29,9 +33,9 @@ export class ExpressApp {
     return app;
   }
 
-  #createRoutes(repository) {
+  #createRoutes(today, repository) {
     this.#app.get('/api/get-recent-activities', async (request, response) => {
-      let recentActivties = await getRecentActivities(repository);
+      let recentActivties = await getRecentActivities({ today }, repository);
       response
         .status(200)
         .header({ 'Content-Type': 'application/json' })

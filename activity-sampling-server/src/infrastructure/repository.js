@@ -43,7 +43,7 @@ export class Repository extends AbstractRepository {
   #mapRecord(record) {
     return {
       timestamp: new Date(record['timestamp']),
-      duration: record['duration'],
+      duration: Number(record['duration']),
       client: record['client'],
       project: record['project'],
       task: record['task'],

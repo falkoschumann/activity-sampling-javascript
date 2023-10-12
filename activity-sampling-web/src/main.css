@@ -69,27 +69,3 @@ strong {
   font-weight: 400;
   line-height: 14px;
 }
-
-.recent-activities ul {
-  margin: 0;
-  padding: 0;
-}
-
-.recent-activities li {
-  padding: 8px;
-  list-style-type: none;
-  display: flex;
-  border-bottom: 1px solid #ddd;
-}
-
-.recent-activities li :first-child {
-  min-width: 48px;
-}
-
-.recent-activities li:nth-child(odd) {
-  background-color: #f5f5f5;
-}
-
-.recent-activities li:last-child {
-  border: none;
-}

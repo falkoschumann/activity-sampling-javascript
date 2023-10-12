@@ -1,13 +1,23 @@
-export function createRecentActivities(activities = []) {
+// TODO change UTC to local time
+// TODO fix mix of hours and minutes
+
+export function createRecentActivities(activities = [], today = new Date()) {
   let workingDays = [];
+  let timeSummary = {
+    hoursToday: 0,
+    hoursYesterday: 0,
+    hoursThisWeek: 0,
+    hoursThisMonth: 0,
+  };
   for (let activity of activities) {
     addActivity(activity);
   }
-  return { workingDays };
+  return { workingDays, timeSummary };
 
   function addActivity(activity) {
     let day = getWorkingDayByDate(activity.timestamp);
     addActivityToWorkingDay(activity, day);
+    addActivityToTimeSummary(activity);
   }
 
   function getWorkingDayByDate(date) {
@@ -31,10 +41,95 @@ export function createRecentActivities(activities = []) {
     day.activities.push(activity);
     day.activities.sort((a, b) => b.timestamp - a.timestamp);
   }
+
+  function addActivityToTimeSummary(activity) {
+    addActivityToHoursToday(activity);
+    addActivityToHoursYesterday(activity);
+    addActivityToHoursThisWeek(activity);
+    addActivityToHoursThisMonth(activity);
+  }
+
+  function addActivityToHoursToday(activity) {
+    if (isToday(activity.timestamp, today)) {
+      timeSummary.hoursToday += activity.duration;
+    }
+  }
+
+  function addActivityToHoursYesterday(activity) {
+    if (isYesterday(activity.timestamp, today)) {
+      timeSummary.hoursYesterday += activity.duration;
+    }
+  }
+
+  function addActivityToHoursThisWeek(activity) {
+    if (isThisWeek(activity.timestamp, today)) {
+      timeSummary.hoursThisWeek += activity.duration;
+    }
+  }
+
+  function addActivityToHoursThisMonth(activity) {
+    if (isThisMonth(activity.timestamp, today)) {
+      timeSummary.hoursThisMonth += activity.duration;
+    }
+  }
+}
+
+function toDate(date) {
+  date = new Date(date);
+  date.setHours(0, 0, 0, 0);
+  return date;
 }
 
 function toUTCDate(date) {
   date = new Date(date);
   date.setUTCHours(0, 0, 0, 0);
   return date;
+}
+
+function isEqualDate(date1, date2) {
+  return date1.toDateString() === date2.toDateString();
+}
+
+function isSameWeek(date1, date2, boundaryDay = 1) {
+  if (date1 > date2) {
+    [date1, date2] = [date2, date1];
+  }
+
+  date1 = toUTCDate(date1);
+  date2 = toUTCDate(date2);
+
+  if ((date2 - date1) / 1000 / 60 / 60 / 24 > 6) {
+    return false;
+  }
+
+  let day1 = date1.getDay();
+  let day2 = date2.getDay();
+  if (day1 === boundaryDay) {
+    return true;
+  }
+  if (day2 === boundaryDay) {
+    return false;
+  }
+
+  let d1BoundaryDist = (day1 - boundaryDay + 7) % 7;
+  let d2BoundaryDist = (day2 - boundaryDay + 7) % 7;
+  return d1BoundaryDist <= d2BoundaryDist;
+}
+
+function isToday(date, today = new Date()) {
+  return isEqualDate(date, today);
+}
+
+function isYesterday(date, today = new Date()) {
+  let yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  return isEqualDate(date, yesterday);
+}
+
+function isThisWeek(date, today = new Date(), boundaryDay = 1) {
+  return date <= today && isSameWeek(date, today, boundaryDay);
+}
+
+function isThisMonth(date, today = new Date()) {
+  return date <= today && date.getMonth() === today.getMonth();
 }

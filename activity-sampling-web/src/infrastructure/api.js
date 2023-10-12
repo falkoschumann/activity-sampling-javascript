@@ -32,5 +32,11 @@ function mapRecentActivitiesDto(raw) {
         notes: rawActivity.notes,
       })),
     })),
+    timeSummary: {
+      hoursToday: raw.timeSummary.hoursToday,
+      hoursYesterday: raw.timeSummary.hoursYesterday,
+      hoursThisWeek: raw.timeSummary.hoursThisWeek,
+      hoursThisMonth: raw.timeSummary.hoursThisMonth,
+    },
   };
 }
