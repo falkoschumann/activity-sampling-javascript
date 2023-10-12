@@ -1,6 +1,3 @@
-// TODO change UTC to local time
-// TODO fix mix of hours and minutes
-
 export function createRecentActivities(activities = [], today = new Date()) {
   let workingDays = [];
   let timeSummary = {
@@ -27,7 +24,7 @@ export function createRecentActivities(activities = [], today = new Date()) {
         d.date.getMonth() === date.getMonth() &&
         d.date.getDate() === date.getDate(),
     );
-    return day ?? addWorkingDay(toUTCDate(date));
+    return day ?? addWorkingDay(toDate(date));
   }
 
   function addWorkingDay(date) {
@@ -51,25 +48,25 @@ export function createRecentActivities(activities = [], today = new Date()) {
 
   function addActivityToHoursToday(activity) {
     if (isToday(activity.timestamp, today)) {
-      timeSummary.hoursToday += activity.duration;
+      timeSummary.hoursToday += activity.duration / 60;
     }
   }
 
   function addActivityToHoursYesterday(activity) {
     if (isYesterday(activity.timestamp, today)) {
-      timeSummary.hoursYesterday += activity.duration;
+      timeSummary.hoursYesterday += activity.duration / 60;
     }
   }
 
   function addActivityToHoursThisWeek(activity) {
     if (isThisWeek(activity.timestamp, today)) {
-      timeSummary.hoursThisWeek += activity.duration;
+      timeSummary.hoursThisWeek += activity.duration / 60;
     }
   }
 
   function addActivityToHoursThisMonth(activity) {
     if (isThisMonth(activity.timestamp, today)) {
-      timeSummary.hoursThisMonth += activity.duration;
+      timeSummary.hoursThisMonth += activity.duration / 60;
     }
   }
 }
@@ -77,12 +74,6 @@ export function createRecentActivities(activities = [], today = new Date()) {
 function toDate(date) {
   date = new Date(date);
   date.setHours(0, 0, 0, 0);
-  return date;
-}
-
-function toUTCDate(date) {
-  date = new Date(date);
-  date.setUTCHours(0, 0, 0, 0);
   return date;
 }
 
@@ -95,8 +86,8 @@ function isSameWeek(date1, date2, boundaryDay = 1) {
     [date1, date2] = [date2, date1];
   }
 
-  date1 = toUTCDate(date1);
-  date2 = toUTCDate(date2);
+  date1 = toDate(date1);
+  date2 = toDate(date2);
 
   if ((date2 - date1) / 1000 / 60 / 60 / 24 > 6) {
     return false;

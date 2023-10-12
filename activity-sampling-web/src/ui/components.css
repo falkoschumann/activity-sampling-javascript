@@ -26,7 +26,7 @@ m-time-summary {
   display: flex;
   padding: 8px 0;
   flex-wrap: wrap;
-  justify-content: center
+  justify-content: center;
 }
 
 m-time-summary div {
@@ -38,7 +38,7 @@ m-time-summary div {
 }
 
 m-time-summary span {
-  font-size: 18px
+  font-size: 18px;
 }
 
 m-time-summary span.caption {

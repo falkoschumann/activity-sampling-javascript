@@ -10,7 +10,7 @@ describe('get recent activities', () => {
   test('returns recent activities', async () => {
     let repository = new Repository({ fileName });
     let app = new ExpressApp({
-      today: new Date('2023-10-07T14:00Z'),
+      today: new Date('2023-10-07T14:00'),
       repository,
     }).app;
 
@@ -23,10 +23,10 @@ describe('get recent activities', () => {
     expect(response.body).toEqual({
       workingDays: [
         {
-          date: '2023-10-07T00:00:00.000Z',
+          date: '2023-10-06T22:00:00.000Z',
           activities: [
             {
-              timestamp: '2023-10-07T13:00:00.000Z',
+              timestamp: '2023-10-07T11:00:00.000Z',
               duration: 30,
               client: 'Muspellheim',
               project: 'Activity Sampling',
@@ -37,10 +37,10 @@ describe('get recent activities', () => {
         },
       ],
       timeSummary: {
-        hoursToday: 30,
+        hoursToday: 0.5,
         hoursYesterday: 0,
-        hoursThisWeek: 30,
-        hoursThisMonth: 30,
+        hoursThisWeek: 0.5,
+        hoursThisMonth: 0.5,
       },
     });
   });

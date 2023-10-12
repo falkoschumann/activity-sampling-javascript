@@ -11,7 +11,7 @@ describe('findAll', () => {
 
     expect(activities).toEqual([
       {
-        timestamp: new Date('2023-10-07T13:00:00Z'),
+        timestamp: new Date('2023-10-07T13:00'),
         duration: 30,
         client: 'Muspellheim',
         project: 'Activity Sampling',

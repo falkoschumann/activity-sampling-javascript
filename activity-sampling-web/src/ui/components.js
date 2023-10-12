@@ -76,7 +76,7 @@ class TimeSummary extends HTMLElement {
 
 function formatHours(hours) {
   let h = Math.floor(hours);
-  let m = Math.floor((hours - h) * 60);
+  let m = Math.round((hours - h) * 60);
   return `${h.toString().padStart(2, 0)}:${m.toString().padStart(2, 0)}`;
 }
 
