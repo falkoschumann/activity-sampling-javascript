@@ -1,15 +1,23 @@
-import { describe, expect, test } from '@jest/globals';
+import { beforeEach, describe, expect, test } from '@jest/globals';
 
 import { getRecentActivities } from '../../src/application/services.js';
+import { initialState, reducer } from '../../src/domain/reducer.js';
+import { Store } from '../../src/domain/store.js';
 import { AbstractApi } from '../../src/infrastructure/api.js';
+
+let store;
+
+beforeEach(() => {
+  store = new Store(reducer, initialState);
+});
 
 describe('get recent activities', () => {
   test('returns multiple activities on same day sorted by time descending', async () => {
     let api = new FakeApi();
 
-    let result = await getRecentActivities(api);
+    await getRecentActivities(store, api);
 
-    expect(result).toEqual({
+    expect(store.getState().recentActivities).toEqual({
       workingDays: [
         {
           date: new Date('2023-10-07T00:00:00Z'),

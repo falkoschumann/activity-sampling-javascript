@@ -1,24 +1,24 @@
-m-recent-activities ul {
+m-working-days ul {
   margin: 0;
   padding: 0;
 }
 
-m-recent-activities li {
+m-working-days li {
   padding: 8px;
   list-style-type: none;
   display: flex;
   border-bottom: 1px solid #ddd;
 }
 
-m-recent-activities li :first-child {
+m-working-days li :first-child {
   min-width: 48px;
 }
 
-m-recent-activities li:nth-child(odd) {
+m-working-days li:nth-child(odd) {
   background-color: #f5f5f5;
 }
 
-m-recent-activities li:last-child {
+m-working-days li:last-child {
   border: none;
 }
 
