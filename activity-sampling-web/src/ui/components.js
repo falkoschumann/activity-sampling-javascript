@@ -3,14 +3,23 @@ import { html } from 'lit-html';
 import './components.css';
 import { Component, getRecentActivitiesAction } from './actions.js';
 
+// TODO scroll recent activities and fix time summary
+
+class ActivitySampling extends Component {
+  getView() {
+    return html`
+      <h1>Activity Sampling</h1>
+      <m-recent-activities></m-recent-activities>
+    `;
+  }
+}
+
+window.customElements.define('m-activity-sampling', ActivitySampling);
+
 class RecentActivities extends Component {
   async connectedCallback() {
     super.connectedCallback();
     getRecentActivitiesAction();
-  }
-
-  extractState(state) {
-    return state.recentActivities;
   }
 
   getView() {
