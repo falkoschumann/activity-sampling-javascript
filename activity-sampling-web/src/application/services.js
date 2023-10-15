@@ -8,3 +8,11 @@ export async function getRecentActivities(
   let recentActivities = await api.getRecentActivities();
   store.dispatch({ type: 'recent-activities-loaded', recentActivities });
 }
+
+export async function logActivity(
+  { timestamp, duration, client, project, task, notes },
+  api = new AbstractApi(),
+) {
+  let activity = { timestamp, duration, client, project, task, notes };
+  await api.postLogActivity(activity);
+}

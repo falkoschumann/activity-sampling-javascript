@@ -34,7 +34,7 @@ export class ExpressApp {
   }
 
   #createRoutes(today, repository) {
-    this.#app.get('/api/get-recent-activities', async (request, response) => {
+    this.#app.get('/api/recent-activities', async (request, response) => {
       let recentActivties = await getRecentActivities({ today }, repository);
       response
         .status(200)

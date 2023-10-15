@@ -2,6 +2,9 @@ export class AbstractApi {
   async getRecentActivities() {
     return { workingDays: [] };
   }
+
+  // eslint-disable-next-line no-unused-vars
+  async postLogActivity(activity) {}
 }
 
 export class Api extends AbstractApi {
@@ -13,9 +16,17 @@ export class Api extends AbstractApi {
   }
 
   async getRecentActivities() {
-    let response = await fetch(`${this.#baseUrl}/get-recent-activities`);
+    let response = await fetch(`${this.#baseUrl}/recent-activities`);
     let dto = await response.json();
     return mapRecentActivitiesDto(dto);
+  }
+
+  async postLogActivity(activity) {
+    let dto = JSON.stringify(activity);
+    await fetch(`${this.#baseUrl}/log-activity`, {
+      method: 'POST',
+      body: dto,
+    });
   }
 }
 

@@ -1,7 +1,11 @@
 import { html } from 'lit-html';
 
 import './components.css';
-import { Component, getRecentActivitiesAction } from './actions.js';
+import {
+  Component,
+  getRecentActivitiesAction,
+  logActivityAction,
+} from './actions.js';
 
 class ActivitySampling extends Component {
   async connectedCallback() {
@@ -23,14 +27,43 @@ window.customElements.define('m-activity-sampling', ActivitySampling);
 class ActivityForm extends Component {
   getView() {
     return html`
-      <form>
-        <label class="caption">Client <input type="text" /></label>
-        <label class="caption">Project <input type="text" /></label>
-        <label class="caption">Task <input type="text" /></label>
-        <label class="caption">Notes <input type="text" /></label>
+      <form @submit="${(e) => this.#onSubmit(e)}">
+        <label class="caption"
+          >Client <input type="text" name="client"
+        /></label>
+        <label class="caption"
+          >Project <input type="text" name="project"
+        /></label>
+        <label class="caption">Task <input type="text" name="task" /></label>
+        <label class="caption">Notes <input type="text" name="notes" /></label>
         <button type="submit">Log</button>
       </form>
     `;
+  }
+
+  #onSubmit(event) {
+    event.preventDefault();
+    if (this.#validateForm(event.target)) {
+      this.#logActivity(event.target);
+    }
+  }
+
+  #validateForm(form) {
+    form.reportValidity();
+    return form.checkValidity();
+  }
+
+  #logActivity(form) {
+    let formData = new FormData(form);
+    let command = {
+      timestamp: new Date(),
+      duration: 0.5,
+      client: formData.get('client'),
+      project: formData.get('project'),
+      task: formData.get('task'),
+      notes: formData.get('notes'),
+    };
+    logActivityAction(command);
   }
 }
 

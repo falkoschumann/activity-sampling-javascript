@@ -15,7 +15,7 @@ describe('get recent activities', () => {
     }).app;
 
     let response = await request(app)
-      .get('/api/get-recent-activities')
+      .get('/api/recent-activities')
       .set('Accept', 'application/json');
 
     expect(response.status).toBe(200);

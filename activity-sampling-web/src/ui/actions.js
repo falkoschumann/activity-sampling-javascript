@@ -1,6 +1,6 @@
 import { html, render } from 'lit-html';
 
-import { getRecentActivities } from '../application/services.js';
+import { getRecentActivities, logActivity } from '../application/services.js';
 import { initialState, reducer } from '../domain/reducer.js';
 import { Store } from '../domain/store.js';
 import { Api } from '../infrastructure/api.js';
@@ -48,4 +48,19 @@ export class Component extends HTMLElement {
 
 export async function getRecentActivitiesAction() {
   return await getRecentActivities(store, api);
+}
+
+export async function logActivityAction({ client, project, task, notes }) {
+  await logActivity(
+    {
+      timestamp: new Date(),
+      duration: 0.5,
+      client,
+      project,
+      task,
+      notes,
+    },
+    api,
+  );
+  await getRecentActivities(store, api);
 }

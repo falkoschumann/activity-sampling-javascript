@@ -1,6 +1,9 @@
-import { beforeEach, describe, expect, test } from '@jest/globals';
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 
-import { getRecentActivities } from '../../src/application/services.js';
+import {
+  getRecentActivities,
+  logActivity,
+} from '../../src/application/services.js';
 import { initialState, reducer } from '../../src/domain/reducer.js';
 import { Store } from '../../src/domain/store.js';
 import { AbstractApi } from '../../src/infrastructure/api.js';
@@ -22,17 +25,52 @@ describe('get recent activities', () => {
         {
           date: new Date('2023-10-07T00:00:00Z'),
           activities: [
-            createActivity({ timestamp: new Date('2023-10-07T13:00:00Z') }),
-            createActivity({ timestamp: new Date('2023-10-07T12:30:00Z') }),
-            createActivity({ timestamp: new Date('2023-10-07T12:00:00Z') }),
+            createActivity({ timestamp: new Date('2023-10-07T13:00Z') }),
+            createActivity({ timestamp: new Date('2023-10-07T12:30Z') }),
+            createActivity({ timestamp: new Date('2023-10-07T12:00Z') }),
           ],
         },
       ],
+      timeSummary: {
+        hoursToday: 1.5,
+        hoursYesterday: 0,
+        hoursThisWeek: 1.5,
+        hoursThisMonth: 1.5,
+      },
+    });
+  });
+});
+
+describe('log activity', () => {
+  test('logs activity', async () => {
+    let api = new FakeApi();
+
+    await logActivity(
+      {
+        timestamp: new Date('2023-10-07T13:30Z'),
+        duration: 0.5,
+        client: 'Muspellheim',
+        project: 'Activity Sampling',
+        task: 'Log activity',
+        notes: 'Log the activity',
+      },
+      api,
+    );
+
+    expect(api.postLogActivity).toHaveBeenNthCalledWith(1, {
+      timestamp: new Date('2023-10-07T13:30Z'),
+      duration: 0.5,
+      client: 'Muspellheim',
+      project: 'Activity Sampling',
+      task: 'Log activity',
+      notes: 'Log the activity',
     });
   });
 });
 
 class FakeApi extends AbstractApi {
+  postLogActivity = jest.fn();
+
   constructor({
     recentActivities = {
       workingDays: [
@@ -45,6 +83,12 @@ class FakeApi extends AbstractApi {
           ],
         },
       ],
+      timeSummary: {
+        hoursToday: 1.5,
+        hoursYesterday: 0,
+        hoursThisWeek: 1.5,
+        hoursThisMonth: 1.5,
+      },
     },
   } = {}) {
     super();
