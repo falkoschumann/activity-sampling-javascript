@@ -1,13 +1,42 @@
-m-working-days ul {
+body {
+  overflow-y: hidden;
+}
+
+m-activity-sampling {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 0 8px;
+}
+
+m-recent-activities {
+  display: flex;
+  flex: 1 1 1px;
+  flex-direction: column;
+}
+
+m-working-days {
+  display: block;
+  flex: 1 1 1px;
+  overflow-y: auto;
+}
+
+m-working-days h4 {
   margin: 0;
-  padding: 0;
+  padding: 0.4em 0;
+  position: sticky;
+  top: 0;
+
+  background: #fdfdfd;
 }
 
 m-working-days li {
-  padding: 8px;
-  list-style-type: none;
   display: flex;
+  padding: 8px;
+
   border-bottom: 1px solid #ddd;
+
+  list-style-type: none;
 }
 
 m-working-days li :first-child {
@@ -24,23 +53,18 @@ m-working-days li:last-child {
 
 m-time-summary {
   display: flex;
-  padding: 8px 0;
   flex-wrap: wrap;
   justify-content: center;
 }
 
-m-time-summary div {
-  display: flex;
-  width: 120px;
+m-time-summary > div {
   padding: 4px;
-  flex-direction: column;
+  width: 120px;
+
+  font-size: 18px;
   text-align: center;
 }
 
-m-time-summary span {
-  font-size: 18px;
-}
-
-m-time-summary span.caption {
+m-time-summary .caption {
   padding-bottom: 4px;
 }

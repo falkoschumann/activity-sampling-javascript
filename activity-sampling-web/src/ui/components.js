@@ -3,9 +3,12 @@ import { html } from 'lit-html';
 import './components.css';
 import { Component, getRecentActivitiesAction } from './actions.js';
 
-// TODO scroll recent activities and fix time summary
-
 class ActivitySampling extends Component {
+  async connectedCallback() {
+    super.connectedCallback();
+    getRecentActivitiesAction();
+  }
+
   getView() {
     return html`
       <h1>Activity Sampling</h1>
@@ -85,20 +88,20 @@ class TimeSummary extends Component {
   getView() {
     return html`
       <div>
-        <span class="caption">Hours Today</span>
-        <span>${formatHours(this.state.hoursToday)}</span>
+        <div class="caption">Hours Today</div>
+        <div>${formatHours(this.state.hoursToday)}</div>
       </div>
       <div>
-        <span class="caption">Hours Yesterday</span>
-        <span>${formatHours(this.state.hoursYesterday)}</span>
+        <div class="caption">Hours Yesterday</div>
+        <div>${formatHours(this.state.hoursYesterday)}</div>
       </div>
       <div>
-        <span class="caption">Hours this Week</span>
-        <span>${formatHours(this.state.hoursThisWeek)}</span>
+        <div class="caption">Hours this Week</div>
+        <div>${formatHours(this.state.hoursThisWeek)}</div>
       </div>
       <div>
-        <span class="caption">Hours this Month</span>
-        <span>${formatHours(this.state.hoursThisMonth)}</span>
+        <div class="caption">Hours this Month</div>
+        <div>${formatHours(this.state.hoursThisMonth)}</div>
       </div>
     `;
   }
