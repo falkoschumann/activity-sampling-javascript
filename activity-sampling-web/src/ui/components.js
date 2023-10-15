@@ -12,12 +12,29 @@ class ActivitySampling extends Component {
   getView() {
     return html`
       <h1>Activity Sampling</h1>
+      <m-activity-form></m-activity-form>
       <m-recent-activities></m-recent-activities>
     `;
   }
 }
 
 window.customElements.define('m-activity-sampling', ActivitySampling);
+
+class ActivityForm extends Component {
+  getView() {
+    return html`
+      <form>
+        <label class="caption">Client <input type="text" /></label>
+        <label class="caption">Project <input type="text" /></label>
+        <label class="caption">Task <input type="text" /></label>
+        <label class="caption">Notes <input type="text" /></label>
+        <button type="submit">Log</button>
+      </form>
+    `;
+  }
+}
+
+window.customElements.define('m-activity-form', ActivityForm);
 
 class RecentActivities extends Component {
   async connectedCallback() {

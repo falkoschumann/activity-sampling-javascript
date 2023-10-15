@@ -9,6 +9,24 @@ m-activity-sampling {
   padding: 0 8px;
 }
 
+m-activity-form label {
+  display: block;
+}
+
+m-activity-form input {
+  display: block;
+  margin-bottom: 4px;
+  padding: 4px;
+  width: calc(100% - 10px);
+
+  border: solid 1px #ddd;
+}
+
+m-activity-form button {
+  padding: 4px;
+  width: 100%;
+}
+
 m-recent-activities {
   display: flex;
   flex: 1 1 1px;
