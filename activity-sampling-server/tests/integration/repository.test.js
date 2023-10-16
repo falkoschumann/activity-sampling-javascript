@@ -1,5 +1,14 @@
-import { describe, expect, test } from '@jest/globals';
+import { beforeEach, describe, expect, test } from '@jest/globals';
+import { rmSync } from 'node:fs';
+
 import { Repository } from '../../src/infrastructure/repository.js';
+import { createActivity } from '../testdata.js';
+
+const fileName = new URL('../../data/activity-log.test.csv', import.meta.url);
+
+beforeEach(() => {
+  rmSync(fileName, { force: true });
+});
 
 describe('findAll', () => {
   test('returns list of activities', async () => {
@@ -37,5 +46,26 @@ describe('findAll', () => {
     });
 
     await expect(repository.findAll()).rejects.toThrow();
+  });
+});
+
+describe('add', () => {
+  test('creates file, if it does not exist', async () => {
+    let repository = new Repository({ fileName });
+
+    await repository.add(createActivity());
+
+    let activities = await repository.findAll();
+    expect(activities).toEqual([createActivity()]);
+  });
+
+  test('adds activtiy to existing file', async () => {
+    let repository = new Repository({ fileName });
+    await repository.add(createActivity());
+
+    await repository.add(createActivity());
+
+    let activities = await repository.findAll();
+    expect(activities).toEqual([createActivity(), createActivity()]);
   });
 });

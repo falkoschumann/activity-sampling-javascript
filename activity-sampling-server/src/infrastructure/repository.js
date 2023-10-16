@@ -1,9 +1,15 @@
-import { parse } from 'csv-parse';
-import { readFile } from 'node:fs/promises';
+import { parse, stringify } from 'csv';
+import { existsSync } from 'node:fs';
+import { readFile, writeFile } from 'node:fs/promises';
 
 export class AbstractRepository {
   async findAll() {
     return [];
+  }
+
+  // eslint-disable-next-line no-unused-vars
+  async add(activity) {
+    return;
   }
 }
 
@@ -16,11 +22,23 @@ export class Repository extends AbstractRepository {
   }
 
   async findAll() {
-    let csv = await this.#openCsvFile();
+    let csv = await this.#readFile();
     return this.#parseCsv(csv);
   }
 
-  async #openCsvFile() {
+  async add({ timestamp, duration, client, project, task, notes }) {
+    let csv = this.#writeCsv({
+      timestamp,
+      duration,
+      client,
+      project,
+      task,
+      notes,
+    });
+    await this.#writeFile(csv);
+  }
+
+  async #readFile() {
     try {
       return await readFile(this.#fileName, { encoding: 'utf-8' });
     } catch (error) {
@@ -35,12 +53,12 @@ export class Repository extends AbstractRepository {
     let records = parse(csv, { columns: true });
     let activities = [];
     for await (let record of records) {
-      activities.push(this.#mapRecord(record));
+      activities.push(this.#parseRecord(record));
     }
     return activities;
   }
 
-  #mapRecord(record) {
+  #parseRecord(record) {
     return {
       timestamp: new Date(record['timestamp']),
       duration: Number(record['duration']),
@@ -49,5 +67,28 @@ export class Repository extends AbstractRepository {
       task: record['task'],
       notes: record['notes'],
     };
+  }
+
+  #writeCsv(activity) {
+    let existsFile = existsSync(this.#fileName);
+    return stringify([this.#createRecord(activity)], {
+      header: !existsFile,
+      columns: ['timestamp', 'duration', 'client', 'project', 'task', 'notes'],
+    });
+  }
+
+  #createRecord({ timestamp, duration, client, project, task, notes }) {
+    return {
+      timestamp: timestamp.toISOString(),
+      duration,
+      client,
+      project,
+      task,
+      notes,
+    };
+  }
+
+  async #writeFile(csv) {
+    await writeFile(this.#fileName, csv, { flag: 'a' });
   }
 }

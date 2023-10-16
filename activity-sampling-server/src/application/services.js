@@ -8,3 +8,10 @@ export async function getRecentActivities(
   let activities = await repository.findAll();
   return createRecentActivities(activities, today);
 }
+
+export async function logActivity(
+  { timestamp, duration, client, project, task, notes },
+  repository = new AbstractRepository(),
+) {
+  await repository.add({ timestamp, duration, client, project, task, notes });
+}

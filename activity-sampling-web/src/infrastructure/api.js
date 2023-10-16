@@ -25,6 +25,7 @@ export class Api extends AbstractApi {
     let dto = JSON.stringify(activity);
     await fetch(`${this.#baseUrl}/log-activity`, {
       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: dto,
     });
   }

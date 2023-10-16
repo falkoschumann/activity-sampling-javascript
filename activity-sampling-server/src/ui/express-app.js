@@ -34,6 +34,11 @@ export class ExpressApp {
   }
 
   #createRoutes(today, repository) {
+    this.#createRouteRecentActivities(today, repository);
+    this.#createRouteLogActivity(today, repository);
+  }
+
+  #createRouteRecentActivities(today, repository) {
     this.#app.get('/api/recent-activities', async (request, response) => {
       let recentActivties = await getRecentActivities({ today }, repository);
       response
@@ -41,5 +46,40 @@ export class ExpressApp {
         .header({ 'Content-Type': 'application/json' })
         .send(recentActivties);
     });
+  }
+
+  #createRouteLogActivity(today, repository) {
+    this.#app.post('/api/log-activity', async (request, response) => {
+      let activity = this.#parseActivity(request);
+      if (activity == null) {
+        response.status(400).end();
+      } else {
+        await repository.add(activity);
+        response.status(201).end();
+      }
+    });
+  }
+
+  #parseActivity(request) {
+    let activity = request.body;
+    if (
+      typeof activity.timestamp == 'string' &&
+      typeof activity.duration == 'number' &&
+      typeof activity.client == 'string' &&
+      typeof activity.project == 'string' &&
+      typeof activity.task == 'string' &&
+      typeof activity.notes == 'string'
+    ) {
+      return {
+        timestamp: new Date(activity.timestamp),
+        duration: activity.duration,
+        client: activity.client,
+        project: activity.project,
+        task: activity.task,
+        notes: activity.notes,
+      };
+    }
+
+    return null;
   }
 }

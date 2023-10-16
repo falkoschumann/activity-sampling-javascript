@@ -54,7 +54,7 @@ export async function logActivityAction({ client, project, task, notes }) {
   await logActivity(
     {
       timestamp: new Date(),
-      duration: 0.5,
+      duration: 30,
       client,
       project,
       task,

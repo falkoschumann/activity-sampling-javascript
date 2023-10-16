@@ -64,8 +64,6 @@ class ActivityForm extends Component {
   #logActivity(form) {
     let formData = new FormData(form);
     let command = {
-      timestamp: new Date(),
-      duration: 0.5,
       client: formData.get('client'),
       project: formData.get('project'),
       task: formData.get('task'),

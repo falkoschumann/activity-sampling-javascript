@@ -1,7 +1,12 @@
 import { describe, expect, test } from '@jest/globals';
 
-import { getRecentActivities } from '../../src/application/services.js';
+import {
+  getRecentActivities,
+  logActivity,
+} from '../../src/application/services.js';
 import { AbstractRepository } from '../../src/infrastructure/repository.js';
+
+import { createActivity } from '../testdata.js';
 
 describe('get recent activities', () => {
   describe('working days', () => {
@@ -193,6 +198,17 @@ describe('get recent activities', () => {
   });
 });
 
+describe('log activity', () => {
+  test('adds activity to repository', async () => {
+    let repository = new FakeRepository();
+
+    await logActivity(createActivity(), repository);
+
+    let activities = await repository.findAll();
+    expect(activities).toEqual([createActivity()]);
+  });
+});
+
 export class FakeRepository extends AbstractRepository {
   #activityLog;
 
@@ -204,15 +220,8 @@ export class FakeRepository extends AbstractRepository {
   async findAll() {
     return this.#activityLog;
   }
-}
 
-function createActivity({
-  timestamp = new Date('2023-10-07T13:00:00'),
-  duration = 30,
-  client = 'Muspellheim',
-  project = 'Activity Sampling',
-  task = 'Recent Activities',
-  notes = 'Show my recent activities',
-} = {}) {
-  return { timestamp, duration, client, project, task, notes };
+  async add(activity) {
+    this.#activityLog.push(activity);
+  }
 }
