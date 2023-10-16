@@ -21,7 +21,7 @@
     "devweb": "npm run dev --workspace=activity-sampling-web"
   },
   "dependencies": {
-    "lit-html": "2.8.0"
+    "lit-html": "3.0.0"
   },
   "devDependencies": {
     "@jest/globals": "29.7.0",
