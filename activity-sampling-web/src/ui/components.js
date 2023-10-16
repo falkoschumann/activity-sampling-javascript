@@ -28,14 +28,22 @@ class ActivityForm extends Component {
   getView() {
     return html`
       <form @submit="${(e) => this.#onSubmit(e)}">
-        <label class="caption"
-          >Client <input type="text" name="client"
-        /></label>
-        <label class="caption"
-          >Project <input type="text" name="project"
-        /></label>
-        <label class="caption">Task <input type="text" name="task" /></label>
-        <label class="caption">Notes <input type="text" name="notes" /></label>
+        <div>
+          <label class="caption" for="client">Client</label>
+          <input type="text" id="client" name="client" />
+        </div>
+        <div>
+          <label class="caption" for="project">Project</label>
+          <input type="text" id="project" name="project" />
+        </div>
+        <div>
+          <label class="caption" for="task">Task</label>
+          <input type="text" id="task" name="task" />
+        </div>
+        <div>
+          <label class="caption" for="notes">Notes</label>
+          <input type="text" id="notes" name="notes" />
+        </div>
         <button type="submit">Log</button>
       </form>
     `;
