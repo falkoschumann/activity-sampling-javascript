@@ -2,9 +2,11 @@ import { html } from 'lit-html';
 
 import './components.css';
 import {
+  activityUpdatedAction,
   Component,
   getRecentActivitiesAction,
   logActivityAction,
+  setActivityAction,
 } from './actions.js';
 
 class ActivitySampling extends Component {
@@ -25,28 +27,68 @@ class ActivitySampling extends Component {
 window.customElements.define('m-activity-sampling', ActivitySampling);
 
 class ActivityForm extends Component {
+  updateView() {
+    super.updateView();
+    this.querySelector('#client').value = this.state.client;
+    this.querySelector('#project').value = this.state.project;
+    this.querySelector('#task').value = this.state.task;
+    this.querySelector('#notes').value = this.state.notes;
+  }
+
+  extractState(state) {
+    return state.activity;
+  }
+
   getView() {
     return html`
       <form @submit="${(e) => this.#onSubmit(e)}">
         <div>
           <label class="caption" for="client">Client</label>
-          <input type="text" id="client" name="client" />
+          <input
+            type="text"
+            required
+            id="client"
+            name="client"
+            @keyup="${(e) => this.#onInput(e)}"
+          />
         </div>
         <div>
           <label class="caption" for="project">Project</label>
-          <input type="text" id="project" name="project" />
+          <input
+            type="text"
+            required
+            id="project"
+            name="project"
+            @keyup="${(e) => this.#onInput(e)}"
+          />
         </div>
         <div>
           <label class="caption" for="task">Task</label>
-          <input type="text" id="task" name="task" />
+          <input
+            type="text"
+            required
+            id="task"
+            name="task"
+            @keyup="${(e) => this.#onInput(e)}"
+          />
         </div>
         <div>
           <label class="caption" for="notes">Notes</label>
-          <input type="text" id="notes" name="notes" />
+          <input
+            type="text"
+            required
+            id="notes"
+            name="notes"
+            @keyup="${(e) => this.#onInput(e)}"
+          />
         </div>
         <button type="submit">Log</button>
       </form>
     `;
+  }
+
+  #onInput({ target: { name, value } }) {
+    activityUpdatedAction({ name, value });
   }
 
   #onSubmit(event) {
@@ -117,7 +159,7 @@ class WorkingDays extends Component {
 
   #renderActivity({ timestamp, client, project, task, notes }) {
     return html`
-      <li>
+      <li @click="${() => this.#onClick({ client, project, task, notes })}">
         <div>
           <strong
             >${timestamp.toLocaleTimeString(undefined, {
@@ -131,6 +173,10 @@ class WorkingDays extends Component {
         </div>
       </li>
     `;
+  }
+
+  #onClick({ client, project, task, notes }) {
+    setActivityAction({ client, project, task, notes });
   }
 }
 

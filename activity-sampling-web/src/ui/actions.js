@@ -1,6 +1,11 @@
 import { html, render } from 'lit-html';
 
-import { getRecentActivities, logActivity } from '../application/services.js';
+import {
+  activityUpdated,
+  getRecentActivities,
+  logActivity,
+  setActivity,
+} from '../application/services.js';
 import { initialState, reducer } from '../domain/reducer.js';
 import { Store } from '../domain/store.js';
 import { Api } from '../infrastructure/api.js';
@@ -44,6 +49,14 @@ export class Component extends HTMLElement {
   getRenderTarget() {
     return this;
   }
+}
+
+export async function activityUpdatedAction({ name, value }) {
+  return activityUpdated({ name, value }, store);
+}
+
+export async function setActivityAction({ client, project, task, notes }) {
+  setActivity({ client, project, task, notes }, store);
 }
 
 export async function getRecentActivitiesAction() {

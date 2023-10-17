@@ -1,8 +1,10 @@
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 
 import {
+  activityUpdated,
   getRecentActivities,
   logActivity,
+  setActivity,
 } from '../../src/application/services.js';
 import { initialState, reducer } from '../../src/domain/reducer.js';
 import { Store } from '../../src/domain/store.js';
@@ -12,6 +14,40 @@ let store;
 
 beforeEach(() => {
   store = new Store(reducer, initialState);
+});
+
+describe('activity updated', () => {
+  test('updates activity', async () => {
+    await activityUpdated({ name: 'client', value: 'Muspellheim' }, store);
+
+    expect(store.getState().activity).toEqual({
+      client: 'Muspellheim',
+      project: '',
+      task: '',
+      notes: '',
+    });
+  });
+});
+
+describe('set activity', () => {
+  test('sets activity', async () => {
+    await setActivity(
+      {
+        client: 'foo',
+        project: 'bar',
+        task: 'lorem',
+        notes: 'ipsum',
+      },
+      store,
+    );
+
+    expect(store.getState().activity).toEqual({
+      client: 'foo',
+      project: 'bar',
+      task: 'lorem',
+      notes: 'ipsum',
+    });
+  });
 });
 
 describe('get recent activities', () => {

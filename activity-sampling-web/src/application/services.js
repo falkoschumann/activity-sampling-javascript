@@ -1,6 +1,20 @@
 import { AbstractStore } from '../domain/store.js';
 import { AbstractApi } from '../infrastructure/api.js';
 
+export async function activityUpdated({ name, value }, store) {
+  store.dispatch({ type: 'activity-updated', name, value });
+}
+
+export async function setActivity({ client, project, task, notes }, store) {
+  store.dispatch({
+    type: 'set-activity',
+    client,
+    project,
+    task,
+    notes,
+  });
+}
+
 export async function getRecentActivities(
   store = new AbstractStore(),
   api = new AbstractApi(),
