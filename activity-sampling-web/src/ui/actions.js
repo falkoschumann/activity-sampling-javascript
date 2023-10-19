@@ -4,6 +4,7 @@ import {
   activityUpdated,
   getRecentActivities,
   logActivity,
+  progressTicked,
   setActivity,
 } from '../application/services.js';
 import { initialState, reducer } from '../domain/reducer.js';
@@ -49,6 +50,10 @@ export class Component extends HTMLElement {
   getRenderTarget() {
     return this;
   }
+}
+
+export async function progressTickedAction({ seconds }) {
+  return progressTicked({ seconds }, store);
 }
 
 export async function activityUpdatedAction({ name, value }) {

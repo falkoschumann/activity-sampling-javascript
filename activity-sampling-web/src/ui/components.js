@@ -6,6 +6,7 @@ import {
   Component,
   getRecentActivitiesAction,
   logActivityAction,
+  progressTickedAction,
   setActivityAction,
 } from './actions.js';
 
@@ -19,6 +20,7 @@ class ActivitySampling extends Component {
     return html`
       <h1>Activity Sampling</h1>
       <m-activity-form></m-activity-form>
+      <m-task-progress></m-task-progress>
       <m-recent-activities></m-recent-activities>
     `;
   }
@@ -117,6 +119,39 @@ class ActivityForm extends Component {
 
 window.customElements.define('m-activity-form', ActivityForm);
 
+class TaskProgress extends Component {
+  #interval;
+
+  async connectedCallback() {
+    super.connectedCallback();
+    this.#interval = setInterval(() => this.#tick(), 1000);
+  }
+
+  #tick() {
+    progressTickedAction({ seconds: 1 });
+  }
+
+  async disconnectedCallback() {
+    super.disconnectedCallback();
+    clearInterval(this.#interval);
+  }
+
+  extractState(state) {
+    return state.progress;
+  }
+
+  getView() {
+    return html`
+      <span class="caption"
+        >${toDurationString(this.state.value, { style: 'medium' })}</span
+      >
+      <progress max="1" value="${this.state.progress}"></progress>
+    `;
+  }
+}
+
+window.customElements.define('m-task-progress', TaskProgress);
+
 class RecentActivities extends Component {
   async connectedCallback() {
     super.connectedCallback();
@@ -191,19 +226,19 @@ class TimeSummary extends Component {
     return html`
       <div>
         <div class="caption">Hours Today</div>
-        <div>${formatHours(this.state.hoursToday)}</div>
+        <div>${toDurationString(this.state.hoursToday * 3600)}</div>
       </div>
       <div>
         <div class="caption">Hours Yesterday</div>
-        <div>${formatHours(this.state.hoursYesterday)}</div>
+        <div>${toDurationString(this.state.hoursYesterday * 3600)}</div>
       </div>
       <div>
         <div class="caption">Hours this Week</div>
-        <div>${formatHours(this.state.hoursThisWeek)}</div>
+        <div>${toDurationString(this.state.hoursThisWeek * 3600)}</div>
       </div>
       <div>
         <div class="caption">Hours this Month</div>
-        <div>${formatHours(this.state.hoursThisMonth)}</div>
+        <div>${toDurationString(this.state.hoursThisMonth * 3600)}</div>
       </div>
     `;
   }
@@ -211,8 +246,15 @@ class TimeSummary extends Component {
 
 window.customElements.define('m-time-summary', TimeSummary);
 
-function formatHours(hours) {
-  let h = Math.floor(hours);
-  let m = Math.round((hours - h) * 60);
-  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+function toDurationString(seconds, { style = 'short' } = {}) {
+  let h = Math.floor(seconds / 3600);
+  let m = Math.floor((seconds - h * 3600) / 60);
+  let s = seconds - h * 3600 - m * 60;
+  let string = `${h.toString().padStart(2, '0')}:${m
+    .toString()
+    .padStart(2, '0')}`;
+  if (style === 'medium') {
+    string += `:${s.toString().padStart(2, '0')}`;
+  }
+  return string;
 }

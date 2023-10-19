@@ -5,6 +5,11 @@ export const initialState = {
     task: '',
     notes: '',
   },
+  progress: {
+    duration: 1800,
+    value: 1800,
+    progress: 0,
+  },
   recentActivities: {
     workingDays: [],
     timeSummary: {
@@ -18,6 +23,8 @@ export const initialState = {
 
 export function reducer(state, action) {
   switch (action.type) {
+    case 'progress-ticked':
+      return progressTicked(state, action);
     case 'activity-updated':
       return activityUpdated(state, action);
     case 'set-activity':
@@ -27,6 +34,16 @@ export function reducer(state, action) {
     default:
       return state;
   }
+}
+
+function progressTicked(state, action) {
+  let progress = {
+    ...state.progress,
+    value: state.progress.value - action.seconds,
+    progress:
+      1.0 - (state.progress.value - action.seconds) / state.progress.duration,
+  };
+  return { ...state, progress };
 }
 
 function activityUpdated(state, action) {

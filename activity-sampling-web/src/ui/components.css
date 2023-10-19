@@ -10,7 +10,16 @@ body {
 button {
   padding: 4px;
 
+  border: solid 1px var(--light-color);
   border-radius: 0.5em;
+}
+
+button:hover {
+  filter: brightness(0.9);
+}
+
+button:active {
+  filter: brightness(1);
 }
 
 input {
@@ -44,6 +53,17 @@ m-activity-form input {
 }
 
 m-activity-form button {
+  width: 100%;
+}
+
+m-task-progress {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+}
+
+m-task-progress progress {
   width: 100%;
 }
 

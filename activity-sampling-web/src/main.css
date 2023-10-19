@@ -19,7 +19,6 @@
 :root {
   --main-color: #292c2f; /* RAL 9011, Graphitschwarz */
   --main-background-color: #fdfdfd; /* RAL 9020, Seidenmatt–Weiß */
-  --primary-color: #005387; /* RAL 5005, Signalblau */
 }
 
 /* Reset */
@@ -53,17 +52,7 @@ button {
   font-weight: 600;
   line-height: 20px;
 
-  background: var(--primary-color);
-  border: none;
-  color: var(--main-background-color);
-}
-
-button:hover {
-  filter: brightness(1.3);
-}
-
-button:active {
-  filter: brightness(1);
+  color: var(--main-color);
 }
 
 /* Header */
