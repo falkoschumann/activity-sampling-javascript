@@ -1,14 +1,26 @@
 :root {
+  --main-color: #292c2f; /* RAL 9011, Graphitschwarz */
+  --main-background-color: #fdfdfd; /* RAL 9020, Seidenmatt–Weiß */
   --light-color: #d7d5cb; /* RAL 9002, Grauweiß */
   --dark-color: #7e8182; /* RAL 9023, Perldunkelgrau */
 }
 
 body {
   overflow-y: hidden;
+
+  background: var(--main-background-color);
+  color: var(--main-color);
+}
+
+button,
+input {
+  color: var(--main-color);
 }
 
 button {
   padding: 4px;
+
+  font-weight: 600;
 
   border: solid 1px var(--light-color);
   border-radius: 0.5em;

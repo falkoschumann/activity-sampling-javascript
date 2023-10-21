@@ -16,11 +16,6 @@
  * Group style properties by type and order them alphabetically like Chrome.
  */
 
-:root {
-  --main-color: #292c2f; /* RAL 9011, Graphitschwarz */
-  --main-background-color: #fdfdfd; /* RAL 9020, Seidenmatt–Weiß */
-}
-
 /* Reset */
 * {
   margin: 0;
@@ -28,31 +23,15 @@
 }
 
 /* Body */
-body {
+body,
+button,
+input,
+select,
+textarea {
   font-family: OpenSans, Roboto, Verdana, Arial, sans-serif;
   font-size: 14px;
   font-weight: 400;
   line-height: 20px;
-
-  background: var(--main-background-color);
-  color: var(--main-color);
-}
-
-input {
-  font-family: OpenSans, Roboto, Verdana, Arial, sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 20px;
-
-  color: var(--main-color);
-}
-
-button {
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 20px;
-
-  color: var(--main-color);
 }
 
 /* Header */
