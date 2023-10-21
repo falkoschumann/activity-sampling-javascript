@@ -1,19 +1,13 @@
 import { html } from 'lit-html';
 
 import './components.css';
-import {
-  activityUpdatedAction,
-  Component,
-  getRecentActivitiesAction,
-  logActivityAction,
-  progressTickedAction,
-  setActivityAction,
-} from './actions.js';
+import { Component } from './actions.js';
+import * as actions from './actions.js';
 
 class ActivitySampling extends Component {
   async connectedCallback() {
     super.connectedCallback();
-    getRecentActivitiesAction();
+    actions.getRecentActivities();
   }
 
   getView() {
@@ -90,7 +84,7 @@ class ActivityForm extends Component {
   }
 
   #onInput({ target: { name, value } }) {
-    activityUpdatedAction({ name, value });
+    actions.activityUpdated({ name, value });
   }
 
   #onSubmit(event) {
@@ -113,7 +107,7 @@ class ActivityForm extends Component {
       task: formData.get('task'),
       notes: formData.get('notes'),
     };
-    logActivityAction(command);
+    actions.logActivity(command);
   }
 }
 
@@ -128,7 +122,7 @@ class TaskProgress extends Component {
   }
 
   #tick() {
-    progressTickedAction({ seconds: 1 });
+    actions.progressTicked({ seconds: 1 });
   }
 
   async disconnectedCallback() {
@@ -155,7 +149,7 @@ window.customElements.define('m-task-progress', TaskProgress);
 class RecentActivities extends Component {
   async connectedCallback() {
     super.connectedCallback();
-    getRecentActivitiesAction();
+    actions.getRecentActivities();
   }
 
   getView() {
@@ -211,7 +205,7 @@ class WorkingDays extends Component {
   }
 
   #onClick({ client, project, task, notes }) {
-    setActivityAction({ client, project, task, notes });
+    actions.setActivity({ client, project, task, notes });
   }
 }
 

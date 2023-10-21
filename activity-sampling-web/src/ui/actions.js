@@ -1,18 +1,12 @@
 import { html, render } from 'lit-html';
 
-import {
-  activityUpdated,
-  getRecentActivities,
-  logActivity,
-  progressTicked,
-  setActivity,
-} from '../application/services.js';
+import * as services from '../application/services.js';
 import { initialState, reducer } from '../domain/reducer.js';
 import { Store } from '../domain/store.js';
 import { Api } from '../infrastructure/api.js';
 
 const store = new Store(reducer, initialState);
-const api = new Api();
+const api = globalThis.activitySampling?.api ?? new Api();
 
 export class Component extends HTMLElement {
   constructor() {
@@ -52,24 +46,24 @@ export class Component extends HTMLElement {
   }
 }
 
-export async function progressTickedAction({ seconds }) {
-  return progressTicked({ seconds }, store);
+export async function progressTicked({ seconds }) {
+  await services.progressTicked({ seconds }, store);
 }
 
-export async function activityUpdatedAction({ name, value }) {
-  return activityUpdated({ name, value }, store);
+export async function activityUpdated({ name, value }) {
+  await services.activityUpdated({ name, value }, store);
 }
 
-export async function setActivityAction({ client, project, task, notes }) {
-  setActivity({ client, project, task, notes }, store);
+export async function setActivity({ client, project, task, notes }) {
+  await services.setActivity({ client, project, task, notes }, store);
 }
 
-export async function getRecentActivitiesAction() {
-  return await getRecentActivities(store, api);
+export async function getRecentActivities() {
+  await services.getRecentActivities(store, api);
 }
 
-export async function logActivityAction({ client, project, task, notes }) {
-  await logActivity(
+export async function logActivity({ client, project, task, notes }) {
+  await services.logActivity(
     {
       timestamp: new Date(),
       duration: 30,
@@ -80,5 +74,5 @@ export async function logActivityAction({ client, project, task, notes }) {
     },
     api,
   );
-  await getRecentActivities(store, api);
+  await services.getRecentActivities(store, api);
 }
