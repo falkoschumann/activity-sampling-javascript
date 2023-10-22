@@ -131,13 +131,15 @@ class TaskProgress extends Component {
   }
 
   extractState(state) {
-    return state.progress;
+    return state.task;
   }
 
   getView() {
     return html`
       <span class="caption"
-        >${toDurationString(this.state.value, { style: 'medium' })}</span
+        >${toDurationString(this.state.remainingDuration, {
+          style: 'medium',
+        })}</span
       >
       <progress max="1" value="${this.state.progress}"></progress>
     `;

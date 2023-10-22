@@ -4,6 +4,7 @@ import {
   activityUpdated,
   getRecentActivities,
   logActivity,
+  progressTicked,
   setActivity,
 } from '../../src/application/services.js';
 import { initialState, reducer } from '../../src/domain/reducer.js';
@@ -25,6 +26,7 @@ describe('activity updated', () => {
       project: '',
       task: '',
       notes: '',
+      logButtonDisabled: false,
     });
   });
 });
@@ -46,6 +48,18 @@ describe('set activity', () => {
       project: 'bar',
       task: 'lorem',
       notes: 'ipsum',
+    });
+  });
+});
+
+describe('progress ticked', () => {
+  test('increases progress', async () => {
+    await progressTicked({ seconds: 720 }, store);
+
+    expect(store.getState().task).toEqual({
+      duration: 1800,
+      remainingDuration: 1080,
+      progress: 0.4,
     });
   });
 });
@@ -80,22 +94,34 @@ describe('get recent activities', () => {
 describe('log activity', () => {
   test('logs activity', async () => {
     let api = new FakeApi();
-
-    await logActivity(
+    await setActivity(
       {
-        timestamp: new Date('2023-10-07T13:30Z'),
-        duration: 0.5,
         client: 'Muspellheim',
         project: 'Activity Sampling',
         task: 'Log activity',
         notes: 'Log the activity',
       },
+      store,
+    );
+
+    await logActivity(
+      {
+        timestamp: new Date('2023-10-07T13:30Z'),
+      },
+      store,
       api,
     );
 
+    expect(store.getState().activity).toEqual({
+      client: 'Muspellheim',
+      project: 'Activity Sampling',
+      task: 'Log activity',
+      notes: 'Log the activity',
+      logButtonDisabled: true,
+    });
     expect(api.postLogActivity).toHaveBeenNthCalledWith(1, {
       timestamp: new Date('2023-10-07T13:30Z'),
-      duration: 0.5,
+      duration: 1800,
       client: 'Muspellheim',
       project: 'Activity Sampling',
       task: 'Log activity',
@@ -138,7 +164,7 @@ class FakeApi extends AbstractApi {
 
 function createActivity({
   timestamp = new Date('2023-10-07T13:00:00Z'),
-  duration = 'PT30M',
+  duration = 30,
   client = 'Muspellheim',
   project = 'Activity Sampling',
   task = 'Recent Activities',

@@ -62,17 +62,7 @@ export async function getRecentActivities() {
   await services.getRecentActivities(store, api);
 }
 
-export async function logActivity({ client, project, task, notes }) {
-  await services.logActivity(
-    {
-      timestamp: new Date(),
-      duration: 30,
-      client,
-      project,
-      task,
-      notes,
-    },
-    api,
-  );
+export async function logActivity() {
+  await services.logActivity(undefined, store, api);
   await services.getRecentActivities(store, api);
 }

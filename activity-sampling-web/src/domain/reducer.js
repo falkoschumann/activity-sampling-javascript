@@ -4,10 +4,11 @@ export const initialState = {
     project: '',
     task: '',
     notes: '',
+    logButtonDisabled: false,
   },
-  progress: {
+  task: {
     duration: 1800,
-    value: 1800,
+    remainingDuration: 1800,
     progress: 0,
   },
   recentActivities: {
@@ -29,6 +30,8 @@ export function reducer(state, action) {
       return activityUpdated(state, action);
     case 'set-activity':
       return setActivity(state, action);
+    case 'activity-logged':
+      return activityLogged(state, action);
     case 'recent-activities-loaded':
       return recentActivitiesLoaded(state, action);
     default:
@@ -37,13 +40,13 @@ export function reducer(state, action) {
 }
 
 function progressTicked(state, action) {
-  let progress = {
-    ...state.progress,
-    value: state.progress.value - action.seconds,
-    progress:
-      1.0 - (state.progress.value - action.seconds) / state.progress.duration,
+  let remainingDuration = state.task.remainingDuration - action.seconds;
+  let task = {
+    ...state.task,
+    remainingDuration,
+    progress: 1.0 - remainingDuration / state.task.duration,
   };
-  return { ...state, progress };
+  return { ...state, task };
 }
 
 function activityUpdated(state, action) {
@@ -61,6 +64,16 @@ function setActivity(state, action) {
       project: action.project,
       task: action.task,
       notes: action.notes,
+    },
+  };
+}
+
+function activityLogged(state) {
+  return {
+    ...state,
+    activity: {
+      ...state.activity,
+      logButtonDisabled: true,
     },
   };
 }
