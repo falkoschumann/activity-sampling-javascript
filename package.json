@@ -28,5 +28,34 @@
     "eslint": "8.51.0",
     "jest": "29.7.0",
     "prettier": "3.0.3"
+  },
+  "jest": {
+    "transform": {},
+    "watchPathIgnorePatterns": [
+      "<rootDir>/activity-sampling-server/data/",
+      "<rootDir>/activity-sampling-server/public/"
+    ],
+    "verbose": true,
+    "globalSetup": "./jest.setup.js"
+  },
+  "prettier": {
+    "proseWrap": "always",
+    "singleQuote": true
+  },
+  "eslintConfig": {
+    "env": {
+      "es2022": true
+    },
+    "extends": [
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 2022,
+      "sourceType": "module"
+    },
+    "ignorePatterns": [
+      "/coverage/",
+      "public/"
+    ]
   }
 }

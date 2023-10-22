@@ -1,7 +1,0 @@
-{
-  "testEnvironment": "node",
-  "transform": {},
-  "watchPathIgnorePatterns": ["<rootDir>/data/", "<rootDir>/public/"],
-  "verbose": true,
-  "globalSetup": "./jest.setup.js"
-}

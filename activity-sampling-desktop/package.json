@@ -4,5 +4,10 @@
   "description": "",
   "author": "Falko Schumann",
   "license": "MIT",
-  "type": "module"
+  "type": "module",
+  "eslintConfig": {
+    "env": {
+      "browser": true
+    }
+  }
 }
