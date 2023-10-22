@@ -1,3 +1,5 @@
+import { Duration } from 'activity-sampling-shared';
+
 export class AbstractApi {
   async getRecentActivities() {
     return { workingDays: [] };
@@ -37,7 +39,7 @@ function mapRecentActivitiesDto(raw) {
       date: new Date(rawDay.date),
       activities: rawDay.activities.map((rawActivity) => ({
         timestamp: new Date(rawActivity.timestamp),
-        duration: rawActivity.duration,
+        duration: new Duration(rawActivity.duration),
         client: rawActivity.client,
         project: rawActivity.project,
         task: rawActivity.task,
@@ -45,10 +47,10 @@ function mapRecentActivitiesDto(raw) {
       })),
     })),
     timeSummary: {
-      hoursToday: raw.timeSummary.hoursToday,
-      hoursYesterday: raw.timeSummary.hoursYesterday,
-      hoursThisWeek: raw.timeSummary.hoursThisWeek,
-      hoursThisMonth: raw.timeSummary.hoursThisMonth,
+      hoursToday: new Duration(raw.timeSummary.hoursToday),
+      hoursYesterday: new Duration(raw.timeSummary.hoursYesterday),
+      hoursThisWeek: new Duration(raw.timeSummary.hoursThisWeek),
+      hoursThisMonth: new Duration(raw.timeSummary.hoursThisMonth),
     },
   };
 }

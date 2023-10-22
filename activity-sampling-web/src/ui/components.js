@@ -118,7 +118,7 @@ class TaskProgress extends Component {
 
   async connectedCallback() {
     super.connectedCallback();
-    this.#interval = setInterval(() => this.#tick(), 1000);
+    //this.#interval = setInterval(() => this.#tick(), 1000);
   }
 
   #tick() {
@@ -136,11 +136,7 @@ class TaskProgress extends Component {
 
   getView() {
     return html`
-      <span class="caption"
-        >${toDurationString(this.state.remainingDuration, {
-          style: 'medium',
-        })}</span
-      >
+      <span class="caption">${this.state.remainingDuration}</span>
       <progress max="1" value="${this.state.progress}"></progress>
     `;
   }
@@ -222,35 +218,22 @@ class TimeSummary extends Component {
     return html`
       <div>
         <div class="caption">Hours Today</div>
-        <div>${toDurationString(this.state.hoursToday * 3600)}</div>
+        <div>${this.state.hoursToday.toString({ style: 'short' })}</div>
       </div>
       <div>
         <div class="caption">Hours Yesterday</div>
-        <div>${toDurationString(this.state.hoursYesterday * 3600)}</div>
+        <div>${this.state.hoursYesterday.toString({ style: 'short' })}</div>
       </div>
       <div>
         <div class="caption">Hours this Week</div>
-        <div>${toDurationString(this.state.hoursThisWeek * 3600)}</div>
+        <div>${this.state.hoursThisWeek.toString({ style: 'short' })}</div>
       </div>
       <div>
         <div class="caption">Hours this Month</div>
-        <div>${toDurationString(this.state.hoursThisMonth * 3600)}</div>
+        <div>${this.state.hoursThisMonth.toString({ style: 'short' })}</div>
       </div>
     `;
   }
 }
 
 window.customElements.define('m-time-summary', TimeSummary);
-
-function toDurationString(seconds, { style = 'short' } = {}) {
-  let h = Math.floor(seconds / 3600);
-  let m = Math.floor((seconds - h * 3600) / 60);
-  let s = seconds - h * 3600 - m * 60;
-  let string = `${h.toString().padStart(2, '0')}:${m
-    .toString()
-    .padStart(2, '0')}`;
-  if (style === 'medium') {
-    string += `:${s.toString().padStart(2, '0')}`;
-  }
-  return string;
-}

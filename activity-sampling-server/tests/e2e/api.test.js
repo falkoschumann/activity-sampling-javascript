@@ -22,7 +22,7 @@ describe('get recent activities', () => {
       .set('Content-Type', 'application/json')
       .send({
         timestamp: '2023-10-07T11:00:00.000Z',
-        duration: 30,
+        duration: 1800,
         client: 'Muspellheim',
         project: 'Activity Sampling',
         task: 'Recent Activities',
@@ -42,7 +42,7 @@ describe('get recent activities', () => {
           activities: [
             {
               timestamp: '2023-10-07T11:00:00.000Z',
-              duration: 30,
+              duration: 1800,
               client: 'Muspellheim',
               project: 'Activity Sampling',
               task: 'Recent Activities',
@@ -52,10 +52,10 @@ describe('get recent activities', () => {
         },
       ],
       timeSummary: {
-        hoursToday: 0.5,
+        hoursToday: 1800,
         hoursYesterday: 0,
-        hoursThisWeek: 0.5,
-        hoursThisMonth: 0.5,
+        hoursThisWeek: 1800,
+        hoursThisMonth: 1800,
       },
     });
   });

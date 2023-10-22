@@ -1,3 +1,5 @@
+import { Duration } from 'activity-sampling-shared';
+
 export const initialState = {
   activity: {
     client: '',
@@ -7,17 +9,17 @@ export const initialState = {
     logButtonDisabled: false,
   },
   task: {
-    duration: 1800,
-    remainingDuration: 1800,
+    duration: new Duration(1800),
+    remainingDuration: new Duration(1800),
     progress: 0,
   },
   recentActivities: {
     workingDays: [],
     timeSummary: {
-      hoursToday: 0,
-      hoursYesterday: 0,
-      hoursThisWeek: 0,
-      hoursThisMonth: 0,
+      hoursToday: new Duration(),
+      hoursYesterday: new Duration(),
+      hoursThisWeek: new Duration(),
+      hoursThisMonth: new Duration(),
     },
   },
 };
@@ -40,7 +42,9 @@ export function reducer(state, action) {
 }
 
 function progressTicked(state, action) {
-  let remainingDuration = state.task.remainingDuration - action.seconds;
+  let remainingDuration = new Duration(
+    state.task.remainingDuration - action.duration,
+  );
   let task = {
     ...state.task,
     remainingDuration,

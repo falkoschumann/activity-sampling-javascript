@@ -1,10 +1,12 @@
+import { Duration } from 'activity-sampling-shared';
+
 export function createRecentActivities(activities = [], today = new Date()) {
   let workingDays = [];
   let timeSummary = {
-    hoursToday: 0,
-    hoursYesterday: 0,
-    hoursThisWeek: 0,
-    hoursThisMonth: 0,
+    hoursToday: new Duration(),
+    hoursYesterday: new Duration(),
+    hoursThisWeek: new Duration(),
+    hoursThisMonth: new Duration(),
   };
   for (let activity of activities) {
     addActivity(activity);
@@ -48,25 +50,25 @@ export function createRecentActivities(activities = [], today = new Date()) {
 
   function addActivityToHoursToday(activity) {
     if (isToday(activity.timestamp, today)) {
-      timeSummary.hoursToday += activity.duration / 60;
+      timeSummary.hoursToday.plus(activity.duration);
     }
   }
 
   function addActivityToHoursYesterday(activity) {
     if (isYesterday(activity.timestamp, today)) {
-      timeSummary.hoursYesterday += activity.duration / 60;
+      timeSummary.hoursYesterday.plus(activity.duration);
     }
   }
 
   function addActivityToHoursThisWeek(activity) {
     if (isThisWeek(activity.timestamp, today)) {
-      timeSummary.hoursThisWeek += activity.duration / 60;
+      timeSummary.hoursThisWeek.plus(activity.duration);
     }
   }
 
   function addActivityToHoursThisMonth(activity) {
     if (isThisMonth(activity.timestamp, today)) {
-      timeSummary.hoursThisMonth += activity.duration / 60;
+      timeSummary.hoursThisMonth.plus(activity.duration);
     }
   }
 }

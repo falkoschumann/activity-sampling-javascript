@@ -6,6 +6,7 @@
   "license": "MIT",
   "type": "module",
   "workspaces": [
+    "activity-sampling-shared",
     "activity-sampling-web",
     "activity-sampling-server",
     "activity-sampling-desktop"

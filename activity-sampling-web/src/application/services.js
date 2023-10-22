@@ -1,8 +1,11 @@
 import { AbstractStore } from '../domain/store.js';
 import { AbstractApi } from '../infrastructure/api.js';
 
-export async function progressTicked({ seconds }, store = new AbstractStore()) {
-  store.dispatch({ type: 'progress-ticked', seconds });
+export async function progressTicked(
+  { duration },
+  store = new AbstractStore(),
+) {
+  store.dispatch({ type: 'progress-ticked', duration });
 }
 
 export async function activityUpdated(

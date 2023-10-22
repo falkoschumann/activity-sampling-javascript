@@ -1,6 +1,8 @@
-import { parse, stringify } from 'csv';
 import { existsSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
+import { parse, stringify } from 'csv';
+
+import { Duration } from 'activity-sampling-shared';
 
 export class AbstractRepository {
   async findAll() {
@@ -12,6 +14,9 @@ export class AbstractRepository {
     return;
   }
 }
+
+// TODO store timestamp as ISO string
+// TODO store duration as ISO string
 
 export class Repository extends AbstractRepository {
   #fileName;
@@ -61,7 +66,7 @@ export class Repository extends AbstractRepository {
   #parseRecord(record) {
     return {
       timestamp: new Date(record['timestamp']),
-      duration: Number(record['duration']),
+      duration: new Duration(Number(record['duration'])),
       client: record['client'],
       project: record['project'],
       task: record['task'],
@@ -79,8 +84,8 @@ export class Repository extends AbstractRepository {
 
   #createRecord({ timestamp, duration, client, project, task, notes }) {
     return {
-      timestamp: timestamp.toISOString(),
-      duration,
+      timestamp: timestamp.toLocaleString(),
+      duration: duration.seconds,
       client,
       project,
       task,

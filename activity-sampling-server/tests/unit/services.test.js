@@ -1,5 +1,7 @@
 import { describe, expect, test } from '@jest/globals';
 
+import { Duration } from 'activity-sampling-shared';
+
 import {
   getRecentActivities,
   logActivity,
@@ -68,19 +70,19 @@ describe('get recent activities', () => {
       let repository = new FakeRepository([
         createActivity({
           timestamp: new Date('2023-10-08T13:30:00'), // tomorrow
-          duration: 60,
+          duration: new Duration(3600),
         }),
         createActivity({
           timestamp: new Date('2023-10-07T13:00:00'), // today
-          duration: 30,
+          duration: new Duration(1800),
         }),
         createActivity({
           timestamp: new Date('2023-10-07T12:30:00'), // today
-          duration: 20,
+          duration: new Duration(1200),
         }),
         createActivity({
           timestamp: new Date('2023-10-06T12:00:00'), // yesterday
-          duration: 15,
+          duration: new Duration(900),
         }),
       ]);
 
@@ -90,10 +92,10 @@ describe('get recent activities', () => {
       );
 
       expect(result.timeSummary).toEqual({
-        hoursToday: expect.closeTo(50 / 60, 5),
-        hoursYesterday: expect.closeTo(15 / 60, 5),
-        hoursThisWeek: expect.closeTo(65 / 60, 5),
-        hoursThisMonth: expect.closeTo(65 / 60, 5),
+        hoursToday: new Duration(3000),
+        hoursYesterday: new Duration(900),
+        hoursThisWeek: new Duration(3900),
+        hoursThisMonth: new Duration(3900),
       });
     });
 
@@ -101,19 +103,19 @@ describe('get recent activities', () => {
       let repository = new FakeRepository([
         createActivity({
           timestamp: new Date('2023-10-08T13:30:00'), // today
-          duration: 60,
+          duration: new Duration(3600),
         }),
         createActivity({
           timestamp: new Date('2023-10-07T13:00:00'), // yesterday
-          duration: 30,
+          duration: new Duration(1800),
         }),
         createActivity({
           timestamp: new Date('2023-10-07T12:30:00'), // yesterday
-          duration: 20,
+          duration: new Duration(1200),
         }),
         createActivity({
           timestamp: new Date('2023-10-06T12:00:00'), // the day before yesterday
-          duration: 15,
+          duration: new Duration(900),
         }),
       ]);
 
@@ -123,10 +125,10 @@ describe('get recent activities', () => {
       );
 
       expect(result.timeSummary).toEqual({
-        hoursToday: expect.closeTo(60 / 60, 5),
-        hoursYesterday: expect.closeTo(50 / 60, 5),
-        hoursThisWeek: expect.closeTo(125 / 60, 5),
-        hoursThisMonth: expect.closeTo(125 / 60, 5),
+        hoursToday: new Duration(3600),
+        hoursYesterday: new Duration(3000),
+        hoursThisWeek: new Duration(7500),
+        hoursThisMonth: new Duration(7500),
       });
     });
 
@@ -134,19 +136,19 @@ describe('get recent activities', () => {
       let repository = new FakeRepository([
         createActivity({
           timestamp: new Date('2023-10-16T13:30:00'), // monday next week
-          duration: 60,
+          duration: new Duration(3600),
         }),
         createActivity({
           timestamp: new Date('2023-10-15T13:00:00'), // sunday this week
-          duration: 30,
+          duration: new Duration(1800),
         }),
         createActivity({
           timestamp: new Date('2023-10-09T12:30:00'), // monday this week
-          duration: 20,
+          duration: new Duration(1200),
         }),
         createActivity({
           timestamp: new Date('2023-10-08T12:00:00'), // sunday last week
-          duration: 15,
+          duration: new Duration(900),
         }),
       ]);
 
@@ -156,10 +158,10 @@ describe('get recent activities', () => {
       );
 
       expect(result.timeSummary).toEqual({
-        hoursToday: expect.closeTo(30 / 60, 5),
-        hoursYesterday: expect.closeTo(0 / 60, 5),
-        hoursThisWeek: expect.closeTo(50 / 60, 5),
-        hoursThisMonth: expect.closeTo(65 / 60, 5),
+        hoursToday: new Duration(1800),
+        hoursYesterday: new Duration(0),
+        hoursThisWeek: new Duration(3000),
+        hoursThisMonth: new Duration(3900),
       });
     });
 
@@ -167,19 +169,19 @@ describe('get recent activities', () => {
       let repository = new FakeRepository([
         createActivity({
           timestamp: new Date('2023-11-01T13:30:00'), // first day next month
-          duration: 60,
+          duration: new Duration(3600),
         }),
         createActivity({
           timestamp: new Date('2023-10-31T13:00:00'), // last day this month
-          duration: 30,
+          duration: new Duration(1800),
         }),
         createActivity({
           timestamp: new Date('2023-10-01T12:30:00'), // first day this month
-          duration: 20,
+          duration: new Duration(1200),
         }),
         createActivity({
           timestamp: new Date('2023-09-30T12:00:00'), // last day last month
-          duration: 15,
+          duration: new Duration(900),
         }),
       ]);
 
@@ -189,10 +191,10 @@ describe('get recent activities', () => {
       );
 
       expect(result.timeSummary).toEqual({
-        hoursToday: expect.closeTo(30 / 60, 5),
-        hoursYesterday: expect.closeTo(0 / 60, 5),
-        hoursThisWeek: expect.closeTo(30 / 60, 5),
-        hoursThisMonth: expect.closeTo(50 / 60, 5),
+        hoursToday: new Duration(1800),
+        hoursYesterday: new Duration(0),
+        hoursThisWeek: new Duration(1800),
+        hoursThisMonth: new Duration(3000),
       });
     });
   });

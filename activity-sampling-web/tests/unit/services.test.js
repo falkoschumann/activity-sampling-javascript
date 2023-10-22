@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 
+import { Duration } from 'activity-sampling-shared/src/index.js';
+
 import {
   activityUpdated,
   getRecentActivities,
@@ -54,11 +56,11 @@ describe('set activity', () => {
 
 describe('progress ticked', () => {
   test('increases progress', async () => {
-    await progressTicked({ seconds: 720 }, store);
+    await progressTicked({ duration: new Duration(720) }, store);
 
     expect(store.getState().task).toEqual({
-      duration: 1800,
-      remainingDuration: 1080,
+      duration: new Duration(1800),
+      remainingDuration: new Duration(1080),
       progress: 0.4,
     });
   });
@@ -121,7 +123,7 @@ describe('log activity', () => {
     });
     expect(api.postLogActivity).toHaveBeenNthCalledWith(1, {
       timestamp: new Date('2023-10-07T13:30Z'),
-      duration: 1800,
+      duration: new Duration(1800),
       client: 'Muspellheim',
       project: 'Activity Sampling',
       task: 'Log activity',

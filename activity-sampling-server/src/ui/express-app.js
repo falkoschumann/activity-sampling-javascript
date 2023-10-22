@@ -1,3 +1,4 @@
+import { Duration } from 'activity-sampling-shared';
 import express from 'express';
 
 import { getRecentActivities } from '../application/services.js';
@@ -72,7 +73,7 @@ export class ExpressApp {
     ) {
       return {
         timestamp: new Date(activity.timestamp),
-        duration: activity.duration,
+        duration: new Duration(activity.duration),
         client: activity.client,
         project: activity.project,
         task: activity.task,

@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, test } from '@jest/globals';
 import { rmSync } from 'node:fs';
 
+import { Duration } from 'activity-sampling-shared';
+
 import { Repository } from '../../src/infrastructure/repository.js';
 import { createActivity } from '../testdata.js';
 
@@ -21,7 +23,7 @@ describe('findAll', () => {
     expect(activities).toEqual([
       {
         timestamp: new Date('2023-10-07T13:00'),
-        duration: 30,
+        duration: new Duration(1800),
         client: 'Muspellheim',
         project: 'Activity Sampling',
         task: 'Recent Activities',
