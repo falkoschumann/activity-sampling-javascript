@@ -14,20 +14,20 @@ describe('get recent activities', () => {
   describe('working days', () => {
     test('returns multiple activities on same day sorted by time descending', async () => {
       let repository = new FakeRepository([
-        createActivity({ timestamp: new Date('2023-10-07T13:00:00') }),
-        createActivity({ timestamp: new Date('2023-10-07T12:30:00') }),
-        createActivity({ timestamp: new Date('2023-10-07T12:00:00') }),
+        createActivity({ timestamp: new Date('2023-10-07T11:00Z') }),
+        createActivity({ timestamp: new Date('2023-10-07T10:30Z') }),
+        createActivity({ timestamp: new Date('2023-10-07T10:00Z') }),
       ]);
 
       let result = await getRecentActivities({}, repository);
 
       expect(result.workingDays).toEqual([
         {
-          date: new Date('2023-10-07T00:00:00'),
+          date: new Date('2023-10-06T22:00:00.000Z'),
           activities: [
-            createActivity({ timestamp: new Date('2023-10-07T13:00:00') }),
-            createActivity({ timestamp: new Date('2023-10-07T12:30:00') }),
-            createActivity({ timestamp: new Date('2023-10-07T12:00:00') }),
+            createActivity({ timestamp: new Date('2023-10-07T11:00Z') }),
+            createActivity({ timestamp: new Date('2023-10-07T10:30Z') }),
+            createActivity({ timestamp: new Date('2023-10-07T10:00Z') }),
           ],
         },
       ]);
@@ -35,30 +35,30 @@ describe('get recent activities', () => {
 
     test('returns activities on multiple days sorted by date descending', async () => {
       let repository = new FakeRepository([
-        createActivity({ timestamp: new Date('2023-10-08T13:00:00') }),
-        createActivity({ timestamp: new Date('2023-10-07T12:30:00') }),
-        createActivity({ timestamp: new Date('2023-10-06T12:00:00') }),
+        createActivity({ timestamp: new Date('2023-10-08T11:00Z') }),
+        createActivity({ timestamp: new Date('2023-10-07T10:30Z') }),
+        createActivity({ timestamp: new Date('2023-10-06T10:00Z') }),
       ]);
 
       let result = await getRecentActivities({}, repository);
 
       expect(result.workingDays).toEqual([
         {
-          date: new Date('2023-10-08T00:00:00'),
+          date: new Date('2023-10-07T22:00:00.000Z'),
           activities: [
-            createActivity({ timestamp: new Date('2023-10-08T13:00:00') }),
+            createActivity({ timestamp: new Date('2023-10-08T11:00Z') }),
           ],
         },
         {
-          date: new Date('2023-10-07T00:00:00'),
+          date: new Date('2023-10-06T22:00:00.000Z'),
           activities: [
-            createActivity({ timestamp: new Date('2023-10-07T12:30:00') }),
+            createActivity({ timestamp: new Date('2023-10-07T10:30Z') }),
           ],
         },
         {
-          date: new Date('2023-10-06T00:00:00'),
+          date: new Date('2023-10-05T22:00:00.000Z'),
           activities: [
-            createActivity({ timestamp: new Date('2023-10-06T12:00:00') }),
+            createActivity({ timestamp: new Date('2023-10-06T10:00Z') }),
           ],
         },
       ]);
@@ -69,25 +69,25 @@ describe('get recent activities', () => {
     test('sums hours today', async () => {
       let repository = new FakeRepository([
         createActivity({
-          timestamp: new Date('2023-10-08T13:30:00'), // tomorrow
+          timestamp: new Date('2023-10-08T11:30Z'), // tomorrow
           duration: new Duration(3600),
         }),
         createActivity({
-          timestamp: new Date('2023-10-07T13:00:00'), // today
+          timestamp: new Date('2023-10-07T11:00Z'), // today
           duration: new Duration(1800),
         }),
         createActivity({
-          timestamp: new Date('2023-10-07T12:30:00'), // today
+          timestamp: new Date('2023-10-07T10:30Z'), // today
           duration: new Duration(1200),
         }),
         createActivity({
-          timestamp: new Date('2023-10-06T12:00:00'), // yesterday
+          timestamp: new Date('2023-10-06T10:00Z'), // yesterday
           duration: new Duration(900),
         }),
       ]);
 
       let result = await getRecentActivities(
-        { today: new Date('2023-10-07T14:00:00') },
+        { today: new Date('2023-10-07T12:00Z') },
         repository,
       );
 
@@ -102,25 +102,25 @@ describe('get recent activities', () => {
     test('sums hours yesterday', async () => {
       let repository = new FakeRepository([
         createActivity({
-          timestamp: new Date('2023-10-08T13:30:00'), // today
+          timestamp: new Date('2023-10-08T11:30Z'), // today
           duration: new Duration(3600),
         }),
         createActivity({
-          timestamp: new Date('2023-10-07T13:00:00'), // yesterday
+          timestamp: new Date('2023-10-07T11:00Z'), // yesterday
           duration: new Duration(1800),
         }),
         createActivity({
-          timestamp: new Date('2023-10-07T12:30:00'), // yesterday
+          timestamp: new Date('2023-10-07T10:30Z'), // yesterday
           duration: new Duration(1200),
         }),
         createActivity({
-          timestamp: new Date('2023-10-06T12:00:00'), // the day before yesterday
+          timestamp: new Date('2023-10-06T10:00Z'), // the day before yesterday
           duration: new Duration(900),
         }),
       ]);
 
       let result = await getRecentActivities(
-        { today: new Date('2023-10-08T14:00:00') },
+        { today: new Date('2023-10-08T12:00Z') },
         repository,
       );
 
@@ -135,25 +135,25 @@ describe('get recent activities', () => {
     test('sums hours this week', async () => {
       let repository = new FakeRepository([
         createActivity({
-          timestamp: new Date('2023-10-16T13:30:00'), // monday next week
+          timestamp: new Date('2023-10-16T11:30Z'), // monday next week
           duration: new Duration(3600),
         }),
         createActivity({
-          timestamp: new Date('2023-10-15T13:00:00'), // sunday this week
+          timestamp: new Date('2023-10-15T11:00Z'), // sunday this week
           duration: new Duration(1800),
         }),
         createActivity({
-          timestamp: new Date('2023-10-09T12:30:00'), // monday this week
+          timestamp: new Date('2023-10-09T10:30Z'), // monday this week
           duration: new Duration(1200),
         }),
         createActivity({
-          timestamp: new Date('2023-10-08T12:00:00'), // sunday last week
+          timestamp: new Date('2023-10-08T10:00Z'), // sunday last week
           duration: new Duration(900),
         }),
       ]);
 
       let result = await getRecentActivities(
-        { today: new Date('2023-10-15T14:00:00') },
+        { today: new Date('2023-10-15T12:00Z') },
         repository,
       );
 
@@ -168,25 +168,25 @@ describe('get recent activities', () => {
     test('sums hours this month', async () => {
       let repository = new FakeRepository([
         createActivity({
-          timestamp: new Date('2023-11-01T13:30:00'), // first day next month
+          timestamp: new Date('2023-11-01T11:30Z'), // first day next month
           duration: new Duration(3600),
         }),
         createActivity({
-          timestamp: new Date('2023-10-31T13:00:00'), // last day this month
+          timestamp: new Date('2023-10-31T11:00Z'), // last day this month
           duration: new Duration(1800),
         }),
         createActivity({
-          timestamp: new Date('2023-10-01T12:30:00'), // first day this month
+          timestamp: new Date('2023-10-01T10:30Z'), // first day this month
           duration: new Duration(1200),
         }),
         createActivity({
-          timestamp: new Date('2023-09-30T12:00:00'), // last day last month
+          timestamp: new Date('2023-09-30T10:00Z'), // last day last month
           duration: new Duration(900),
         }),
       ]);
 
       let result = await getRecentActivities(
-        { today: new Date('2023-10-31T14:00:00') },
+        { today: new Date('2023-10-31T12:00Z') },
         repository,
       );
 

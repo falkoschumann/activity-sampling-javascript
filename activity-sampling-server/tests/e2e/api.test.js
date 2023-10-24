@@ -12,7 +12,10 @@ let app;
 beforeEach(() => {
   rmSync(fileName, { force: true });
   repository = new Repository({ fileName });
-  app = new ExpressApp({ today: new Date('2023-10-07T14:00'), repository }).app;
+  app = new ExpressApp({
+    today: new Date('2023-10-07T12:00Z'),
+    repository,
+  }).app;
 });
 
 describe('get recent activities', () => {
@@ -21,7 +24,7 @@ describe('get recent activities', () => {
       .post('/api/log-activity')
       .set('Content-Type', 'application/json')
       .send({
-        timestamp: '2023-10-07T11:00:00.000Z',
+        timestamp: '2023-10-07T11:00Z',
         duration: 1800,
         client: 'Muspellheim',
         project: 'Activity Sampling',
@@ -42,7 +45,7 @@ describe('get recent activities', () => {
           activities: [
             {
               timestamp: '2023-10-07T11:00:00.000Z',
-              duration: 1800,
+              duration: 'PT30M',
               client: 'Muspellheim',
               project: 'Activity Sampling',
               task: 'Recent Activities',
@@ -52,10 +55,10 @@ describe('get recent activities', () => {
         },
       ],
       timeSummary: {
-        hoursToday: 1800,
-        hoursYesterday: 0,
-        hoursThisWeek: 1800,
-        hoursThisMonth: 1800,
+        hoursToday: 'PT30M',
+        hoursYesterday: 'PT0S',
+        hoursThisWeek: 'PT30M',
+        hoursThisMonth: 'PT30M',
       },
     });
   });

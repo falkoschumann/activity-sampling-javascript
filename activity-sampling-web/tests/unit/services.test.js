@@ -75,7 +75,7 @@ describe('get recent activities', () => {
     expect(store.getState().recentActivities).toEqual({
       workingDays: [
         {
-          date: new Date('2023-10-07T00:00:00Z'),
+          date: new Date('2023-10-07T00:00Z'),
           activities: [
             createActivity({ timestamp: new Date('2023-10-07T13:00Z') }),
             createActivity({ timestamp: new Date('2023-10-07T12:30Z') }),
@@ -139,11 +139,11 @@ class FakeApi extends AbstractApi {
     recentActivities = {
       workingDays: [
         {
-          date: new Date('2023-10-07T00:00:00Z'),
+          date: new Date('2023-10-07T00:00Z'),
           activities: [
-            createActivity({ timestamp: new Date('2023-10-07T13:00:00Z') }),
-            createActivity({ timestamp: new Date('2023-10-07T12:30:00Z') }),
-            createActivity({ timestamp: new Date('2023-10-07T12:00:00Z') }),
+            createActivity({ timestamp: new Date('2023-10-07T13:00Z') }),
+            createActivity({ timestamp: new Date('2023-10-07T12:30Z') }),
+            createActivity({ timestamp: new Date('2023-10-07T12:00Z') }),
           ],
         },
       ],
@@ -165,8 +165,8 @@ class FakeApi extends AbstractApi {
 }
 
 function createActivity({
-  timestamp = new Date('2023-10-07T13:00:00Z'),
-  duration = 30,
+  timestamp = new Date('2023-10-07T13:00Z'),
+  duration = new Duration(1800),
   client = 'Muspellheim',
   project = 'Activity Sampling',
   task = 'Recent Activities',

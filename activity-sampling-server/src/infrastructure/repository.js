@@ -66,7 +66,7 @@ export class Repository extends AbstractRepository {
   #parseRecord(record) {
     return {
       timestamp: new Date(record['timestamp']),
-      duration: new Duration(Number(record['duration'])),
+      duration: new Duration(record['duration']),
       client: record['client'],
       project: record['project'],
       task: record['task'],
@@ -84,8 +84,8 @@ export class Repository extends AbstractRepository {
 
   #createRecord({ timestamp, duration, client, project, task, notes }) {
     return {
-      timestamp: timestamp.toLocaleString(),
-      duration: duration.seconds,
+      timestamp: timestamp.toISOString(),
+      duration: duration.toISOString(),
       client,
       project,
       task,
