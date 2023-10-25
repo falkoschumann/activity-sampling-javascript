@@ -15,9 +15,6 @@ export class AbstractRepository {
   }
 }
 
-// TODO store timestamp as ISO string
-// TODO store duration as ISO string
-
 export class Repository extends AbstractRepository {
   #fileName;
 
