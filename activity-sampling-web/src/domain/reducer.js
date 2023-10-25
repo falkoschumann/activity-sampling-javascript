@@ -41,10 +41,8 @@ export function reducer(state, action) {
   }
 }
 
-function progressTicked(state, action) {
-  let remainingDuration = new Duration(
-    state.task.remainingDuration - action.duration,
-  );
+function progressTicked(state, { duration }) {
+  let remainingDuration = new Duration(state.task.remainingDuration - duration);
   let task = {
     ...state.task,
     remainingDuration,
@@ -53,22 +51,17 @@ function progressTicked(state, action) {
   return { ...state, task };
 }
 
-function activityUpdated(state, action) {
+function activityUpdated(state, { name, value }) {
   return {
     ...state,
-    activity: { ...state.activity, [action.name]: action.value },
+    activity: { ...state.activity, [name]: value },
   };
 }
 
-function setActivity(state, action) {
+function setActivity(state, { client, project, task, notes }) {
   return {
     ...state,
-    activity: {
-      client: action.client,
-      project: action.project,
-      task: action.task,
-      notes: action.notes,
-    },
+    activity: { client, project, task, notes },
   };
 }
 
@@ -82,6 +75,6 @@ function activityLogged(state) {
   };
 }
 
-function recentActivitiesLoaded(state, action) {
-  return { ...state, recentActivities: action.recentActivities };
+function recentActivitiesLoaded(state, { recentActivities }) {
+  return { ...state, recentActivities };
 }
