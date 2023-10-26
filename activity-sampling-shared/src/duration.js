@@ -1,13 +1,13 @@
 export class Duration {
   static ZERO = new Duration(0);
 
-  seconds;
+  #seconds;
 
   constructor(seconds = 0) {
     if (typeof seconds === 'string') {
-      this.seconds = Duration.parse(seconds).seconds;
+      this.#seconds = Duration.parse(seconds).seconds;
     } else if (typeof seconds === 'number') {
-      this.seconds = seconds;
+      this.#seconds = seconds;
     } else {
       throw new TypeError('`seconds` must be a number or an ISO 8601 string');
     }
@@ -26,8 +26,12 @@ export class Duration {
     return new Duration(seconds);
   }
 
+  get seconds() {
+    return this.#seconds;
+  }
+
   plus(duration) {
-    this.seconds += duration;
+    this.#seconds += duration;
     return this;
   }
 
@@ -74,5 +78,9 @@ export class Duration {
 
   valueOf() {
     return this.seconds;
+  }
+
+  equals(other) {
+    return this.seconds === other.seconds;
   }
 }

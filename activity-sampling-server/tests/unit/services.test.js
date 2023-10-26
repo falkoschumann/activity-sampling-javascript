@@ -1,6 +1,7 @@
 import { describe, expect, test } from '@jest/globals';
 
 import { Duration } from 'activity-sampling-shared';
+import 'activity-sampling-shared/tests/equality-testers.js';
 
 import {
   getRecentActivities,

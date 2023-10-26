@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 
 import { Duration } from 'activity-sampling-shared/src/index.js';
+import 'activity-sampling-shared/tests/equality-testers.js';
 
 import {
   activityUpdated,
