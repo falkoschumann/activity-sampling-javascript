@@ -3,18 +3,23 @@ export class Duration {
 
   #seconds;
 
-  constructor(seconds = 0) {
-    if (typeof seconds === 'string') {
-      this.#seconds = Duration.parse(seconds).seconds;
-    } else if (typeof seconds === 'number') {
-      this.#seconds = seconds;
+  /**
+   * @param {number|string} [value=0] - The duration in seconds or an ISO 8601 string.
+   */
+  constructor(value) {
+    if (value == null) {
+      this.#seconds = 0;
+    } else if (typeof value === 'string') {
+      this.#seconds = Duration.parse(value).seconds;
+    } else if (typeof value === 'number') {
+      this.#seconds = value;
     } else {
       throw new TypeError('`seconds` must be a number or an ISO 8601 string');
     }
   }
 
-  static parse(durationString) {
-    let match = durationString.match(/^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/);
+  static parse(isoString) {
+    let match = isoString.match(/^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/);
     if (match == null) {
       throw new TypeError('Invalid Duration');
     }
