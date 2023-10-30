@@ -1,11 +1,13 @@
 import { Duration } from 'activity-sampling-shared';
 import express from 'express';
 
-import { getRecentActivities } from '../application/services.js';
+import { getRecentActivities, logActivity } from '../application/services.js';
 import { Repository } from '../infrastructure/repository.js';
 
 export class ExpressApp {
   #app;
+  #today;
+  #repository;
 
   constructor({
     publicPath = './public',
@@ -13,7 +15,9 @@ export class ExpressApp {
     repository = new Repository(),
   } = {}) {
     this.#app = this.#createApp(publicPath);
-    this.#createRoutes(today, repository);
+    this.#today = today;
+    this.#repository = repository;
+    this.#createRoutes();
   }
 
   get app() {
@@ -34,53 +38,56 @@ export class ExpressApp {
     return app;
   }
 
-  #createRoutes(today, repository) {
-    this.#createRouteRecentActivities(today, repository);
-    this.#createRouteLogActivity(today, repository);
+  #createRoutes() {
+    this.#createRouteRecentActivities();
+    this.#createRouteLogActivity();
   }
 
-  #createRouteRecentActivities(today, repository) {
+  #createRouteRecentActivities() {
     this.#app.get('/api/recent-activities', async (request, response) => {
-      let recentActivties = await getRecentActivities({ today }, repository);
+      let body = await getRecentActivities(
+        { today: this.#today },
+        this.#repository,
+      );
       response
         .status(200)
         .header({ 'Content-Type': 'application/json' })
-        .send(recentActivties);
+        .send(body);
     });
   }
 
-  #createRouteLogActivity(today, repository) {
+  #createRouteLogActivity() {
     this.#app.post('/api/log-activity', async (request, response) => {
-      let activity = this.#parseActivity(request);
+      let activity = parseActivity(request);
       if (activity == null) {
         response.status(400).end();
       } else {
-        await repository.add(activity);
+        await logActivity(activity, this.#repository);
         response.status(201).end();
       }
     });
   }
+}
 
-  #parseActivity(request) {
-    let activity = request.body;
-    if (
-      typeof activity.timestamp == 'string' &&
-      typeof activity.duration == 'number' &&
-      typeof activity.client == 'string' &&
-      typeof activity.project == 'string' &&
-      typeof activity.task == 'string' &&
-      typeof activity.notes == 'string'
-    ) {
-      return {
-        timestamp: new Date(activity.timestamp),
-        duration: new Duration(activity.duration),
-        client: activity.client,
-        project: activity.project,
-        task: activity.task,
-        notes: activity.notes,
-      };
-    }
-
-    return null;
+function parseActivity(request) {
+  let activity = request.body;
+  if (
+    typeof activity.timestamp == 'string' &&
+    typeof activity.duration == 'number' &&
+    typeof activity.client == 'string' &&
+    typeof activity.project == 'string' &&
+    typeof activity.task == 'string' &&
+    typeof activity.notes == 'string'
+  ) {
+    return {
+      timestamp: new Date(activity.timestamp),
+      duration: new Duration(activity.duration),
+      client: activity.client,
+      project: activity.project,
+      task: activity.task,
+      notes: activity.notes,
+    };
   }
+
+  return null;
 }
