@@ -58,11 +58,11 @@ export async function setActivity({ client, project, task, notes }) {
   await services.setActivity({ client, project, task, notes }, store);
 }
 
-export async function getRecentActivities() {
+export async function logActivity() {
+  await services.logActivity(undefined, store, api);
   await services.getRecentActivities(store, api);
 }
 
-export async function logActivity() {
-  await services.logActivity(undefined, store, api);
+export async function getRecentActivities() {
   await services.getRecentActivities(store, api);
 }

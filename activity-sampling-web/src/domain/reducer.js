@@ -1,17 +1,17 @@
 import { Duration } from 'activity-sampling-shared';
 
 export const initialState = {
+  task: {
+    duration: new Duration(1800),
+    remainingDuration: new Duration(1800),
+    progress: 0,
+  },
   activity: {
     client: '',
     project: '',
     task: '',
     notes: '',
     logButtonDisabled: false,
-  },
-  task: {
-    duration: new Duration(1800),
-    remainingDuration: new Duration(1800),
-    progress: 0,
   },
   recentActivities: {
     workingDays: [],

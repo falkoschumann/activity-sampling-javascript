@@ -20,6 +20,18 @@ beforeEach(() => {
   store = new Store(reducer, initialState);
 });
 
+describe('progress ticked', () => {
+  test('increases progress', async () => {
+    await progressTicked({ duration: new Duration(720) }, store);
+
+    expect(store.getState().task).toEqual({
+      duration: new Duration(1800),
+      remainingDuration: new Duration(1080),
+      progress: 0.4,
+    });
+  });
+});
+
 describe('activity updated', () => {
   test('updates activity', async () => {
     await activityUpdated({ name: 'client', value: 'Muspellheim' }, store);
@@ -51,45 +63,6 @@ describe('set activity', () => {
       project: 'bar',
       task: 'lorem',
       notes: 'ipsum',
-    });
-  });
-});
-
-describe('progress ticked', () => {
-  test('increases progress', async () => {
-    await progressTicked({ duration: new Duration(720) }, store);
-
-    expect(store.getState().task).toEqual({
-      duration: new Duration(1800),
-      remainingDuration: new Duration(1080),
-      progress: 0.4,
-    });
-  });
-});
-
-describe('get recent activities', () => {
-  test('returns multiple activities on same day sorted by time descending', async () => {
-    let api = new FakeApi();
-
-    await getRecentActivities(store, api);
-
-    expect(store.getState().recentActivities).toEqual({
-      workingDays: [
-        {
-          date: new Date('2023-10-07T00:00Z'),
-          activities: [
-            createActivity({ timestamp: new Date('2023-10-07T13:00Z') }),
-            createActivity({ timestamp: new Date('2023-10-07T12:30Z') }),
-            createActivity({ timestamp: new Date('2023-10-07T12:00Z') }),
-          ],
-        },
-      ],
-      timeSummary: {
-        hoursToday: 1.5,
-        hoursYesterday: 0,
-        hoursThisWeek: 1.5,
-        hoursThisMonth: 1.5,
-      },
     });
   });
 });
@@ -129,6 +102,33 @@ describe('log activity', () => {
       project: 'Activity Sampling',
       task: 'Log activity',
       notes: 'Log the activity',
+    });
+  });
+});
+
+describe('get recent activities', () => {
+  test('returns multiple activities on same day sorted by time descending', async () => {
+    let api = new FakeApi();
+
+    await getRecentActivities(store, api);
+
+    expect(store.getState().recentActivities).toEqual({
+      workingDays: [
+        {
+          date: new Date('2023-10-07T00:00Z'),
+          activities: [
+            createActivity({ timestamp: new Date('2023-10-07T13:00Z') }),
+            createActivity({ timestamp: new Date('2023-10-07T12:30Z') }),
+            createActivity({ timestamp: new Date('2023-10-07T12:00Z') }),
+          ],
+        },
+      ],
+      timeSummary: {
+        hoursToday: 1.5,
+        hoursYesterday: 0,
+        hoursThisWeek: 1.5,
+        hoursThisMonth: 1.5,
+      },
     });
   });
 });
