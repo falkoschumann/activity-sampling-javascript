@@ -1,7 +1,5 @@
 import { Duration } from 'activity-sampling-shared';
 
-// TODO: move to client because local time zone of user is relevant
-
 export function createRecentActivities(activities = [], today = new Date()) {
   return {
     workingDays: createWorkingDays(activities),

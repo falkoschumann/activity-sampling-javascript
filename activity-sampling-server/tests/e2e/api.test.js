@@ -13,14 +13,14 @@ beforeEach(() => {
   rmSync(fileName, { force: true });
   repository = new Repository({ fileName });
   app = new ExpressApp({
-    today: new Date('2023-10-07T12:00Z'),
+    today: new Date('2023-10-07T14:00+0200'),
     repository,
   }).app;
 });
 
-describe('get recent activities', () => {
-  test('returns recent activities', async () => {
-    await request(app)
+describe('activity sampling app', () => {
+  test('happy path returns status 201 and logs activity', async () => {
+    let response = await request(app)
       .post('/api/log-activity')
       .set('Content-Type', 'application/json')
       .send({
@@ -31,8 +31,9 @@ describe('get recent activities', () => {
         task: 'Recent Activities',
         notes: 'Show my recent activities',
       });
+    expect(response.status).toBe(201);
 
-    let response = await request(app)
+    response = await request(app)
       .get('/api/recent-activities')
       .set('Accept', 'application/json');
 
@@ -61,5 +62,20 @@ describe('get recent activities', () => {
         hoursThisMonth: 'PT30M',
       },
     });
+  });
+
+  test('unhappy path returns status 400', async () => {
+    let response = await request(app)
+      .post('/api/log-activity')
+      .set('Content-Type', 'application/json')
+      .send({
+        // missing timestamp and duration
+        client: 'Muspellheim',
+        project: 'Activity Sampling',
+        task: 'Recent Activities',
+        notes: 'Show my recent activities',
+      });
+
+    expect(response.status).toBe(400);
   });
 });

@@ -120,7 +120,7 @@ describe('time summary', () => {
     });
   });
 
-  test('sums hours this week', () => {
+  test('sums hours this week on a sunday', () => {
     let result = createRecentActivities(
       [
         createActivity({
@@ -147,6 +147,37 @@ describe('time summary', () => {
       hoursToday: new Duration('PT30M'),
       hoursYesterday: Duration.ZERO,
       hoursThisWeek: new Duration('PT50M'),
+      hoursThisMonth: new Duration('PT1H5M'),
+    });
+  });
+
+  test('sums hours this week on a monday', () => {
+    let result = createRecentActivities(
+      [
+        createActivity({
+          timestamp: new Date('2023-10-09T12:00'), // monday last week
+          duration: new Duration('PT15M'),
+        }),
+        createActivity({
+          timestamp: new Date('2023-10-15T12:00'), // sunday this week
+          duration: new Duration('PT20M'),
+        }),
+        createActivity({
+          timestamp: new Date('2023-10-16T12:00'), // monday this week
+          duration: new Duration('PT30M'),
+        }),
+        createActivity({
+          timestamp: new Date('2023-10-17T12:00'), // tomorrow this week
+          duration: new Duration('PT60M'),
+        }),
+      ],
+      new Date('2023-10-16T00:00'),
+    );
+
+    expect(result.timeSummary).toEqual({
+      hoursToday: new Duration('PT30M'),
+      hoursYesterday: new Duration('PT20M'),
+      hoursThisWeek: new Duration('PT30M'),
       hoursThisMonth: new Duration('PT1H5M'),
     });
   });

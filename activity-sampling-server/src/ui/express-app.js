@@ -73,7 +73,8 @@ function parseActivity(request) {
   let activity = request.body;
   if (
     typeof activity.timestamp == 'string' &&
-    typeof activity.duration == 'number' &&
+    (typeof activity.duration == 'number' ||
+      typeof activity.duration == 'string') &&
     typeof activity.client == 'string' &&
     typeof activity.project == 'string' &&
     typeof activity.task == 'string' &&
