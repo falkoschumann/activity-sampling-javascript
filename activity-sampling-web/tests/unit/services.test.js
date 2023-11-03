@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, jest, test } from '@jest/globals';
+import { describe, expect, jest, test } from '@jest/globals';
 
 import { Duration } from 'activity-sampling-shared/src/index.js';
 import 'activity-sampling-shared/tests/equality-testers.js';
@@ -14,14 +14,10 @@ import { initialState, reducer } from '../../src/domain/reducer.js';
 import { Store } from '../../src/domain/store.js';
 import { AbstractApi } from '../../src/infrastructure/api.js';
 
-let store;
-
-beforeEach(() => {
-  store = new Store(reducer, initialState);
-});
-
 describe('progress ticked', () => {
   test('increases progress', async () => {
+    let store = createStore();
+
     await progressTicked({ duration: new Duration(720) }, store);
 
     expect(store.getState().task).toEqual({
@@ -34,6 +30,8 @@ describe('progress ticked', () => {
 
 describe('activity updated', () => {
   test('updates activity', async () => {
+    let store = createStore();
+
     await activityUpdated({ name: 'client', value: 'Muspellheim' }, store);
 
     expect(store.getState().activity).toEqual({
@@ -48,6 +46,8 @@ describe('activity updated', () => {
 
 describe('set activity', () => {
   test('sets activity', async () => {
+    let store = createStore();
+
     await setActivity(
       {
         client: 'foo',
@@ -69,16 +69,17 @@ describe('set activity', () => {
 
 describe('log activity', () => {
   test('logs activity', async () => {
-    let api = new FakeApi();
-    await setActivity(
-      {
+    let store = createStore({
+      ...initialState,
+      activity: {
+        ...initialState.activity,
         client: 'Muspellheim',
         project: 'Activity Sampling',
         task: 'Log activity',
         notes: 'Log the activity',
       },
-      store,
-    );
+    });
+    let api = new FakeApi();
 
     await logActivity(
       {
@@ -108,6 +109,7 @@ describe('log activity', () => {
 
 describe('get recent activities', () => {
   test('returns multiple activities on same day sorted by time descending', async () => {
+    let store = createStore();
     let api = new FakeApi();
 
     await getRecentActivities(store, api);
@@ -132,6 +134,21 @@ describe('get recent activities', () => {
     });
   });
 });
+
+function createActivity({
+  timestamp = new Date('2023-10-07T13:00Z'),
+  duration = new Duration(1800),
+  client = 'Muspellheim',
+  project = 'Activity Sampling',
+  task = 'Recent Activities',
+  notes = 'Show my recent activities',
+} = {}) {
+  return { timestamp, duration, client, project, task, notes };
+}
+
+function createStore(state = initialState) {
+  return new Store(reducer, state);
+}
 
 class FakeApi extends AbstractApi {
   postLogActivity = jest.fn();
@@ -163,15 +180,4 @@ class FakeApi extends AbstractApi {
   async getRecentActivities() {
     return this.recentActivities;
   }
-}
-
-function createActivity({
-  timestamp = new Date('2023-10-07T13:00Z'),
-  duration = new Duration(1800),
-  client = 'Muspellheim',
-  project = 'Activity Sampling',
-  task = 'Recent Activities',
-  notes = 'Show my recent activities',
-} = {}) {
-  return { timestamp, duration, client, project, task, notes };
 }

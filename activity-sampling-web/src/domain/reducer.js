@@ -2,8 +2,8 @@ import { Duration } from 'activity-sampling-shared';
 
 export const initialState = {
   task: {
-    duration: new Duration(1800),
-    remainingDuration: new Duration(1800),
+    duration: new Duration('PT30M'),
+    remainingDuration: new Duration('PT30M'),
     progress: 0,
   },
   activity: {
