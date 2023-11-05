@@ -14,7 +14,7 @@ class ActivitySampling extends Component {
     return html`
       <h1>Activity Sampling</h1>
       <m-activity-form></m-activity-form>
-      <m-task-progress></m-task-progress>
+      <m-current-task></m-current-task>
       <m-recent-activities></m-recent-activities>
     `;
   }
@@ -32,7 +32,7 @@ class ActivityForm extends Component {
   }
 
   extractState(state) {
-    return state.activity;
+    return state.activityForm;
   }
 
   getView() {
@@ -113,7 +113,7 @@ class ActivityForm extends Component {
 
 window.customElements.define('m-activity-form', ActivityForm);
 
-class TaskProgress extends Component {
+class CurrentTask extends Component {
   #interval;
 
   async connectedCallback() {
@@ -131,18 +131,18 @@ class TaskProgress extends Component {
   }
 
   extractState(state) {
-    return state.task;
+    return state.currentTask;
   }
 
   getView() {
     return html`
-      <span class="caption">${this.state.remainingDuration}</span>
+      <span class="caption">${this.state.remainingTime}</span>
       <progress max="1" value="${this.state.progress}"></progress>
     `;
   }
 }
 
-window.customElements.define('m-task-progress', TaskProgress);
+window.customElements.define('m-current-task', CurrentTask);
 
 class RecentActivities extends Component {
   async connectedCallback() {

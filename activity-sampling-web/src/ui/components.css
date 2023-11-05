@@ -68,14 +68,14 @@ m-activity-form button {
   width: 100%;
 }
 
-m-task-progress {
+m-current-task {
   align-items: center;
   display: flex;
   flex-direction: column;
   padding: 8px;
 }
 
-m-task-progress progress {
+m-current-task progress {
   width: 100%;
 }
 

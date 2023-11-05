@@ -1,17 +1,17 @@
 import { Duration } from 'activity-sampling-shared';
 
 export const initialState = {
-  task: {
-    duration: new Duration('PT30M'),
-    remainingDuration: new Duration('PT30M'),
-    progress: 0,
-  },
-  activity: {
+  activityForm: {
     client: '',
     project: '',
     task: '',
     notes: '',
     logButtonDisabled: false,
+  },
+  currentTask: {
+    duration: new Duration('PT30M'),
+    remainingTime: new Duration('PT30M'),
+    progress: 0,
   },
   recentActivities: {
     workingDays: [],
@@ -42,34 +42,34 @@ export function reducer(state, action) {
 }
 
 function progressTicked(state, { duration }) {
-  let remainingDuration = new Duration(state.task.remainingDuration - duration);
-  let task = {
-    ...state.task,
-    remainingDuration,
-    progress: 1.0 - remainingDuration / state.task.duration,
+  let remainingTime = new Duration(state.currentTask.remainingTime - duration);
+  let currentTask = {
+    ...state.currentTask,
+    remainingTime,
+    progress: 1.0 - remainingTime / state.currentTask.duration,
   };
-  return { ...state, task };
+  return { ...state, currentTask };
 }
 
 function activityUpdated(state, { name, value }) {
   return {
     ...state,
-    activity: { ...state.activity, [name]: value },
+    activityForm: { ...state.activityForm, [name]: value },
   };
 }
 
 function setActivity(state, { client, project, task, notes }) {
   return {
     ...state,
-    activity: { client, project, task, notes },
+    activityForm: { client, project, task, notes },
   };
 }
 
 function activityLogged(state) {
   return {
     ...state,
-    activity: {
-      ...state.activity,
+    activityForm: {
+      ...state.activityForm,
       logButtonDisabled: true,
     },
   };

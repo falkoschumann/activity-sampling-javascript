@@ -18,11 +18,11 @@ describe('progress ticked', () => {
   test('increases progress', async () => {
     let store = createStore();
 
-    await progressTicked({ duration: new Duration(720) }, store);
+    await progressTicked({ duration: new Duration('PT12M') }, store);
 
-    expect(store.getState().task).toEqual({
-      duration: new Duration(1800),
-      remainingDuration: new Duration(1080),
+    expect(store.getState().currentTask).toEqual({
+      duration: new Duration('PT30M'),
+      remainingTime: new Duration('PT18M'),
       progress: 0.4,
     });
   });
@@ -34,7 +34,7 @@ describe('activity updated', () => {
 
     await activityUpdated({ name: 'client', value: 'Muspellheim' }, store);
 
-    expect(store.getState().activity).toEqual({
+    expect(store.getState().activityForm).toEqual({
       client: 'Muspellheim',
       project: '',
       task: '',
@@ -58,7 +58,7 @@ describe('set activity', () => {
       store,
     );
 
-    expect(store.getState().activity).toEqual({
+    expect(store.getState().activityForm).toEqual({
       client: 'foo',
       project: 'bar',
       task: 'lorem',
@@ -71,8 +71,8 @@ describe('log activity', () => {
   test('logs activity', async () => {
     let store = createStore({
       ...initialState,
-      activity: {
-        ...initialState.activity,
+      activityForm: {
+        ...initialState.activityForm,
         client: 'Muspellheim',
         project: 'Activity Sampling',
         task: 'Log activity',
@@ -89,7 +89,7 @@ describe('log activity', () => {
       api,
     );
 
-    expect(store.getState().activity).toEqual({
+    expect(store.getState().activityForm).toEqual({
       client: 'Muspellheim',
       project: 'Activity Sampling',
       task: 'Log activity',

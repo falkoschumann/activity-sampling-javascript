@@ -1,8 +1,10 @@
+import { Duration } from 'activity-sampling-shared';
+
 import { AbstractStore } from '../domain/store.js';
 import { AbstractApi } from '../infrastructure/api.js';
 
 export async function progressTicked(
-  { duration },
+  { duration = new Duration('PT1S') } = {},
   store = new AbstractStore(),
 ) {
   store.dispatch({ type: 'progress-ticked', duration });
@@ -33,8 +35,8 @@ export async function logActivity(
   store = new AbstractStore(),
   api = new AbstractApi(),
 ) {
-  let duration = store.getState().task.duration;
-  let { client, project, task, notes } = store.getState().activity;
+  let duration = store.getState().currentTask.duration;
+  let { client, project, task, notes } = store.getState().activityForm;
   let activity = { timestamp, duration, client, project, task, notes };
   await api.postLogActivity(activity);
   store.dispatch({ type: 'activity-logged' });

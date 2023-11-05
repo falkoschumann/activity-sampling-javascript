@@ -25,7 +25,7 @@ describe('activity sampling app', () => {
       .set('Content-Type', 'application/json')
       .send({
         timestamp: '2023-10-07T11:00Z',
-        duration: 1800,
+        duration: 'PT30M',
         client: 'Muspellheim',
         project: 'Activity Sampling',
         task: 'Recent Activities',
