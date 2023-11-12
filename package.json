@@ -18,14 +18,14 @@
     "check": "prettier . --check && eslint */src */tests",
     "format": "prettier . --write && eslint --fix */src */tests",
     "start": "npm run start --workspace=activity-sampling-server",
-    "devserver": "npm run dev --workspace=activity-sampling-server",
-    "devweb": "npm run dev --workspace=activity-sampling-web"
+    "dev": "concurrently \"npm run dev --workspace=activity-sampling-web\" \"npm run dev --workspace=activity-sampling-server\""
   },
   "dependencies": {
     "lit-html": "3.0.2"
   },
   "devDependencies": {
     "@jest/globals": "29.7.0",
+    "concurrently": "8.2.2",
     "eslint": "8.53.0",
     "jest": "29.7.0",
     "prettier": "3.0.3"

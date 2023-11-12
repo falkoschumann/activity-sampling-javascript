@@ -12,6 +12,7 @@ case $task in
   start) npm start ;;
   clean) npm run clean ;;
   format) npm run format ;;
+  dev) npm run dev ;;
   test) npm test ;;
   unit-tests) npm test -- --testPathPattern=".*\/unit\/.*" ;;
   integration-tests) npm test -- --testPathPattern=".*\/integration\/.*" ;;
