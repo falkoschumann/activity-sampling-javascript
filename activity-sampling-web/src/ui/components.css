@@ -3,6 +3,7 @@
   --main-background-color: #fdfdfd; /* RAL 9020, Seidenmatt–Weiß */
   --light-color: #d7d5cb; /* RAL 9002, Grauweiß */
   --dark-color: #7e8182; /* RAL 9023, Perldunkelgrau */
+  --active-color: #cc2c24; /* RAL3028 Reinrot */
 }
 
 body {
@@ -70,13 +71,37 @@ m-activity-form button {
 
 m-current-task {
   align-items: center;
-  display: flex;
-  flex-direction: column;
-  padding: 8px;
+  display: grid;
+  gap: 4px;
+  grid-template-columns: 1fr 40px;
+  grid-template-rows: auto;
+  padding: 8px 0;
+  place-items: center;
+}
+
+m-current-task .caption.active {
+  color: var(--active-color);
 }
 
 m-current-task progress {
   width: 100%;
+}
+
+m-current-task button {
+  grid-column: 2 / 3;
+  grid-row: 1 / 3;
+  width: 34px;
+  height: 34px;
+}
+
+m-current-task button svg {
+  display: block;
+  cursor: pointer;
+  fill: var(--dark-color);
+}
+
+m-current-task button[aria-pressed='true'] svg {
+  fill: var(--active-color);
 }
 
 m-recent-activities {
