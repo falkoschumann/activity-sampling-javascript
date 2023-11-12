@@ -15,15 +15,59 @@ import { Store } from '../../src/domain/store.js';
 import { AbstractApi } from '../../src/infrastructure/api.js';
 
 describe('progress ticked', () => {
-  test('increases progress', async () => {
-    let store = createStore();
+  test('increases progress and decreases remaining time', async () => {
+    let store = createStore({
+      ...initialState,
+      currentTask: {
+        duration: new Duration('PT30M'),
+        remainingTime: new Duration('PT21M'),
+        progress: 0.7,
+        inProgress: true,
+      },
+    });
 
-    await progressTicked({ duration: new Duration('PT12M') }, store);
+    await progressTicked({ duration: new Duration('PT3M') }, store);
 
     expect(store.getState().currentTask).toEqual({
       duration: new Duration('PT30M'),
       remainingTime: new Duration('PT18M'),
       progress: 0.4,
+      inProgress: true,
+    });
+  });
+
+  test('finish current task', async () => {
+    let store = createStore({
+      ...initialState,
+      activityForm: {
+        ...initialState.activityForm,
+        timestamp: undefined,
+        duration: undefined,
+        formDisabled: true,
+        logButtonDisabled: false,
+      },
+      currentTask: {
+        duration: new Duration('PT30M'),
+        remainingTime: new Duration('PT1M'),
+        progress: 0.97,
+        inProgress: true,
+      },
+    });
+
+    await progressTicked({ duration: new Duration('PT1M') }, store);
+
+    expect(store.getState().activityForm).toEqual({
+      ...initialState.activityForm,
+      timestamp: undefined,
+      duration: new Duration('PT30M'),
+      formDisabled: false,
+      logButtonDisabled: false,
+    });
+    expect(store.getState().currentTask).toEqual({
+      duration: new Duration('PT30M'),
+      remainingTime: new Duration('PT0S'),
+      progress: 1.0,
+      inProgress: true,
     });
   });
 });
@@ -35,6 +79,7 @@ describe('activity updated', () => {
     await activityUpdated({ name: 'client', value: 'Muspellheim' }, store);
 
     expect(store.getState().activityForm).toEqual({
+      ...initialState.activityForm,
       client: 'Muspellheim',
       project: '',
       task: '',
@@ -59,6 +104,7 @@ describe('set activity', () => {
     );
 
     expect(store.getState().activityForm).toEqual({
+      ...initialState.activityForm,
       client: 'foo',
       project: 'bar',
       task: 'lorem',
@@ -90,6 +136,7 @@ describe('log activity', () => {
     );
 
     expect(store.getState().activityForm).toEqual({
+      ...initialState.activityForm,
       client: 'Muspellheim',
       project: 'Activity Sampling',
       task: 'Log activity',

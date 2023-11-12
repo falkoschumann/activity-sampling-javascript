@@ -2,16 +2,20 @@ import { Duration } from 'activity-sampling-shared';
 
 export const initialState = {
   activityForm: {
+    timestamp: undefined,
+    duration: undefined,
     client: '',
     project: '',
     task: '',
     notes: '',
+    formDisabled: false,
     logButtonDisabled: false,
   },
   currentTask: {
     duration: new Duration('PT30M'),
     remainingTime: new Duration('PT30M'),
     progress: 0,
+    inProgress: false,
   },
   recentActivities: {
     workingDays: [],
@@ -48,7 +52,15 @@ function progressTicked(state, { duration }) {
     remainingTime,
     progress: 1.0 - remainingTime / state.currentTask.duration,
   };
-  return { ...state, currentTask };
+  let activityForm = state.activityForm;
+  if (remainingTime <= 0) {
+    activityForm = {
+      ...activityForm,
+      duration: currentTask.duration,
+      formDisabled: false,
+    };
+  }
+  return { ...state, activityForm, currentTask };
 }
 
 function activityUpdated(state, { name, value }) {
@@ -61,7 +73,7 @@ function activityUpdated(state, { name, value }) {
 function setActivity(state, { client, project, task, notes }) {
   return {
     ...state,
-    activityForm: { client, project, task, notes },
+    activityForm: { ...state.activityForm, client, project, task, notes },
   };
 }
 
