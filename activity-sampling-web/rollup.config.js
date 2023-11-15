@@ -7,7 +7,7 @@ const production = !process.env.ROLLUP_WATCH;
 export default {
   input: 'src/main.js',
   output: {
-    file: '../activity-sampling-server/public/activitysampling.js',
+    file: './dist/activity-sampling.js',
     format: 'esm',
   },
   plugins: [

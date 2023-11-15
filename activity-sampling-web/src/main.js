@@ -1,2 +1,2 @@
-import './style.css';
+import './main.css';
 import './ui/components.js';

@@ -22,7 +22,6 @@ bin/
 
 # Node
 coverage/
-dist/
 node_modules/
 junit.xml
 
