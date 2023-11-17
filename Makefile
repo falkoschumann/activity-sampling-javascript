@@ -26,6 +26,12 @@ test-integration: prepare
 test-e2e: prepare
 	@npx jest --testPathPattern=".*\/e2e\/.*"
 
+watch: prepare
+	@npx jest --watch
+
+coverage: prepare
+	@npx jest --coverage
+
 check:
 	@npx prettier . --check
 	@npx eslint */src */tests
@@ -36,10 +42,8 @@ format:
 
 prepare:
 	@if [ -n "$(CI)" ] ; then \
-		echo "Build in CI environment"; \
 		npm ci; \
 	elif [ ! -d "node_modules" ] ; then \
-		echo "Install dependencies"; \
 		npm install; \
 	fi
 

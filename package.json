@@ -11,15 +11,6 @@
     "activity-sampling-server",
     "activity-sampling-desktop"
   ],
-  "scripts": {
-    "build": "npm run dist --workspaces --if-present && npm run test && npm run check",
-    "clean": "npm run clean --workspaces --if-present",
-    "test": "node --no-warnings=ExperimentalWarning --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "check": "prettier . --check && eslint */src */tests",
-    "format": "prettier . --write && eslint --fix */src */tests",
-    "start": "npm run start --workspace=activity-sampling-server",
-    "dev": "concurrently \"npm run dev --workspace=activity-sampling-web\" \"npm run dev --workspace=activity-sampling-server\""
-  },
   "dependencies": {
     "lit-html": "3.0.2"
   },
@@ -36,7 +27,6 @@
       "<rootDir>/activity-sampling-server/data/",
       "<rootDir>/activity-sampling-server/public/"
     ],
-    "verbose": true,
     "globalSetup": "./jest.setup.js"
   },
   "prettier": {
