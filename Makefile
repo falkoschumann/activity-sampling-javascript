@@ -1,6 +1,6 @@
 export NODE_OPTIONS=--experimental-vm-modules --no-warnings=ExperimentalWarning
 
-build: dist test check
+all: dist test check
 
 clean:
 	@npm run clean --workspaces --if-present
@@ -17,13 +17,13 @@ dist: prepare
 test: prepare
 	@npx jest
 
-test-unit: prepare
+unit-tests: prepare
 	@npx jest --testPathPattern=".*\/unit\/.*"
 
-test-integration: prepare
+integration-tests: prepare
 	@npx jest --testPathPattern=".*\/integration\/.*"
 
-test-e2e: prepare
+e2e-tests: prepare
 	@npx jest --testPathPattern=".*\/e2e\/.*"
 
 watch: prepare
