@@ -47,15 +47,15 @@ prepare:
 		npm install; \
 	fi
 
-.PHONY: build \
+.PHONY: all \
 	clean \
 	start \
 	dev \
 	dist \
 	test \
-	test-unit \
-	test-integration \
-	test-e2e \
+	unit-tests \
+	integration-tests \
+	e2e-tests \
 	check \
 	format \
 	prepare
