@@ -1,11 +1,11 @@
 import { html, render } from 'lit-html';
 
 import * as services from '../application/services.js';
-import { initialState, reducer } from '../domain/reducer.js';
-import { Store } from '../domain/store.js';
+import { reducer } from '../domain/reducer.js';
+import { createStore } from '../domain/store.js';
 import { Api } from '../infrastructure/api.js';
 
-const store = new Store(reducer, initialState);
+const store = createStore(reducer);
 const api = globalThis.activitySampling?.api ?? new Api();
 
 export class Component extends HTMLElement {

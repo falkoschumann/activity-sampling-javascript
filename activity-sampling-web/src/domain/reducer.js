@@ -28,7 +28,7 @@ export const initialState = {
   },
 };
 
-export function reducer(state, action) {
+export function reducer(state = initialState, action) {
   switch (action.type) {
     case 'progress-ticked':
       return progressTicked(state, action);
