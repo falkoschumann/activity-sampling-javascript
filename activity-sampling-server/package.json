@@ -8,7 +8,7 @@
   "scripts": {
     "clean": "rm public/activitysampling.js public/activitysampling.css",
     "start": "node src/main.js",
-    "dev": "nodemon src/main.js"
+    "dev": "npx nodemon src/main.js"
   },
   "dependencies": {
     "activity-sampling-shared": "0.1.0",
@@ -18,7 +18,6 @@
   "devDependencies": {
     "@types/express": "4.17.21",
     "@types/supertest": "2.0.16",
-    "nodemon": "3.0.1",
     "supertest": "6.3.3"
   },
   "eslintConfig": {

@@ -1,4 +1,5 @@
 export NODE_OPTIONS=--experimental-vm-modules --no-warnings=ExperimentalWarning
+export NPM_CONFIG_YES=true
 
 all: dist test check
 
@@ -9,7 +10,7 @@ start: prepare
 	@npm run start --workspace=activity-sampling-server
 
 dev: prepare
-	@concurrently "npm run dev --workspace=activity-sampling-web" "npm run dev --workspace=activity-sampling-server"
+	@npx concurrently "npm run dev --workspace=activity-sampling-web" "npm run dev --workspace=activity-sampling-server"
 
 dist: prepare
 	@npm run dist --workspaces --if-present
