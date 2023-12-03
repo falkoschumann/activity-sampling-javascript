@@ -4,16 +4,13 @@ export NPM_CONFIG_YES=true
 all: dist test check
 
 clean:
-	@npm run clean --workspaces --if-present
+	@rm -rf coverage public/vendor
 
 start: prepare
-	@npm run start --workspace=activity-sampling-server
+	@node src/main.js
 
 dev: prepare
-	@npx concurrently "npm run dev --workspace=activity-sampling-web" "npm run dev --workspace=activity-sampling-server"
-
-dist: prepare
-	@npm run dist --workspaces --if-present
+	@npx nodemon src/main.js
 
 test: prepare
 	@npx jest
@@ -35,18 +32,23 @@ coverage: prepare
 
 check:
 	@npx prettier . --check
-	@npx eslint */src */tests
+	@npx eslint public/js src tests
 
 format:
 	@npx prettier . --write
-	@npx eslint --fix */src */tests
+	@npx eslint --fix public/js src tests
 
-prepare:
+prepare: deps public/vendor
+
+deps:
 	@if [ -n "$(CI)" ] ; then \
-		npm ci; \
-	elif [ ! -d "node_modules" ] ; then \
-		npm install; \
-	fi
+    	npm ci; \
+    elif [ ! -d "node_modules" ] ; then \
+    	npm install; \
+    fi
+
+public/vendor:
+	@npx rollup -c
 
 .PHONY: all \
 	clean \
@@ -57,6 +59,9 @@ prepare:
 	unit-tests \
 	integration-tests \
 	e2e-tests \
+	watch \
+	coverage \
 	check \
 	format \
-	prepare
+	prepare \
+	deps

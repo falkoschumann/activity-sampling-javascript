@@ -5,17 +5,17 @@
   "author": "Falko Schumann",
   "license": "MIT",
   "type": "module",
-  "workspaces": [
-    "activity-sampling-shared",
-    "activity-sampling-web",
-    "activity-sampling-server",
-    "activity-sampling-desktop"
-  ],
   "dependencies": {
+    "csv": "6.3.5",
+    "express": "4.18.2",
     "lit-html": "3.1.0"
   },
   "devDependencies": {
-    "@jest/globals": "29.7.0"
+    "@jest/globals": "29.7.0",
+    "@rollup/plugin-node-resolve": "15.2.3",
+    "@types/express": "4.17.21",
+    "@types/supertest": "2.0.16",
+    "supertest": "6.3.3"
   },
   "jest": {
     "transform": {},
@@ -23,7 +23,7 @@
       "<rootDir>/activity-sampling-server/data/",
       "<rootDir>/activity-sampling-server/public/"
     ],
-    "globalSetup": "./jest.setup.js"
+    "globalSetup": "./tests/jest.setup.js"
   },
   "prettier": {
     "proseWrap": "always",
@@ -31,7 +31,8 @@
   },
   "eslintConfig": {
     "env": {
-      "es2022": true
+      "es2022": true,
+      "browser": true
     },
     "extends": [
       "eslint:recommended"
@@ -41,8 +42,16 @@
       "sourceType": "module"
     },
     "ignorePatterns": [
-      "/coverage/",
-      "public/"
+      "coverage/",
+      "data/",
+      "vendor/"
+    ]
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "data/**",
+      "public/**",
+      "tests/**"
     ]
   }
 }

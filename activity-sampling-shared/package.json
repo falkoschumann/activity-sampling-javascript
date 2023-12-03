@@ -1,9 +1,0 @@
-{
-  "name": "activity-sampling-shared",
-  "version": "0.1.0",
-  "description": "",
-  "author": "Falko Schumann",
-  "license": "MIT",
-  "type": "module",
-  "main": "src/index.js"
-}
