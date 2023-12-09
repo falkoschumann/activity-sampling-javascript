@@ -6,8 +6,8 @@ import { createRecentActivities } from '../../../src/domain/recent-activities.js
 
 import { createActivity } from '../../testdata.js';
 
-describe('working days', () => {
-  test('returns multiple activities on same day sorted by time descending', () => {
+describe('Working days', () => {
+  test('Returns multiple activities on same day sorted by time descending', () => {
     let result = createRecentActivities([
       createActivity({ timestamp: new Date('2023-10-07T10:00Z') }),
       createActivity({ timestamp: new Date('2023-10-07T10:30Z') }),
@@ -26,7 +26,7 @@ describe('working days', () => {
     ]);
   });
 
-  test('returns activities on multiple days sorted by date descending', () => {
+  test('Returns activities on multiple days sorted by date descending', () => {
     let result = createRecentActivities([
       createActivity({ timestamp: new Date('2023-10-06T10:00Z') }),
       createActivity({ timestamp: new Date('2023-10-07T10:00Z') }),
@@ -56,8 +56,8 @@ describe('working days', () => {
   });
 });
 
-describe('time summary', () => {
-  test('sums hours today', () => {
+describe('Time summary', () => {
+  test('Sums hours today', () => {
     let result = createRecentActivities(
       [
         createActivity({
@@ -88,7 +88,7 @@ describe('time summary', () => {
     });
   });
 
-  test('sums hours yesterday', () => {
+  test('Sums hours yesterday', () => {
     let result = createRecentActivities(
       [
         createActivity({
@@ -119,7 +119,7 @@ describe('time summary', () => {
     });
   });
 
-  test('sums hours this week on a sunday', () => {
+  test('Sums hours this week on a sunday', () => {
     let result = createRecentActivities(
       [
         createActivity({
@@ -150,7 +150,7 @@ describe('time summary', () => {
     });
   });
 
-  test('sums hours this week on a monday', () => {
+  test('Sums hours this week on a monday', () => {
     let result = createRecentActivities(
       [
         createActivity({
@@ -181,7 +181,7 @@ describe('time summary', () => {
     });
   });
 
-  test('sums hours this month', () => {
+  test('Sums hours this month', () => {
     let result = createRecentActivities(
       [
         createActivity({

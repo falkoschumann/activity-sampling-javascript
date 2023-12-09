@@ -21,8 +21,8 @@ beforeEach(() => {
   }).app;
 });
 
-describe('activity sampling app', () => {
-  test('happy path returns status 201 and logs activity', async () => {
+describe('Log activity', () => {
+  test('Happy path returns status 201 and logs activity', async () => {
     let response = await request(app)
       .post('/api/log-activity')
       .set('Content-Type', 'application/json')
@@ -67,7 +67,7 @@ describe('activity sampling app', () => {
     });
   });
 
-  test('unhappy path returns status 400', async () => {
+  test('Unhappy path returns status 400', async () => {
     let response = await request(app)
       .post('/api/log-activity')
       .set('Content-Type', 'application/json')

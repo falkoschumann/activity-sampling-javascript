@@ -10,8 +10,19 @@ import { AbstractRepository } from '../../../src/infrastructure/repository.js';
 
 import { createActivity } from '../../testdata.js';
 
-describe('get recent activities', () => {
-  test('returns working days and time summary', async () => {
+describe('Log activity', () => {
+  test('Logs the activity', async () => {
+    let repository = new FakeRepository();
+
+    await logActivity(createActivity(), repository);
+
+    let activities = await repository.findAll();
+    expect(activities).toEqual([createActivity()]);
+  });
+});
+
+describe('Recent activities', () => {
+  test('Contains working days', async () => {
     let repository = new FakeRepository([
       createActivity({ timestamp: new Date('2023-10-05T12:00') }),
       createActivity({ timestamp: new Date('2023-10-06T12:00') }),
@@ -24,46 +35,48 @@ describe('get recent activities', () => {
       repository,
     );
 
-    expect(result).toEqual({
-      workingDays: [
-        {
-          date: new Date('2023-10-07T00:00'),
-          activities: [
-            createActivity({ timestamp: new Date('2023-10-07T12:00') }),
-          ],
-        },
-        {
-          date: new Date('2023-10-06T00:00'),
-          activities: [
-            createActivity({ timestamp: new Date('2023-10-06T12:30') }),
-            createActivity({ timestamp: new Date('2023-10-06T12:00') }),
-          ],
-        },
-        {
-          date: new Date('2023-10-05T00:00'),
-          activities: [
-            createActivity({ timestamp: new Date('2023-10-05T12:00') }),
-          ],
-        },
-      ],
-      timeSummary: {
-        hoursToday: new Duration('PT30M'),
-        hoursYesterday: new Duration('PT1H'),
-        hoursThisWeek: new Duration('PT2H'),
-        hoursThisMonth: new Duration('PT2H'),
+    expect(result.workingDays).toEqual([
+      {
+        date: new Date('2023-10-07T00:00'),
+        activities: [
+          createActivity({ timestamp: new Date('2023-10-07T12:00') }),
+        ],
       },
-    });
+      {
+        date: new Date('2023-10-06T00:00'),
+        activities: [
+          createActivity({ timestamp: new Date('2023-10-06T12:30') }),
+          createActivity({ timestamp: new Date('2023-10-06T12:00') }),
+        ],
+      },
+      {
+        date: new Date('2023-10-05T00:00'),
+        activities: [
+          createActivity({ timestamp: new Date('2023-10-05T12:00') }),
+        ],
+      },
+    ]);
   });
-});
 
-describe('log activity', () => {
-  test('adds activity to repository', async () => {
-    let repository = new FakeRepository();
+  test('Contains time summary', async () => {
+    let repository = new FakeRepository([
+      createActivity({ timestamp: new Date('2023-10-05T12:00') }),
+      createActivity({ timestamp: new Date('2023-10-06T12:00') }),
+      createActivity({ timestamp: new Date('2023-10-06T12:30') }),
+      createActivity({ timestamp: new Date('2023-10-07T12:00') }),
+    ]);
 
-    await logActivity(createActivity(), repository);
+    let result = await getRecentActivities(
+      { today: new Date('2023-10-07T00:00') },
+      repository,
+    );
 
-    let activities = await repository.findAll();
-    expect(activities).toEqual([createActivity()]);
+    expect(result.timeSummary).toEqual({
+      hoursToday: new Duration('PT30M'),
+      hoursYesterday: new Duration('PT1H'),
+      hoursThisWeek: new Duration('PT2H'),
+      hoursThisMonth: new Duration('PT2H'),
+    });
   });
 });
 

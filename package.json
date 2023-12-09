@@ -18,12 +18,13 @@
     "supertest": "6.3.3"
   },
   "jest": {
+    "globalSetup": "./tests/jest.setup.js",
     "transform": {},
+    "verbose": true,
     "watchPathIgnorePatterns": [
-      "<rootDir>/activity-sampling-server/data/",
-      "<rootDir>/activity-sampling-server/public/"
-    ],
-    "globalSetup": "./tests/jest.setup.js"
+      "<rootDir>/data/",
+      "<rootDir>/public/"
+    ]
   },
   "prettier": {
     "proseWrap": "always",

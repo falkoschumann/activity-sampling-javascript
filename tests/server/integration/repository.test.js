@@ -15,8 +15,8 @@ beforeEach(() => {
   rmSync(fileName, { force: true });
 });
 
-describe('findAll', () => {
-  test('returns list of activities', async () => {
+describe('FindAll', () => {
+  test('Returns list of activities', async () => {
     let repository = new Repository({
       fileName: new URL('../data/example.csv', import.meta.url),
     });
@@ -35,7 +35,7 @@ describe('findAll', () => {
     ]);
   });
 
-  test('returns empty list, if file does not exist', async () => {
+  test('Returns empty list, if file does not exist', async () => {
     let repository = new Repository({
       fileName: new URL('../data/non-existent.csv', import.meta.url),
     });
@@ -45,7 +45,7 @@ describe('findAll', () => {
     expect(activities).toEqual([]);
   });
 
-  test('reports an error, if file is corrupt', async () => {
+  test('Reports an error, if file is corrupt', async () => {
     let repository = new Repository({
       fileName: new URL('../data/corrupt.csv', import.meta.url),
     });
@@ -54,8 +54,8 @@ describe('findAll', () => {
   });
 });
 
-describe('add', () => {
-  test('creates file, if it does not exist', async () => {
+describe('Add', () => {
+  test('Creates file, if it does not exist', async () => {
     let repository = new Repository({ fileName });
 
     await repository.add(createActivity());
@@ -64,7 +64,7 @@ describe('add', () => {
     expect(activities).toEqual([createActivity()]);
   });
 
-  test('adds activtiy to existing file', async () => {
+  test('Adds activtiy to existing file', async () => {
     let repository = new Repository({ fileName });
     await repository.add(createActivity());
 
