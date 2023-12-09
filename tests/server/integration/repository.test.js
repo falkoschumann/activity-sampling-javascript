@@ -4,7 +4,7 @@ import { rmSync } from 'node:fs';
 import { Duration } from '../../../public/js/domain/duration.js';
 
 import { Repository } from '../../../src/infrastructure/repository.js';
-import { createActivity } from '../testdata.js';
+import { createActivity } from '../../testdata.js';
 
 const fileName = new URL(
   '../../../data/activity-log.test.csv',

@@ -4,7 +4,7 @@ import { Duration } from '../../../public/js/domain/duration.js';
 
 import { createRecentActivities } from '../../../src/domain/recent-activities.js';
 
-import { createActivity } from '../testdata.js';
+import { createActivity } from '../../testdata.js';
 
 describe('working days', () => {
   test('returns multiple activities on same day sorted by time descending', () => {

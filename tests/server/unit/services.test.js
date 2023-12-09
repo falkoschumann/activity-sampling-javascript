@@ -8,7 +8,7 @@ import {
 } from '../../../src/application/services.js';
 import { AbstractRepository } from '../../../src/infrastructure/repository.js';
 
-import { createActivity } from '../testdata.js';
+import { createActivity } from '../../testdata.js';
 
 describe('get recent activities', () => {
   test('returns working days and time summary', async () => {

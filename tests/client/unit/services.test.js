@@ -1,7 +1,5 @@
 import { describe, expect, jest, test } from '@jest/globals';
 
-import { Duration } from '../../../public/js/domain/duration.js';
-
 import {
   activityUpdated,
   getRecentActivities,
@@ -9,6 +7,7 @@ import {
   progressTicked,
   setActivity,
 } from '../../../public/js/application/services.js';
+import { Duration } from '../../../public/js/domain/duration.js';
 import { initialState, reducer } from '../../../public/js/domain/reducer.js';
 import { Store } from '../../../public/js/domain/store.js';
 import { AbstractApi } from '../../../public/js/infrastructure/api.js';
@@ -26,6 +25,7 @@ describe('progress ticked', () => {
     });
 
     await progressTicked({ duration: new Duration('PT3M') }, store);
+import { createActivity } from '../../testdata.js';
 
     expect(store.getState().currentTask).toEqual({
       duration: new Duration('PT30M'),
