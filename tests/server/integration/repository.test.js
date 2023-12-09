@@ -2,7 +2,6 @@ import { beforeEach, describe, expect, test } from '@jest/globals';
 import { rmSync } from 'node:fs';
 
 import { Duration } from '../../../public/js/domain/duration.js';
-import '../../equality-testers.js';
 
 import { Repository } from '../../../src/infrastructure/repository.js';
 import { createActivity } from '../testdata.js';

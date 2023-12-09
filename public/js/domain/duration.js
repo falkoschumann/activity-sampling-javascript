@@ -1,18 +1,16 @@
 export class Duration {
   static ZERO = new Duration(0);
 
-  #seconds;
-
   /**
    * @param {number|string} [value=0] - The duration in seconds or an ISO 8601 string.
    */
   constructor(value) {
     if (value == null) {
-      this.#seconds = 0;
+      this.seconds = 0;
     } else if (typeof value === 'string') {
-      this.#seconds = Duration.parse(value).seconds;
+      this.seconds = Duration.parse(value).seconds;
     } else if (typeof value === 'number') {
-      this.#seconds = value;
+      this.seconds = value;
     } else {
       throw new TypeError('`seconds` must be a number or an ISO 8601 string');
     }
@@ -31,12 +29,8 @@ export class Duration {
     return new Duration(seconds);
   }
 
-  get seconds() {
-    return this.#seconds;
-  }
-
   plus(duration) {
-    this.#seconds += duration;
+    this.seconds += duration;
     return this;
   }
 

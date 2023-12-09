@@ -2,8 +2,6 @@ import { describe, expect, test } from '@jest/globals';
 
 import { Duration } from '../../../public/js/domain/duration.js';
 
-import '../../equality-testers.js';
-
 describe('constructor', () => {
   test('creates duration with 0 seconds by default', () => {
     let duration = new Duration();

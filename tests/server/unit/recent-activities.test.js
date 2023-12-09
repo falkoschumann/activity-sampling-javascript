@@ -1,7 +1,6 @@
 import { describe, expect, test } from '@jest/globals';
 
 import { Duration } from '../../../public/js/domain/duration.js';
-import '../../equality-testers.js';
 
 import { createRecentActivities } from '../../../src/domain/recent-activities.js';
 
