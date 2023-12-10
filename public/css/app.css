@@ -46,7 +46,7 @@ input {
   color: var(--dark-color);
 }
 
-m-activity-sampling {
+m-activity-sampling-app {
   display: flex;
   flex-direction: column;
   height: 100vh;

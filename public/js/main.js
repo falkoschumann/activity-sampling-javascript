@@ -1,1 +1,1 @@
-import './ui/components.js';
+import './ui/activity-sampling-app.js';
