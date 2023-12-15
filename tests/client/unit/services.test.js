@@ -36,7 +36,7 @@ describe('Log activity', () => {
     });
   });
 
-  describe('Asks periodically whar I am working on', () => {
+  describe('Asks periodically what I am working on', () => {
     test('Increases progress and decreases remaining time', async () => {
       let store = createStore({
         ...initialState,

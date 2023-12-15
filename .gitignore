@@ -1,27 +1,12 @@
 # see also https://gitignore.io
 
-/data/*
-!/data/.gitkeep
-vendor/
+data/
 tmp/
+vendor/
 
 # Gradle
 .gradle/
 build/
-
-# IntelliJ IDEA
-.idea/
-out/
-
-# Eclipse
-.settings/
-bin/
-.project
-.classpath
-*.launch
-
-# VS Code
-.vscode/
 
 # Node
 coverage/
@@ -30,6 +15,20 @@ junit.xml
 
 # Python
 __pycache__/
+
+# Eclipse
+.settings/
+bin/
+.project
+.classpath
+*.launch
+
+# IntelliJ IDEA
+.idea/
+out/
+
+# VS Code
+.vscode/
 
 # Mac OS
 .DS_Store
