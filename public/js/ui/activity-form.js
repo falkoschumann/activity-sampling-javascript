@@ -18,7 +18,7 @@ class ActivityForm extends Component {
 
   getView() {
     return html`
-      <form @submit="${(e) => this.#onSubmit(e)}">
+      <form @submit=${(e) => this.#onSubmit(e)}>
         <div>
           <label class="caption" for="client">Client</label>
           <input
@@ -26,7 +26,7 @@ class ActivityForm extends Component {
             required
             id="client"
             name="client"
-            @keyup="${(e) => this.#onInput(e)}"
+            @keyup=${(e) => this.#onInput(e)}
           />
         </div>
         <div>
@@ -36,7 +36,7 @@ class ActivityForm extends Component {
             required
             id="project"
             name="project"
-            @keyup="${(e) => this.#onInput(e)}"
+            @keyup=${(e) => this.#onInput(e)}
           />
         </div>
         <div>
@@ -46,7 +46,7 @@ class ActivityForm extends Component {
             required
             id="task"
             name="task"
-            @keyup="${(e) => this.#onInput(e)}"
+            @keyup=${(e) => this.#onInput(e)}
           />
         </div>
         <div>
@@ -56,7 +56,7 @@ class ActivityForm extends Component {
             required
             id="notes"
             name="notes"
-            @keyup="${(e) => this.#onInput(e)}"
+            @keyup=${(e) => this.#onInput(e)}
           />
         </div>
         <button type="submit">Log</button>

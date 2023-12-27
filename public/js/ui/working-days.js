@@ -29,7 +29,7 @@ class WorkingDays extends Component {
 
   #renderActivity({ timestamp, client, project, task, notes }) {
     return html`
-      <li @click="${() => this.#onClick({ client, project, task, notes })}">
+      <li @click=${() => this.#onClick({ client, project, task, notes })}>
         <div>
           <strong
             >${timestamp.toLocaleTimeString(undefined, {
