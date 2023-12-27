@@ -29,7 +29,8 @@
   },
   "prettier": {
     "proseWrap": "always",
-    "singleQuote": true
+    "singleQuote": true,
+    "trailingComma": "all"
   },
   "eslintConfig": {
     "env": {

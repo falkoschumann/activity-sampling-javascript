@@ -1,19 +1,9 @@
 import { Duration } from '../domain/duration.js';
 
-export class AbstractApi {
-  async getRecentActivities() {
-    return { workingDays: [] };
-  }
-
-  // eslint-disable-next-line no-unused-vars
-  async postLogActivity(activity) {}
-}
-
-export class Api extends AbstractApi {
+export class Api {
   #baseUrl;
 
   constructor({ baseUrl = '/api' } = {}) {
-    super();
     this.#baseUrl = baseUrl;
   }
 

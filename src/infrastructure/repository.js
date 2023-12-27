@@ -4,22 +4,10 @@ import { parse, stringify } from 'csv';
 
 import { Duration } from '../../public/js/domain/duration.js';
 
-export class AbstractRepository {
-  async findAll() {
-    return [];
-  }
-
-  // eslint-disable-next-line no-unused-vars
-  async add(activity) {
-    return;
-  }
-}
-
-export class Repository extends AbstractRepository {
+export class Repository {
   #fileName;
 
   constructor({ fileName = './data/activity-log.csv' } = {}) {
-    super();
     this.#fileName = fileName;
   }
 

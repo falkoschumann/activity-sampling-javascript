@@ -10,7 +10,6 @@ import {
 import { Duration } from '../../../public/js/domain/duration.js';
 import { initialState, reducer } from '../../../public/js/domain/reducer.js';
 import { Store } from '../../../public/js/domain/store.js';
-import { AbstractApi } from '../../../public/js/infrastructure/api.js';
 
 import { createActivity } from '../../testdata.js';
 
@@ -194,7 +193,7 @@ function createStore(state = initialState) {
   return new Store(reducer, state);
 }
 
-class FakeApi extends AbstractApi {
+class FakeApi {
   postLogActivity = jest.fn();
 
   constructor({
@@ -217,7 +216,6 @@ class FakeApi extends AbstractApi {
       },
     },
   } = {}) {
-    super();
     this.recentActivities = recentActivities;
   }
 

@@ -6,7 +6,6 @@ import {
   getRecentActivities,
   logActivity,
 } from '../../../src/application/services.js';
-import { AbstractRepository } from '../../../src/infrastructure/repository.js';
 
 import { createActivity } from '../../testdata.js';
 
@@ -80,11 +79,10 @@ describe('Recent activities', () => {
   });
 });
 
-export class FakeRepository extends AbstractRepository {
+export class FakeRepository {
   #activityLog;
 
   constructor(activityLog = []) {
-    super();
     this.#activityLog = activityLog;
   }
 
