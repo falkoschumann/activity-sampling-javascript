@@ -2,12 +2,18 @@ import * as services from '../application/services.js';
 import { reducer } from '../domain/reducer.js';
 import { createStore } from '../domain/store.js';
 import { Api } from '../infrastructure/api.js';
+import { Timer } from '../infrastructure/timer.js';
 
 export const store = createStore(reducer);
 const api = globalThis.activitySampling?.api ?? new Api();
+const timer = new Timer();
 
-export async function progressTicked({ seconds }) {
-  await services.progressTicked({ seconds }, store);
+export async function startTimer() {
+  await services.startTimer(store, timer);
+}
+
+export async function stopTimer() {
+  await services.stopTimer(store, timer);
 }
 
 export async function activityUpdated({ name, value }) {

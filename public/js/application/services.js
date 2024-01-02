@@ -1,10 +1,20 @@
 import { Duration } from '../domain/duration.js';
 
-export async function progressTicked(
+export async function startTimer(store, timer) {
+  timer.start(() => timerTicked(undefined, store), 1000);
+  store.dispatch({ type: 'timer-started' });
+}
+
+export async function stopTimer(store, timer) {
+  timer.stop();
+  store.dispatch({ type: 'timer-stopped' });
+}
+
+export async function timerTicked(
   { duration = new Duration('PT1S') } = {},
   store,
 ) {
-  store.dispatch({ type: 'progress-ticked', duration });
+  store.dispatch({ type: 'timer-ticked', duration });
 }
 
 export async function activityUpdated({ name, value }, store) {

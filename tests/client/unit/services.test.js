@@ -4,8 +4,10 @@ import {
   activityUpdated,
   getRecentActivities,
   logActivity,
-  progressTicked,
+  timerTicked,
   setActivity,
+  startTimer,
+  stopTimer,
 } from '../../../public/js/application/services.js';
 import { Duration } from '../../../public/js/domain/duration.js';
 import { initialState, reducer } from '../../../public/js/domain/reducer.js';
@@ -36,6 +38,21 @@ describe('Log activity', () => {
   });
 
   describe('Asks periodically what I am working on', () => {
+    test('Starts timer', async () => {
+      let timer = new FakeTimer();
+      let store = createStore();
+
+      startTimer(store, timer);
+
+      expect(store.getState().currentTask).toEqual({
+        duration: new Duration('PT30M'),
+        remainingTime: new Duration('PT30M'),
+        progress: 0.0,
+        isTimerRunning: true,
+      });
+      expect(timer.start).toBeCalledTimes(1);
+    });
+
     test('Increases progress and decreases remaining time', async () => {
       let store = createStore({
         ...initialState,
@@ -43,17 +60,17 @@ describe('Log activity', () => {
           duration: new Duration('PT30M'),
           remainingTime: new Duration('PT21M'),
           progress: 0.7,
-          inProgress: true,
+          isTimerRunning: true,
         },
       });
 
-      await progressTicked({ duration: new Duration('PT3M') }, store);
+      await timerTicked({ duration: new Duration('PT3M') }, store);
 
       expect(store.getState().currentTask).toEqual({
         duration: new Duration('PT30M'),
         remainingTime: new Duration('PT18M'),
         progress: 0.4,
-        inProgress: true,
+        isTimerRunning: true,
       });
     });
 
@@ -71,11 +88,11 @@ describe('Log activity', () => {
           duration: new Duration('PT30M'),
           remainingTime: new Duration('PT1M'),
           progress: 0.97,
-          inProgress: true,
+          isTimerRunning: true,
         },
       });
 
-      await progressTicked({ duration: new Duration('PT1M') }, store);
+      await timerTicked({ duration: new Duration('PT1M') }, store);
 
       expect(store.getState().activityForm).toEqual({
         ...initialState.activityForm,
@@ -88,8 +105,31 @@ describe('Log activity', () => {
         duration: new Duration('PT30M'),
         remainingTime: new Duration('PT0S'),
         progress: 1.0,
-        inProgress: true,
+        isTimerRunning: true,
       });
+    });
+
+    test('Stops timer and resets progress', async () => {
+      let store = createStore({
+        ...initialState,
+        currentTask: {
+          duration: new Duration('PT30M'),
+          remainingTime: new Duration('PT12M'),
+          progress: 0.6,
+          isTimerRunning: true,
+        },
+      });
+      let timer = new FakeTimer();
+
+      await stopTimer(store, timer);
+
+      expect(store.getState().currentTask).toEqual({
+        duration: new Duration('PT30M'),
+        remainingTime: new Duration('PT30M'),
+        progress: 0.0,
+        isTimerRunning: false,
+      });
+      expect(timer.stop).toBeCalledTimes(1);
     });
   });
 
@@ -222,4 +262,9 @@ class FakeApi {
   async getRecentActivities() {
     return this.recentActivities;
   }
+}
+
+class FakeTimer {
+  start = jest.fn();
+  stop = jest.fn();
 }

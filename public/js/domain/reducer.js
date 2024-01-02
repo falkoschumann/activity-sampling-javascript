@@ -15,7 +15,7 @@ export const initialState = {
     duration: new Duration('PT30M'),
     remainingTime: new Duration('PT30M'),
     progress: 0,
-    inProgress: false,
+    isTimerRunning: false,
   },
   recentActivities: {
     workingDays: [],
@@ -30,8 +30,12 @@ export const initialState = {
 
 export function reducer(state = initialState, action) {
   switch (action.type) {
-    case 'progress-ticked':
-      return progressTicked(state, action);
+    case 'timer-started':
+      return timerStarted(state, action);
+    case 'timer-stopped':
+      return timerStopped(state, action);
+    case 'timer-ticked':
+      return timerTicked(state, action);
     case 'activity-updated':
       return activityUpdated(state, action);
     case 'set-activity':
@@ -45,7 +49,26 @@ export function reducer(state = initialState, action) {
   }
 }
 
-function progressTicked(state, { duration }) {
+function timerStarted(state) {
+  return {
+    ...state,
+    currentTask: { ...state.currentTask, isTimerRunning: true },
+  };
+}
+
+function timerStopped(state) {
+  return {
+    ...state,
+    currentTask: {
+      ...state.currentTask,
+      remainingTime: state.currentTask.duration,
+      progress: 0,
+      isTimerRunning: false,
+    },
+  };
+}
+
+function timerTicked(state, { duration }) {
   let remainingTime = new Duration(state.currentTask.remainingTime - duration);
   let currentTask = {
     ...state.currentTask,
