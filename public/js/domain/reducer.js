@@ -3,16 +3,13 @@ import { Duration } from './duration.js';
 export const initialState = {
   activityForm: {
     timestamp: undefined,
-    duration: undefined,
+    duration: new Duration('PT30M'),
     client: '',
     project: '',
     task: '',
     notes: '',
     formDisabled: false,
     logButtonDisabled: false,
-  },
-  currentTask: {
-    duration: new Duration('PT30M'),
     remainingTime: new Duration('PT30M'),
     progress: 0,
     isTimerRunning: false,
@@ -52,16 +49,16 @@ export function reducer(state = initialState, action) {
 function timerStarted(state) {
   return {
     ...state,
-    currentTask: { ...state.currentTask, isTimerRunning: true },
+    activityForm: { ...state.activityForm, isTimerRunning: true },
   };
 }
 
 function timerStopped(state) {
   return {
     ...state,
-    currentTask: {
-      ...state.currentTask,
-      remainingTime: state.currentTask.duration,
+    activityForm: {
+      ...state.activityForm,
+      remainingTime: state.activityForm.duration,
       progress: 0,
       isTimerRunning: false,
     },
@@ -69,21 +66,18 @@ function timerStopped(state) {
 }
 
 function timerTicked(state, { duration }) {
-  let remainingTime = new Duration(state.currentTask.remainingTime - duration);
-  let currentTask = {
-    ...state.currentTask,
-    remainingTime,
-    progress: 1.0 - remainingTime / state.currentTask.duration,
-  };
-  let activityForm = state.activityForm;
+  let remainingTime = new Duration(state.activityForm.remainingTime - duration);
+  let formDisabled = state.activityForm.formDisabled;
   if (remainingTime <= 0) {
-    activityForm = {
-      ...activityForm,
-      duration: currentTask.duration,
-      formDisabled: false,
-    };
+    formDisabled = false;
   }
-  return { ...state, activityForm, currentTask };
+  let activityForm = {
+    ...state.activityForm,
+    formDisabled,
+    remainingTime,
+    progress: 1.0 - remainingTime / state.activityForm.duration,
+  };
+  return { ...state, activityForm };
 }
 
 function activityUpdated(state, { name, value }) {

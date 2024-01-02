@@ -10,7 +10,7 @@ class CurrentTask extends Component {
   }
 
   extractState(state) {
-    return state.currentTask;
+    return state.activityForm;
   }
 
   getView() {

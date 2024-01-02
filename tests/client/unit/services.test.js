@@ -44,8 +44,8 @@ describe('Log activity', () => {
 
       startTimer(store, timer);
 
-      expect(store.getState().currentTask).toEqual({
-        duration: new Duration('PT30M'),
+      expect(store.getState().activityForm).toEqual({
+        ...initialState.activityForm,
         remainingTime: new Duration('PT30M'),
         progress: 0.0,
         isTimerRunning: true,
@@ -56,8 +56,8 @@ describe('Log activity', () => {
     test('Increases progress and decreases remaining time', async () => {
       let store = createStore({
         ...initialState,
-        currentTask: {
-          duration: new Duration('PT30M'),
+        activityForm: {
+          ...initialState.activityForm,
           remainingTime: new Duration('PT21M'),
           progress: 0.7,
           isTimerRunning: true,
@@ -66,8 +66,8 @@ describe('Log activity', () => {
 
       await timerTicked({ duration: new Duration('PT3M') }, store);
 
-      expect(store.getState().currentTask).toEqual({
-        duration: new Duration('PT30M'),
+      expect(store.getState().activityForm).toEqual({
+        ...initialState.activityForm,
         remainingTime: new Duration('PT18M'),
         progress: 0.4,
         isTimerRunning: true,
@@ -80,12 +80,8 @@ describe('Log activity', () => {
         activityForm: {
           ...initialState.activityForm,
           timestamp: undefined,
-          duration: undefined,
           formDisabled: true,
           logButtonDisabled: false,
-        },
-        currentTask: {
-          duration: new Duration('PT30M'),
           remainingTime: new Duration('PT1M'),
           progress: 0.97,
           isTimerRunning: true,
@@ -97,12 +93,8 @@ describe('Log activity', () => {
       expect(store.getState().activityForm).toEqual({
         ...initialState.activityForm,
         timestamp: undefined,
-        duration: new Duration('PT30M'),
         formDisabled: false,
         logButtonDisabled: false,
-      });
-      expect(store.getState().currentTask).toEqual({
-        duration: new Duration('PT30M'),
         remainingTime: new Duration('PT0S'),
         progress: 1.0,
         isTimerRunning: true,
@@ -112,8 +104,8 @@ describe('Log activity', () => {
     test('Stops timer and resets progress', async () => {
       let store = createStore({
         ...initialState,
-        currentTask: {
-          duration: new Duration('PT30M'),
+        activityForm: {
+          ...initialState.activityForm,
           remainingTime: new Duration('PT12M'),
           progress: 0.6,
           isTimerRunning: true,
@@ -123,8 +115,8 @@ describe('Log activity', () => {
 
       await stopTimer(store, timer);
 
-      expect(store.getState().currentTask).toEqual({
-        duration: new Duration('PT30M'),
+      expect(store.getState().activityForm).toEqual({
+        ...initialState.activityForm,
         remainingTime: new Duration('PT30M'),
         progress: 0.0,
         isTimerRunning: false,
@@ -164,7 +156,7 @@ describe('Log activity', () => {
     });
     expect(api.postLogActivity).toHaveBeenNthCalledWith(1, {
       timestamp: new Date('2023-10-07T13:30Z'),
-      duration: new Duration(1800),
+      duration: new Duration('PT30M'),
       client: 'Muspellheim',
       project: 'Activity Sampling',
       task: 'Log activity',

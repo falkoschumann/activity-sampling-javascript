@@ -32,7 +32,7 @@ export async function setActivity({ client, project, task, notes }, store) {
 }
 
 export async function logActivity({ timestamp = new Date() } = {}, store, api) {
-  let duration = store.getState().currentTask.duration;
+  let duration = store.getState().activityForm.duration;
   let { client, project, task, notes } = store.getState().activityForm;
   let activity = { timestamp, duration, client, project, task, notes };
   await api.postLogActivity(activity);
