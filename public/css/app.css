@@ -56,23 +56,23 @@ m-activity-sampling-app {
   padding: 0 8px;
 }
 
-m-activity-form label {
+.activity-form label {
   display: block;
   margin-bottom: 2px;
   padding-left: 0.5em;
 }
 
-m-activity-form input {
+.activity-form input {
   display: block;
   margin-bottom: 6px;
   width: calc(100% - 10px);
 }
 
-m-activity-form button {
+.activity-form button {
   width: 100%;
 }
 
-m-current-task {
+.current-task {
   align-items: center;
   display: grid;
   gap: 4px;
@@ -82,28 +82,28 @@ m-current-task {
   place-items: center;
 }
 
-m-current-task .caption.active {
+.current-task .caption.active {
   color: var(--active-color);
 }
 
-m-current-task progress {
+.current-task progress {
   width: 100%;
 }
 
-m-current-task button {
+.current-task button {
   grid-column: 2 / 3;
   grid-row: 1 / 3;
   width: 34px;
   height: 34px;
 }
 
-m-current-task button svg {
+.current-task button svg {
   display: block;
   cursor: pointer;
   fill: var(--dark-color);
 }
 
-m-current-task button[aria-pressed='true'] svg {
+.current-task button[aria-pressed='true'] svg {
   fill: var(--active-color);
 }
 
