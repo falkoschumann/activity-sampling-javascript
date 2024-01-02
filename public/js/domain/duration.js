@@ -2,7 +2,7 @@ export class Duration {
   static ZERO = new Duration(0);
 
   /**
-   * @param {number|string} [value=0] - The duration in seconds or an ISO 8601 string.
+   * @param {number|string|Duration} [value=0] - The duration in seconds or an ISO 8601 string.
    */
   constructor(value) {
     if (value == null) {
@@ -11,8 +11,12 @@ export class Duration {
       this.seconds = Duration.parse(value).seconds;
     } else if (typeof value === 'number') {
       this.seconds = value;
+    } else if (value instanceof Duration) {
+      this.seconds = value.seconds;
     } else {
-      throw new TypeError('`seconds` must be a number or an ISO 8601 string');
+      throw new TypeError(
+        'The parameter `value` must be a number, an ISO 8601 string or an other `Duration` object.',
+      );
     }
   }
 
