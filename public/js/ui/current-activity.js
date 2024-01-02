@@ -22,6 +22,10 @@ class CurrentActivity extends Component {
   }
 
   getView() {
+    return html`${this.#getActivityForm()}${this.#getCurrentTaskView()}`;
+  }
+
+  #getActivityForm() {
     return html`
       <form class="activity-form" @submit=${(e) => this.#onSubmit(e)}>
         <div>
@@ -66,6 +70,11 @@ class CurrentActivity extends Component {
         </div>
         <button type="submit">Log</button>
       </form>
+    `;
+  }
+
+  #getCurrentTaskView() {
+    return html`
       <div class="current-task">
         <span class="caption">${this.state.remainingTime}</span>
         <progress max="1" value="${this.state.progress}"></progress>
