@@ -3,7 +3,7 @@ import { html } from '../../vendor/lit-html.js';
 import { Component } from './component.js';
 import * as actions from './actions.js';
 
-class ActivityForm extends Component {
+class CurrentActivity extends Component {
   disconnectedCallback() {
     super.disconnectedCallback();
     actions.stopTimer();
@@ -23,49 +23,51 @@ class ActivityForm extends Component {
 
   getView() {
     return html`
-      <form @submit=${(e) => this.#onSubmit(e)}>
-        <div>
-          <label class="caption" for="client">Client</label>
-          <input
-            type="text"
-            required
-            id="client"
-            name="client"
-            @keyup=${(e) => this.#onInput(e)}
-          />
-        </div>
-        <div>
-          <label class="caption" for="project">Project</label>
-          <input
-            type="text"
-            required
-            id="project"
-            name="project"
-            @keyup=${(e) => this.#onInput(e)}
-          />
-        </div>
-        <div>
-          <label class="caption" for="task">Task</label>
-          <input
-            type="text"
-            required
-            id="task"
-            name="task"
-            @keyup=${(e) => this.#onInput(e)}
-          />
-        </div>
-        <div>
-          <label class="caption" for="notes">Notes</label>
-          <input
-            type="text"
-            required
-            id="notes"
-            name="notes"
-            @keyup=${(e) => this.#onInput(e)}
-          />
-        </div>
-        <button type="submit">Log</button>
-      </form>
+      <m-activity-form>
+        <form @submit=${(e) => this.#onSubmit(e)}>
+          <div>
+            <label class="caption" for="client">Client</label>
+            <input
+              type="text"
+              required
+              id="client"
+              name="client"
+              @keyup=${(e) => this.#onInput(e)}
+            />
+          </div>
+          <div>
+            <label class="caption" for="project">Project</label>
+            <input
+              type="text"
+              required
+              id="project"
+              name="project"
+              @keyup=${(e) => this.#onInput(e)}
+            />
+          </div>
+          <div>
+            <label class="caption" for="task">Task</label>
+            <input
+              type="text"
+              required
+              id="task"
+              name="task"
+              @keyup=${(e) => this.#onInput(e)}
+            />
+          </div>
+          <div>
+            <label class="caption" for="notes">Notes</label>
+            <input
+              type="text"
+              required
+              id="notes"
+              name="notes"
+              @keyup=${(e) => this.#onInput(e)}
+            />
+          </div>
+          <button type="submit">Log</button>
+        </form>
+      </m-activity-form>
       <m-current-task>
         <span class="caption">${this.state.remainingTime}</span>
         <progress max="1" value="${this.state.progress}"></progress>
@@ -121,4 +123,4 @@ class ActivityForm extends Component {
   };
 }
 
-window.customElements.define('m-activity-form', ActivityForm);
+window.customElements.define('m-current-activity', CurrentActivity);
