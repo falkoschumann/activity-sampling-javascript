@@ -113,13 +113,13 @@ m-recent-activities {
   flex-direction: column;
 }
 
-m-working-days {
+.working-days {
   display: block;
   flex: 1 1 1px;
   overflow-y: auto;
 }
 
-m-working-days h4 {
+.working-days h4 {
   margin: 0;
   padding: 0.4em 0;
   position: sticky;
@@ -128,7 +128,7 @@ m-working-days h4 {
   background: var(--main-background-color);
 }
 
-m-working-days li {
+.working-days li {
   display: flex;
   padding: 8px;
 
@@ -137,17 +137,17 @@ m-working-days li {
   list-style-type: none;
 }
 
-m-working-days li :first-child {
+.working-days li :first-child {
   min-width: 48px;
 }
 
-m-time-summary {
+.time-summary {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
 }
 
-m-time-summary > div {
+.time-summary > div {
   padding: 4px;
   width: 120px;
 
@@ -155,6 +155,6 @@ m-time-summary > div {
   text-align: center;
 }
 
-m-time-summary .caption {
+.time-summary .caption {
   padding-bottom: 4px;
 }
