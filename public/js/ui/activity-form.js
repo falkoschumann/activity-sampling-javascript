@@ -4,6 +4,11 @@ import { Component } from './component.js';
 import * as actions from './actions.js';
 
 class ActivityForm extends Component {
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    actions.stopTimer();
+  }
+
   updateView() {
     super.updateView();
     this.querySelector('#client').value = this.state.client;
@@ -61,6 +66,17 @@ class ActivityForm extends Component {
         </div>
         <button type="submit">Log</button>
       </form>
+      <m-current-task>
+        <span class="caption">${this.state.remainingTime}</span>
+        <progress max="1" value="${this.state.progress}"></progress>
+        <button
+          id="toggle-timer"
+          aria-label="Start timer"
+          @click=${this.#handleToggleTimer}
+        >
+          <span class="material-icons">punch_clock</span>
+        </button>
+      </m-current-task>
     `;
   }
 
@@ -90,6 +106,19 @@ class ActivityForm extends Component {
     };
     actions.logActivity(command);
   }
+
+  #handleToggleTimer = () => {
+    let button = this.querySelector('#toggle-timer');
+    if (this.state.isTimerRunning) {
+      actions.stopTimer();
+      button.setAttribute('aria-label', 'Start timer');
+      button.setAttribute('aria-pressed', 'false');
+    } else {
+      actions.startTimer();
+      button.setAttribute('aria-label', 'Stop timer');
+      button.setAttribute('aria-pressed', 'true');
+    }
+  };
 }
 
 window.customElements.define('m-activity-form', ActivityForm);
