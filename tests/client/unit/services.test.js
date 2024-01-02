@@ -33,7 +33,7 @@ describe('Log activity', () => {
       project: 'Activity Sampling',
       task: 'Enters activity',
       notes: 'Need more tests',
-      logButtonDisabled: false,
+      isLogButtonDisabled: false,
     });
   });
 
@@ -80,8 +80,8 @@ describe('Log activity', () => {
         activityForm: {
           ...initialState.activityForm,
           timestamp: undefined,
-          formDisabled: true,
-          logButtonDisabled: false,
+          isFormDisabled: true,
+          isLogButtonDisabled: false,
           remainingTime: new Duration('PT1M'),
           progress: 0.97,
           isTimerRunning: true,
@@ -93,8 +93,8 @@ describe('Log activity', () => {
       expect(store.getState().activityForm).toEqual({
         ...initialState.activityForm,
         timestamp: undefined,
-        formDisabled: false,
-        logButtonDisabled: false,
+        isFormDisabled: false,
+        isLogButtonDisabled: false,
         remainingTime: new Duration('PT0S'),
         progress: 1.0,
         isTimerRunning: true,
@@ -152,7 +152,7 @@ describe('Log activity', () => {
       project: 'Activity Sampling',
       task: 'Log activity',
       notes: 'Log the activity',
-      logButtonDisabled: true,
+      isLogButtonDisabled: true,
     });
     expect(api.postLogActivity).toHaveBeenNthCalledWith(1, {
       timestamp: new Date('2023-10-07T13:30Z'),

@@ -8,8 +8,8 @@ export const initialState = {
     project: '',
     task: '',
     notes: '',
-    formDisabled: false,
-    logButtonDisabled: false,
+    isFormDisabled: false,
+    isLogButtonDisabled: false,
     remainingTime: new Duration('PT30M'),
     progress: 0,
     isTimerRunning: false,
@@ -67,13 +67,13 @@ function timerStopped(state) {
 
 function timerTicked(state, { duration }) {
   let remainingTime = new Duration(state.activityForm.remainingTime - duration);
-  let formDisabled = state.activityForm.formDisabled;
+  let isFormDisabled = state.activityForm.isFormDisabled;
   if (remainingTime <= 0) {
-    formDisabled = false;
+    isFormDisabled = false;
   }
   let activityForm = {
     ...state.activityForm,
-    formDisabled,
+    isFormDisabled,
     remainingTime,
     progress: 1.0 - remainingTime / state.activityForm.duration,
   };
@@ -99,7 +99,7 @@ function activityLogged(state) {
     ...state,
     activityForm: {
       ...state.activityForm,
-      logButtonDisabled: true,
+      isLogButtonDisabled: true,
     },
   };
 }
