@@ -1,10 +1,8 @@
 import * as services from '../application/services.js';
-import { reducer } from '../domain/reducer.js';
-import { createStore } from '../domain/store.js';
 import { Api } from '../infrastructure/api.js';
 import { Timer } from '../infrastructure/timer.js';
+import { store } from './store.js';
 
-export const store = createStore(reducer);
 const api = globalThis.activitySampling?.api ?? new Api();
 const timer = new Timer();
 
