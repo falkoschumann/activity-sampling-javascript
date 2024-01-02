@@ -73,26 +73,6 @@ class CurrentActivity extends Component {
     `;
   }
 
-  #getCurrentTaskView() {
-    return html`
-      <div class="current-task">
-        <span class="caption">${this.state.remainingTime}</span>
-        <progress max="1" value="${this.state.progress}"></progress>
-        <button
-          id="toggle-timer"
-          aria-label="Start timer"
-          @click=${this.#handleToggleTimer}
-        >
-          <span class="material-icons">punch_clock</span>
-        </button>
-      </div>
-    `;
-  }
-
-  #onInput({ target: { name, value } }) {
-    actions.activityUpdated({ name, value });
-  }
-
   #onSubmit(event) {
     event.preventDefault();
     if (this.#validateForm(event.target)) {
@@ -116,7 +96,27 @@ class CurrentActivity extends Component {
     actions.logActivity(command);
   }
 
-  #handleToggleTimer = () => {
+  #onInput({ target: { name, value } }) {
+    actions.activityUpdated({ name, value });
+  }
+
+  #getCurrentTaskView() {
+    return html`
+      <div class="current-task">
+        <span class="caption">${this.state.remainingTime}</span>
+        <progress max="1" value="${this.state.progress}"></progress>
+        <button
+          id="toggle-timer"
+          aria-label="Start timer"
+          @click=${() => this.#handleToggleTimer()}
+        >
+          <span class="material-icons">punch_clock</span>
+        </button>
+      </div>
+    `;
+  }
+
+  #handleToggleTimer() {
     let button = this.querySelector('#toggle-timer');
     if (this.state.isTimerRunning) {
       actions.stopTimer();
@@ -127,7 +127,7 @@ class CurrentActivity extends Component {
       button.setAttribute('aria-label', 'Stop timer');
       button.setAttribute('aria-pressed', 'true');
     }
-  };
+  }
 }
 
 window.customElements.define('m-current-activity', CurrentActivity);

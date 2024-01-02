@@ -9,6 +9,10 @@ class RecentActivities extends Component {
     actions.getRecentActivities();
   }
 
+  extractState(state) {
+    return state.recentActivities;
+  }
+
   getView() {
     return html` ${this.#getWorkingDaysView()} ${this.#getTimeSummaryView()} `;
   }
@@ -52,6 +56,10 @@ class RecentActivities extends Component {
     `;
   }
 
+  #onClick({ client, project, task, notes }) {
+    actions.setActivity({ client, project, task, notes });
+  }
+
   #getTimeSummaryView() {
     return html`
       <div class="time-summary">
@@ -85,14 +93,6 @@ class RecentActivities extends Component {
         </div>
       </div>
     `;
-  }
-
-  #onClick({ client, project, task, notes }) {
-    actions.setActivity({ client, project, task, notes });
-  }
-
-  extractState(state) {
-    return state.recentActivities;
   }
 }
 
