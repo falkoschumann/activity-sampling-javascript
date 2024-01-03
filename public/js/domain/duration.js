@@ -82,8 +82,4 @@ export class Duration {
   valueOf() {
     return this.seconds;
   }
-
-  equals(other) {
-    return this.seconds === other.seconds;
-  }
 }

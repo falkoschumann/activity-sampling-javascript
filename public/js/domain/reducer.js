@@ -28,9 +28,9 @@ export const initialState = {
 export function reducer(state = initialState, action) {
   switch (action.type) {
     case 'timer-started':
-      return timerStarted(state, action);
+      return timerStarted(state);
     case 'timer-stopped':
-      return timerStopped(state, action);
+      return timerStopped(state);
     case 'timer-ticked':
       return timerTicked(state, action);
     case 'activity-updated':
@@ -38,7 +38,7 @@ export function reducer(state = initialState, action) {
     case 'set-activity':
       return setActivity(state, action);
     case 'activity-logged':
-      return activityLogged(state, action);
+      return activityLogged(state);
     case 'recent-activities-loaded':
       return recentActivitiesLoaded(state, action);
     default:
