@@ -9,7 +9,7 @@ Periodically ask the user about their current activity and log it for analysis.
 ### Log Activity
 
 -   [x] Enters activity
--   [ ] Asks periodically what I am working on
+-   [x] Asks periodically what I am working on
 -   [x] Logs the activity
 -   [x] Selects an activity from recent activities
 
