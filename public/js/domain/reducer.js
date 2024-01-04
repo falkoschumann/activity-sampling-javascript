@@ -9,7 +9,6 @@ export const initialState = {
     task: '',
     notes: '',
     isFormDisabled: false,
-    isLogButtonDisabled: false,
     remainingTime: new Duration('PT30M'),
     progress: 0,
     isTimerRunning: false,
@@ -49,7 +48,13 @@ export function reducer(state = initialState, action) {
 function timerStarted(state) {
   return {
     ...state,
-    activityForm: { ...state.activityForm, isTimerRunning: true },
+    activityForm: {
+      ...state.activityForm,
+      isFormDisabled: true,
+      remainingTime: state.activityForm.duration,
+      progress: 0,
+      isTimerRunning: true,
+    },
   };
 }
 
@@ -58,6 +63,7 @@ function timerStopped(state) {
     ...state,
     activityForm: {
       ...state.activityForm,
+      isFormDisabled: false,
       remainingTime: state.activityForm.duration,
       progress: 0,
       isTimerRunning: false,
@@ -66,16 +72,19 @@ function timerStopped(state) {
 }
 
 function timerTicked(state, { duration }) {
-  let remainingTime = new Duration(state.activityForm.remainingTime - duration);
   let isFormDisabled = state.activityForm.isFormDisabled;
+  let remainingTime = new Duration(state.activityForm.remainingTime - duration);
+  let progress = 1 - remainingTime / state.activityForm.duration;
   if (remainingTime <= 0) {
     isFormDisabled = false;
+    remainingTime = state.activityForm.duration;
+    progress = 0;
   }
   let activityForm = {
     ...state.activityForm,
     isFormDisabled,
     remainingTime,
-    progress: 1.0 - remainingTime / state.activityForm.duration,
+    progress,
   };
   return { ...state, activityForm };
 }
@@ -95,11 +104,15 @@ function setActivity(state, { client, project, task, notes }) {
 }
 
 function activityLogged(state) {
+  let isFormDisabled = state.activityForm.isFormDisabled;
+  if (state.activityForm.isTimerRunning) {
+    isFormDisabled = true;
+  }
   return {
     ...state,
     activityForm: {
       ...state.activityForm,
-      isLogButtonDisabled: true,
+      isFormDisabled,
     },
   };
 }

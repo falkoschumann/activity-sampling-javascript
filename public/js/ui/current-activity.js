@@ -1,4 +1,4 @@
-import { html } from '../../vendor/lit-html.js';
+import { html, nothing } from '../../vendor/lit-html.js';
 
 import { Component } from './component.js';
 import * as actions from './actions.js';
@@ -27,15 +27,16 @@ class CurrentActivity extends Component {
 
   #getActivityForm() {
     return html`
-      <form class="activity-form" @submit=${(e) => this.#onSubmit(e)}>
+      <form class="activity-form" @submit=${(e) => this.#onSubmitForm(e)}>
         <div>
           <label class="caption" for="client">Client</label>
           <input
             type="text"
             required
+            disabled="${this.state.isFormDisabled ? '' : nothing}"
             id="client"
             name="client"
-            @keyup=${(e) => this.#onInput(e)}
+            @keyup=${(e) => this.#onInputChanged(e)}
           />
         </div>
         <div>
@@ -43,9 +44,10 @@ class CurrentActivity extends Component {
           <input
             type="text"
             required
+            disabled="${this.state.isFormDisabled ? '' : nothing}"
             id="project"
             name="project"
-            @keyup=${(e) => this.#onInput(e)}
+            @keyup=${(e) => this.#onInputChanged(e)}
           />
         </div>
         <div>
@@ -53,9 +55,10 @@ class CurrentActivity extends Component {
           <input
             type="text"
             required
+            disabled="${this.state.isFormDisabled ? '' : nothing}"
             id="task"
             name="task"
-            @keyup=${(e) => this.#onInput(e)}
+            @keyup=${(e) => this.#onInputChanged(e)}
           />
         </div>
         <div>
@@ -63,20 +66,26 @@ class CurrentActivity extends Component {
           <input
             type="text"
             required
+            disabled="${this.state.isFormDisabled ? '' : nothing}"
             id="notes"
             name="notes"
-            @keyup=${(e) => this.#onInput(e)}
+            @keyup=${(e) => this.#onInputChanged(e)}
           />
         </div>
-        <button type="submit">Log</button>
+        <button
+          type="submit"
+          disabled="${this.state.isFormDisabled ? '' : nothing}"
+        >
+          Log
+        </button>
       </form>
     `;
   }
 
-  #onSubmit(event) {
+  #onSubmitForm(event) {
     event.preventDefault();
     if (this.#validateForm(event.target)) {
-      this.#logActivity(event.target);
+      actions.logActivity();
     }
   }
 
@@ -85,18 +94,7 @@ class CurrentActivity extends Component {
     return form.checkValidity();
   }
 
-  #logActivity(form) {
-    let formData = new FormData(form);
-    let command = {
-      client: formData.get('client'),
-      project: formData.get('project'),
-      task: formData.get('task'),
-      notes: formData.get('notes'),
-    };
-    actions.logActivity(command);
-  }
-
-  #onInput({ target: { name, value } }) {
+  #onInputChanged({ target: { name, value } }) {
     actions.activityUpdated({ name, value });
   }
 

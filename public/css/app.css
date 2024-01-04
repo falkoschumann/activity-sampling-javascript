@@ -18,6 +18,11 @@ input {
   color: var(--main-color);
 }
 
+button[disabled],
+input[disabled] {
+  color: var(--light-color);
+}
+
 button {
   padding: 4px;
 

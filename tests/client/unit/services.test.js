@@ -19,35 +19,41 @@ describe('Log activity', () => {
   test('Enters activity', async () => {
     let store = createStore();
 
-    await activityUpdated({ name: 'client', value: 'Muspellheim' }, store);
-    await activityUpdated(
-      { name: 'project', value: 'Activity Sampling' },
-      store,
-    );
-    await activityUpdated({ name: 'task', value: 'Enters activity' }, store);
-    await activityUpdated({ name: 'notes', value: 'Need more tests' }, store);
+    await activityUpdated({ name: 'client', value: 'c1' }, store);
+    await activityUpdated({ name: 'project', value: 'p1' }, store);
+    await activityUpdated({ name: 'task', value: 't1' }, store);
+    await activityUpdated({ name: 'notes', value: 'n1' }, store);
 
     expect(store.getState().activityForm).toEqual({
       ...initialState.activityForm,
-      client: 'Muspellheim',
-      project: 'Activity Sampling',
-      task: 'Enters activity',
-      notes: 'Need more tests',
-      isLogButtonDisabled: false,
+      client: 'c1',
+      project: 'p1',
+      task: 't1',
+      notes: 'n1',
     });
   });
 
   describe('Asks periodically what I am working on', () => {
     test('Starts timer', async () => {
       let timer = new FakeTimer();
-      let store = createStore();
+      let store = createStore({
+        ...initialState,
+        activityForm: {
+          ...initialState.activityForm,
+          isFormDisabled: false,
+          remainingTime: new Duration('PT20M'),
+          progress: 0.2,
+          isTimerRunning: false,
+        },
+      });
 
       startTimer(store, timer);
 
       expect(store.getState().activityForm).toEqual({
         ...initialState.activityForm,
+        isFormDisabled: true,
         remainingTime: new Duration('PT30M'),
-        progress: 0.0,
+        progress: 0,
         isTimerRunning: true,
       });
       expect(timer.start).toBeCalledTimes(1);
@@ -58,6 +64,7 @@ describe('Log activity', () => {
         ...initialState,
         activityForm: {
           ...initialState.activityForm,
+          isFormDisabled: true,
           remainingTime: new Duration('PT21M'),
           progress: 0.7,
           isTimerRunning: true,
@@ -68,6 +75,7 @@ describe('Log activity', () => {
 
       expect(store.getState().activityForm).toEqual({
         ...initialState.activityForm,
+        isFormDisabled: true,
         remainingTime: new Duration('PT18M'),
         progress: 0.4,
         isTimerRunning: true,
@@ -81,7 +89,6 @@ describe('Log activity', () => {
           ...initialState.activityForm,
           timestamp: undefined,
           isFormDisabled: true,
-          isLogButtonDisabled: false,
           remainingTime: new Duration('PT1M'),
           progress: 0.97,
           isTimerRunning: true,
@@ -94,18 +101,18 @@ describe('Log activity', () => {
         ...initialState.activityForm,
         timestamp: undefined,
         isFormDisabled: false,
-        isLogButtonDisabled: false,
-        remainingTime: new Duration('PT0S'),
-        progress: 1.0,
+        remainingTime: new Duration('PT30M'),
+        progress: 0,
         isTimerRunning: true,
       });
     });
 
-    test('Stops timer and resets progress', async () => {
+    test('Stops timer and resets activity form', async () => {
       let store = createStore({
         ...initialState,
         activityForm: {
           ...initialState.activityForm,
+          isFormDisabled: true,
           remainingTime: new Duration('PT12M'),
           progress: 0.6,
           isTimerRunning: true,
@@ -117,50 +124,98 @@ describe('Log activity', () => {
 
       expect(store.getState().activityForm).toEqual({
         ...initialState.activityForm,
+        isFormDisabled: false,
         remainingTime: new Duration('PT30M'),
-        progress: 0.0,
+        progress: 0,
         isTimerRunning: false,
       });
       expect(timer.stop).toBeCalledTimes(1);
     });
   });
 
-  test('Logs the activity', async () => {
-    let store = createStore({
-      ...initialState,
-      activityForm: {
+  describe('Logs the activity', () => {
+    test('Leaves the form enabled if timer is not running', async () => {
+      let store = createStore({
+        ...initialState,
+        activityForm: {
+          ...initialState.activityForm,
+          client: 'c1',
+          project: 'p1',
+          task: 't1',
+          notes: 'n1',
+          isFormDisabled: false,
+          isTimerRunning: false,
+        },
+      });
+      let api = new FakeApi();
+
+      await logActivity(
+        {
+          timestamp: new Date('2023-10-07T13:30Z'),
+        },
+        store,
+        api,
+      );
+
+      expect(store.getState().activityForm).toEqual({
         ...initialState.activityForm,
-        client: 'Muspellheim',
-        project: 'Activity Sampling',
-        task: 'Log activity',
-        notes: 'Log the activity',
-      },
-    });
-    let api = new FakeApi();
-
-    await logActivity(
-      {
+        client: 'c1',
+        project: 'p1',
+        task: 't1',
+        notes: 'n1',
+        isFormDisabled: false,
+        isTimerRunning: false,
+      });
+      expect(api.postLogActivity).toHaveBeenNthCalledWith(1, {
         timestamp: new Date('2023-10-07T13:30Z'),
-      },
-      store,
-      api,
-    );
-
-    expect(store.getState().activityForm).toEqual({
-      ...initialState.activityForm,
-      client: 'Muspellheim',
-      project: 'Activity Sampling',
-      task: 'Log activity',
-      notes: 'Log the activity',
-      isLogButtonDisabled: true,
+        duration: new Duration('PT30M'),
+        client: 'c1',
+        project: 'p1',
+        task: 't1',
+        notes: 'n1',
+      });
     });
-    expect(api.postLogActivity).toHaveBeenNthCalledWith(1, {
-      timestamp: new Date('2023-10-07T13:30Z'),
-      duration: new Duration('PT30M'),
-      client: 'Muspellheim',
-      project: 'Activity Sampling',
-      task: 'Log activity',
-      notes: 'Log the activity',
+
+    test('Disables the form if timer is running', async () => {
+      let store = createStore({
+        ...initialState,
+        activityForm: {
+          ...initialState.activityForm,
+          client: 'c1',
+          project: 'p1',
+          task: 't1',
+          notes: 'n1',
+          isFormDisabled: false,
+          isTimerRunning: true,
+        },
+      });
+      let api = new FakeApi();
+
+      await logActivity(
+        {
+          timestamp: new Date('2023-10-07T13:30Z'),
+        },
+        store,
+        api,
+      );
+
+      expect(store.getState().activityForm).toEqual({
+        ...initialState.activityForm,
+        client: 'c1',
+        project: 'p1',
+        task: 't1',
+        notes: 'n1',
+        isFormDisabled: true,
+        isTimerRunning: true,
+      });
+      expect(api.postLogActivity).toHaveBeenNthCalledWith(1, {
+        timestamp: new Date('2023-10-07T13:30Z'),
+        duration: new Duration('PT30M'),
+        client: 'c1',
+        project: 'p1',
+        task: 't1',
+        notes: 'n1',
+      });
     });
   });
 
