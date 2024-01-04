@@ -23,8 +23,7 @@
     "transform": {},
     "verbose": true,
     "watchPathIgnorePatterns": [
-      "<rootDir>/data/",
-      "<rootDir>/public/"
+      "<rootDir>/data/"
     ]
   },
   "prettier": {
