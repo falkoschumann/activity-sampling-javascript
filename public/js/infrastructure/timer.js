@@ -1,8 +1,18 @@
 export class Timer {
+  #task;
+  #delay;
   #timerId;
 
-  start(task, delay) {
-    this.#timerId = setInterval(task, delay);
+  constructor(task, seconds = 1) {
+    this.#task = task;
+    this.#delay = seconds;
+  }
+
+  start() {
+    this.#timerId = setInterval(
+      () => this.#task(this.#delay),
+      this.#delay * 1000,
+    );
   }
 
   stop() {

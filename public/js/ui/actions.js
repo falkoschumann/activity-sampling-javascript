@@ -1,10 +1,13 @@
 import * as services from '../application/services.js';
+import { Duration } from '../domain/duration.js';
 import { Api } from '../infrastructure/api.js';
 import { Timer } from '../infrastructure/timer.js';
 import { store } from './store.js';
 
 const api = globalThis.activitySampling?.api ?? new Api();
-const timer = new Timer();
+const timer = new Timer((delay) =>
+  services.timerTicked({ duration: new Duration(delay) }, store),
+);
 
 export async function startTimer() {
   await services.startTimer(store, timer);

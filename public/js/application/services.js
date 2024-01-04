@@ -1,7 +1,5 @@
-import { Duration } from '../domain/duration.js';
-
 export async function startTimer(store, timer) {
-  timer.start(() => timerTicked(undefined, store), 1000);
+  timer.start();
   store.dispatch({ type: 'timer-started' });
 }
 
@@ -10,10 +8,7 @@ export async function stopTimer(store, timer) {
   store.dispatch({ type: 'timer-stopped' });
 }
 
-export async function timerTicked(
-  { duration = new Duration('PT1S') } = {},
-  store,
-) {
+export async function timerTicked({ duration }, store) {
   store.dispatch({ type: 'timer-ticked', duration });
 }
 
