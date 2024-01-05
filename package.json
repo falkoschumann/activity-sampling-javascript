@@ -4,6 +4,10 @@
   "author": "Falko Schumann",
   "license": "MIT",
   "type": "module",
+  "scripts": {
+    "start": "make start",
+    "test": "make test"
+  },
   "dependencies": {
     "csv": "6.3.6",
     "express": "4.18.2",
