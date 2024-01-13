@@ -40,6 +40,8 @@ export function reducer(state = initialState, action) {
       return activityLogged(state);
     case 'recent-activities-loaded':
       return recentActivitiesLoaded(state, action);
+    case 'hours-worked-loaded':
+      return hoursWorkedLoaded(state, action);
     default:
       return state;
   }
@@ -119,4 +121,8 @@ function activityLogged(state) {
 
 function recentActivitiesLoaded(state, { recentActivities }) {
   return { ...state, recentActivities };
+}
+
+function hoursWorkedLoaded(state, { hoursWorked }) {
+  return { ...state, hoursWorked };
 }

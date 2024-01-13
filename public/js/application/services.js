@@ -38,3 +38,8 @@ export async function getRecentActivities(store, api) {
   let recentActivities = await api.getRecentActivities();
   store.dispatch({ type: 'recent-activities-loaded', recentActivities });
 }
+
+export async function getHoursWorked(store, api) {
+  let hoursWorked = await api.getHoursWorked();
+  store.dispatch({ type: 'hours-worked-loaded', hoursWorked });
+}

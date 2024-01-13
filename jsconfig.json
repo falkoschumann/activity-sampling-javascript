@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "checkJs": true,
+    "lib": ["ES2022", "DOM"],
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "noEmit": true,
+    "target": "ES2022"
+  },
+  "include": ["public/js/**/*", "src/**/*", "tests/**/*"]
+}

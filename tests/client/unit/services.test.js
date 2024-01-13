@@ -2,6 +2,7 @@ import { describe, expect, jest, test } from '@jest/globals';
 
 import {
   activityUpdated,
+  getHoursWorked,
   getRecentActivities,
   logActivity,
   timerTicked,
@@ -276,6 +277,24 @@ describe('Recent activities', () => {
   });
 });
 
+describe('Hours worked', () => {
+  test('Summarize hours worked for clients', async () => {
+    let store = createStore();
+    let api = new FakeApi();
+
+    await getHoursWorked(store, api);
+
+    expect(store.getState().hoursWorked).toEqual({
+      clients: [
+        {
+          name: 'client 1',
+          hours: new Duration('PT1H30M'),
+        },
+      ],
+    });
+  });
+});
+
 function createStore(state = initialState) {
   return new Store(reducer, state);
 }
@@ -302,12 +321,25 @@ class FakeApi {
         hoursThisMonth: 1.5,
       },
     },
+    hoursWorked = {
+      clients: [
+        {
+          name: 'client 1',
+          hours: new Duration('PT1H30M'),
+        },
+      ],
+    },
   } = {}) {
     this.recentActivities = recentActivities;
+    this.hoursWorked = hoursWorked;
   }
 
   async getRecentActivities() {
     return this.recentActivities;
+  }
+
+  async getHoursWorked() {
+    return this.hoursWorked;
   }
 }
 
