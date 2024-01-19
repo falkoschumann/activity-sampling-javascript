@@ -7,5 +7,5 @@
     "noEmit": true,
     "target": "ES2022"
   },
-  "include": ["public/js/**/*", "src/**/*", "tests/**/*"]
+  "include": ["**/src/**/*", "**/test/**/*"]
 }

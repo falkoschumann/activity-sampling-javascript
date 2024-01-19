@@ -1,0 +1,27 @@
+{
+  "name": "activity-sampling-server",
+  "version": "0.1.0",
+  "author": "Falko Schumann",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "type": "module",
+  "scripts": {
+    "start": "node src/main.js",
+    "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx jest",
+    "dev": "npx nodemon src/main.js"
+  },
+  "dependencies": {
+    "activity-sampling-shared": "0.1.0",
+    "csv": "6.3.6",
+    "express": "4.18.2"
+  },
+  "devDependencies": {
+    "@types/express": "4.17.21",
+    "@jest/globals": "27.0.6",
+    "@types/supertest": "6.0.2",
+    "jest": "27.0.6",
+    "supertest": "6.3.4"
+  }
+}

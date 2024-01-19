@@ -1,0 +1,25 @@
+{
+  "name": "activity-sampling-webclient",
+  "version": "0.1.0",
+  "author": "Falko Schumann",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "type": "module",
+  "scripts": {
+    "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx jest",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "activity-sampling-shared": "0.1.0",
+    "lit-html": "3.1.1"
+  },
+  "devDependencies": {
+    "@jest/globals": "27.0.6",
+    "jest": "27.0.6",
+    "vite": "5.0.8"
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "name": "activity-sampling",
+  "name": "activity-sampling-shared",
   "version": "0.1.0",
   "author": "Falko Schumann",
   "license": "MIT",
@@ -7,14 +7,12 @@
     "node": ">=18.0.0"
   },
   "type": "module",
-  "workspaces": [
-    "packages/*"
-  ],
+  "main": "./src/index.js",
   "scripts": {
-    "start": "make start",
-    "test": "make test"
+    "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx jest"
   },
   "devDependencies": {
+    "@jest/globals": "27.0.6",
     "jest": "27.0.6"
   }
 }

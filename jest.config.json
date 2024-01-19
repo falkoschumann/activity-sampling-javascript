@@ -1,0 +1,8 @@
+{
+  "globalSetup": "./jest.setup.js",
+  "transform": {},
+  "verbose": true,
+  "watchPathIgnorePatterns": [
+    "<rootDir>/packages/activity-sampling-server/data/"
+  ]
+}
