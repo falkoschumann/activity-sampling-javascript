@@ -33,8 +33,8 @@ export class Duration {
     return new Duration(seconds);
   }
 
-  plus(duration) {
-    this.seconds += duration;
+  add(other) {
+    this.seconds += other;
     return this;
   }
 

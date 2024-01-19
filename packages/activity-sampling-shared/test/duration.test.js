@@ -1,6 +1,6 @@
 import { describe, expect, test } from '@jest/globals';
 
-import { Duration } from '../src/index.js';
+import { Duration } from '../src';
 
 describe('Duration', () => {
   describe('Creation', () => {
@@ -49,11 +49,11 @@ describe('Duration', () => {
     });
   });
 
-  describe('Add durations', () => {
-    test('Adds durations', () => {
+  describe('Add duration', () => {
+    test('Adds duration', () => {
       let duration = new Duration(3600);
 
-      duration.plus(new Duration(1800));
+      duration.add(new Duration(1800));
 
       expect(duration).toEqual(new Duration(5400));
     });
@@ -61,7 +61,7 @@ describe('Duration', () => {
     test('Adds seconds', () => {
       let duration = new Duration(3600);
 
-      duration.plus(1800);
+      duration.add(1800);
 
       expect(duration).toEqual(new Duration(5400));
     });

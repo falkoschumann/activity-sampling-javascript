@@ -80,25 +80,25 @@ class TimeSummaryBuilder {
 
   #addActivityToHoursToday(activity) {
     if (isToday(activity.timestamp, this.#today)) {
-      this.#timeSummary.hoursToday.plus(activity.duration);
+      this.#timeSummary.hoursToday.add(activity.duration);
     }
   }
 
   #addActivityToHoursYesterday(activity) {
     if (isYesterday(activity.timestamp, this.#today)) {
-      this.#timeSummary.hoursYesterday.plus(activity.duration);
+      this.#timeSummary.hoursYesterday.add(activity.duration);
     }
   }
 
   #addActivityToHoursThisWeek(activity) {
     if (isThisWeek(activity.timestamp, this.#today)) {
-      this.#timeSummary.hoursThisWeek.plus(activity.duration);
+      this.#timeSummary.hoursThisWeek.add(activity.duration);
     }
   }
 
   #addActivityToHoursThisMonth(activity) {
     if (isThisMonth(activity.timestamp, this.#today)) {
-      this.#timeSummary.hoursThisMonth.plus(activity.duration);
+      this.#timeSummary.hoursThisMonth.add(activity.duration);
     }
   }
 }
