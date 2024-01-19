@@ -2,42 +2,44 @@ import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 
 import { Store } from '../../src/domain/store.js';
 
-describe('Subscribe', () => {
-  let store;
+describe('Store', () => {
+  describe('Subscribe', () => {
+    let store;
 
-  beforeEach(() => {
-    store = new Store(reducer, { user: 'Alice' });
-  });
+    beforeEach(() => {
+      store = new Store(reducer, { user: 'Alice' });
+    });
 
-  test('Does not emit event, if state is not changed', () => {
-    let listener = jest.fn();
-    store.subscribe(listener);
+    test('Does not emit event, if state is not changed', () => {
+      let listener = jest.fn();
+      store.subscribe(listener);
 
-    store.dispatch({ type: 'unknown-action' });
+      store.dispatch({ type: 'unknown-action' });
 
-    expect(store.getState()).toEqual({ user: 'Alice' });
-    expect(listener).not.toBeCalled();
-  });
+      expect(store.getState()).toEqual({ user: 'Alice' });
+      expect(listener).not.toBeCalled();
+    });
 
-  test('Emits event, if state is changed', () => {
-    let listener = jest.fn();
-    store.subscribe(listener);
+    test('Emits event, if state is changed', () => {
+      let listener = jest.fn();
+      store.subscribe(listener);
 
-    store.dispatch({ type: 'user-changed', name: 'Bob' });
+      store.dispatch({ type: 'user-changed', name: 'Bob' });
 
-    expect(store.getState()).toEqual({ user: 'Bob' });
-    expect(listener).toBeCalledTimes(1);
-  });
+      expect(store.getState()).toEqual({ user: 'Bob' });
+      expect(listener).toBeCalledTimes(1);
+    });
 
-  test('Does not emit event, if listener is unsubscribed', () => {
-    let listener = jest.fn();
-    let unsubscribe = store.subscribe(listener);
+    test('Does not emit event, if listener is unsubscribed', () => {
+      let listener = jest.fn();
+      let unsubscribe = store.subscribe(listener);
 
-    unsubscribe();
-    store.dispatch({ type: 'user-changed', name: 'Bob' });
+      unsubscribe();
+      store.dispatch({ type: 'user-changed', name: 'Bob' });
 
-    expect(store.getState()).toEqual({ user: 'Bob' });
-    expect(listener).not.toBeCalled();
+      expect(store.getState()).toEqual({ user: 'Bob' });
+      expect(listener).not.toBeCalled();
+    });
   });
 });
 

@@ -7,66 +7,68 @@ import { createActivity } from '../testdata.js';
 
 const fileName = new URL('../../data/activity-log.test.csv', import.meta.url);
 
-beforeEach(() => {
-  rmSync(fileName, { force: true });
-});
+describe('Repository', () => {
+  beforeEach(() => {
+    rmSync(fileName, { force: true });
+  });
 
-describe('FindAll', () => {
-  test('Returns list of activities', async () => {
-    let repository = new Repository({
-      fileName: new URL('../data/example.csv', import.meta.url),
+  describe('FindAll', () => {
+    test('Returns list of activities', async () => {
+      let repository = new Repository({
+        fileName: new URL('../data/example.csv', import.meta.url),
+      });
+
+      let activities = await repository.findAll();
+
+      expect(activities).toEqual([
+        {
+          timestamp: new Date('2023-10-07T11:00Z'),
+          duration: new Duration('PT30M'),
+          client: 'Muspellheim',
+          project: 'Activity Sampling',
+          task: 'Recent Activities',
+          notes: 'Show my recent activities',
+        },
+      ]);
     });
 
-    let activities = await repository.findAll();
+    test('Returns empty list, if file does not exist', async () => {
+      let repository = new Repository({
+        fileName: new URL('../data/non-existent.csv', import.meta.url),
+      });
 
-    expect(activities).toEqual([
-      {
-        timestamp: new Date('2023-10-07T11:00Z'),
-        duration: new Duration('PT30M'),
-        client: 'Muspellheim',
-        project: 'Activity Sampling',
-        task: 'Recent Activities',
-        notes: 'Show my recent activities',
-      },
-    ]);
-  });
+      let activities = await repository.findAll();
 
-  test('Returns empty list, if file does not exist', async () => {
-    let repository = new Repository({
-      fileName: new URL('../data/non-existent.csv', import.meta.url),
+      expect(activities).toEqual([]);
     });
 
-    let activities = await repository.findAll();
+    test('Reports an error, if file is corrupt', async () => {
+      let repository = new Repository({
+        fileName: new URL('../data/corrupt.csv', import.meta.url),
+      });
 
-    expect(activities).toEqual([]);
+      await expect(repository.findAll()).rejects.toThrow();
+    });
   });
 
-  test('Reports an error, if file is corrupt', async () => {
-    let repository = new Repository({
-      fileName: new URL('../data/corrupt.csv', import.meta.url),
+  describe('Add', () => {
+    test('Creates file, if it does not exist', async () => {
+      let repository = new Repository({ fileName });
+
+      await repository.add(createActivity());
+
+      let activities = await repository.findAll();
+      expect(activities).toEqual([createActivity()]);
     });
 
-    await expect(repository.findAll()).rejects.toThrow();
-  });
-});
+    test('Adds activtiy to existing file', async () => {
+      let repository = new Repository({ fileName });
+      await repository.add(createActivity());
 
-describe('Add', () => {
-  test('Creates file, if it does not exist', async () => {
-    let repository = new Repository({ fileName });
+      await repository.add(createActivity());
 
-    await repository.add(createActivity());
-
-    let activities = await repository.findAll();
-    expect(activities).toEqual([createActivity()]);
-  });
-
-  test('Adds activtiy to existing file', async () => {
-    let repository = new Repository({ fileName });
-    await repository.add(createActivity());
-
-    await repository.add(createActivity());
-
-    let activities = await repository.findAll();
-    expect(activities).toEqual([createActivity(), createActivity()]);
+      let activities = await repository.findAll();
+      expect(activities).toEqual([createActivity(), createActivity()]);
+    });
   });
 });
