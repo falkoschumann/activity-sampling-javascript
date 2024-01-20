@@ -1,11 +1,14 @@
-import { beforeEach, describe, expect, test } from '@jest/globals';
 import { rmSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { beforeEach, describe, expect, test } from '@jest/globals';
 import request from 'supertest';
 
 import { Repository } from '../../src/infrastructure/repository.js';
 import { ExpressApp } from '../../src/ui/express-app.js';
 
-const fileName = new URL('../../data/activity-log.test.csv', import.meta.url);
+const fileName = fileURLToPath(
+  new URL('../../data/activity-log.test.csv', import.meta.url),
+);
 let repository;
 let app;
 

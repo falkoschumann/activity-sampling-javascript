@@ -5,7 +5,6 @@ import {
   getRecentActivities,
   logActivity,
 } from '../../src/application/services.js';
-
 import { createActivity } from '../testdata.js';
 
 describe('Services', () => {

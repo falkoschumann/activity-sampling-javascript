@@ -1,5 +1,6 @@
-import { existsSync } from 'node:fs';
+import { existsSync, mkdirSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
+import { dirname } from 'node:path';
 import { parse, stringify } from 'csv';
 
 import { Duration } from 'activity-sampling-shared';
@@ -61,6 +62,10 @@ export class Repository {
 
   #writeCsv(activity) {
     let existsFile = existsSync(this.#fileName);
+    if (!existsFile) {
+      const pathName = dirname(this.#fileName);
+      mkdirSync(pathName, { recursive: true });
+    }
     return stringify([this.#createRecord(activity)], {
       header: !existsFile,
       columns: ['timestamp', 'duration', 'client', 'project', 'task', 'notes'],
