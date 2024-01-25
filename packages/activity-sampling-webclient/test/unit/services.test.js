@@ -14,6 +14,7 @@ import {
 import { initialState, reducer } from '../../src/domain/reducer.js';
 import { Store } from '../../src/domain/store.js';
 import { createActivity } from '../testdata.js';
+import { Api } from '../../src/infrastructure/api.js';
 
 describe('Services', () => {
   describe('Log activity', () => {
@@ -148,12 +149,13 @@ describe('Services', () => {
             isTimerRunning: false,
           },
         });
-        let api = new FakeApi();
+        let api = Api.createNull({
+          responses: [{ status: 201 }],
+        });
+        const activitiesLogged = api.trackActivitiesLogged();
 
         await logActivity(
-          {
-            timestamp: new Date('2023-10-07T13:30Z'),
-          },
+          { timestamp: new Date('2023-10-07T13:30Z') },
           store,
           api,
         );
@@ -167,14 +169,16 @@ describe('Services', () => {
           isFormDisabled: false,
           isTimerRunning: false,
         });
-        expect(api.postLogActivity).toHaveBeenNthCalledWith(1, {
-          timestamp: new Date('2023-10-07T13:30Z'),
-          duration: new Duration('PT30M'),
-          client: 'c1',
-          project: 'p1',
-          task: 't1',
-          notes: 'n1',
-        });
+        expect(activitiesLogged.data).toEqual([
+          {
+            timestamp: new Date('2023-10-07T13:30Z'),
+            duration: new Duration('PT30M'),
+            client: 'c1',
+            project: 'p1',
+            task: 't1',
+            notes: 'n1',
+          },
+        ]);
       });
 
       test('Disables the form if timer is running', async () => {
@@ -190,12 +194,13 @@ describe('Services', () => {
             isTimerRunning: true,
           },
         });
-        let api = new FakeApi();
+        let api = Api.createNull({
+          responses: [{ status: 201 }],
+        });
+        const activitiesLogged = api.trackActivitiesLogged();
 
         await logActivity(
-          {
-            timestamp: new Date('2023-10-07T13:30Z'),
-          },
+          { timestamp: new Date('2023-10-07T13:30Z') },
           store,
           api,
         );
@@ -209,14 +214,16 @@ describe('Services', () => {
           isFormDisabled: true,
           isTimerRunning: true,
         });
-        expect(api.postLogActivity).toHaveBeenNthCalledWith(1, {
-          timestamp: new Date('2023-10-07T13:30Z'),
-          duration: new Duration('PT30M'),
-          client: 'c1',
-          project: 'p1',
-          task: 't1',
-          notes: 'n1',
-        });
+        expect(activitiesLogged.data).toEqual([
+          {
+            timestamp: new Date('2023-10-07T13:30Z'),
+            duration: new Duration('PT30M'),
+            client: 'c1',
+            project: 'p1',
+            task: 't1',
+            notes: 'n1',
+          },
+        ]);
       });
     });
 
@@ -244,9 +251,38 @@ describe('Services', () => {
   });
 
   describe('Recent activities', () => {
-    test('Contains working days', async () => {
-      let store = createStore();
-      let api = new FakeApi();
+    test('Gets working days and time summary', async () => {
+      const store = createStore();
+      const api = Api.createNull({
+        responses: [
+          {
+            body: {
+              workingDays: [
+                {
+                  date: new Date('2023-10-07T00:00Z'),
+                  activities: [
+                    createActivity({
+                      timestamp: new Date('2023-10-07T13:00Z'),
+                    }),
+                    createActivity({
+                      timestamp: new Date('2023-10-07T12:30Z'),
+                    }),
+                    createActivity({
+                      timestamp: new Date('2023-10-07T12:00Z'),
+                    }),
+                  ],
+                },
+              ],
+              timeSummary: {
+                hoursToday: 1.5,
+                hoursYesterday: 0,
+                hoursThisWeek: 1.5,
+                hoursThisMonth: 1.5,
+              },
+            },
+          },
+        ],
+      });
 
       await getRecentActivities(store, api);
 
@@ -261,26 +297,25 @@ describe('Services', () => {
         },
       ]);
     });
-
-    test('Contains time summary', async () => {
-      let store = createStore();
-      let api = new FakeApi();
-
-      await getRecentActivities(store, api);
-
-      expect(store.getState().recentActivities.timeSummary).toEqual({
-        hoursToday: 1.5,
-        hoursYesterday: 0,
-        hoursThisWeek: 1.5,
-        hoursThisMonth: 1.5,
-      });
-    });
   });
 
   describe('Hours worked', () => {
     test('Summarize hours worked for clients', async () => {
       let store = createStore();
-      let api = new FakeApi();
+      const api = Api.createNull({
+        responses: [
+          {
+            body: {
+              clients: [
+                {
+                  name: 'client 1',
+                  hours: 'PT1H30M',
+                },
+              ],
+            },
+          },
+        ],
+      });
 
       await getHoursWorked(store, api);
 
@@ -294,55 +329,11 @@ describe('Services', () => {
       });
     });
   });
-
-  function createStore(state = initialState) {
-    return new Store(reducer, state);
-  }
-
-  class FakeApi {
-    postLogActivity = jest.fn();
-
-    constructor({
-      recentActivities = {
-        workingDays: [
-          {
-            date: new Date('2023-10-07T00:00Z'),
-            activities: [
-              createActivity({ timestamp: new Date('2023-10-07T13:00Z') }),
-              createActivity({ timestamp: new Date('2023-10-07T12:30Z') }),
-              createActivity({ timestamp: new Date('2023-10-07T12:00Z') }),
-            ],
-          },
-        ],
-        timeSummary: {
-          hoursToday: 1.5,
-          hoursYesterday: 0,
-          hoursThisWeek: 1.5,
-          hoursThisMonth: 1.5,
-        },
-      },
-      hoursWorked = {
-        clients: [
-          {
-            name: 'client 1',
-            hours: new Duration('PT1H30M'),
-          },
-        ],
-      },
-    } = {}) {
-      this.recentActivities = recentActivities;
-      this.hoursWorked = hoursWorked;
-    }
-
-    async getRecentActivities() {
-      return this.recentActivities;
-    }
-
-    async getHoursWorked() {
-      return this.hoursWorked;
-    }
-  }
 });
+
+function createStore(state = initialState) {
+  return new Store(reducer, state);
+}
 
 class FakeTimer {
   start = jest.fn();

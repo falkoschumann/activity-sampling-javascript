@@ -4,7 +4,7 @@ import { Api } from '../infrastructure/api.js';
 import { Timer } from '../infrastructure/timer.js';
 import { store } from './store.js';
 
-const api = globalThis.activitySampling?.api ?? new Api();
+const api = globalThis.activitySampling?.api ?? Api.create();
 const timer = new Timer((delay) =>
   services.timerTicked({ duration: new Duration(delay) }, store),
 );
