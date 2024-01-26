@@ -100,7 +100,7 @@ class ResponseStub {
   constructor({ status, headers, body } = {}) {
     this.#status = status;
     this.#headers = new Headers(headers);
-    this.#body = body != null ? JSON.stringify(body) : '';
+    this.#body = body != null ? JSON.stringify(body) : body;
   }
 
   get ok() {

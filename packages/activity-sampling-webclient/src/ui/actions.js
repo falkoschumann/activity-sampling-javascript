@@ -1,10 +1,10 @@
 import * as services from '../application/services.js';
-import { Duration } from 'activity-sampling-shared';
-import { Api } from '../infrastructure/api.js';
+import { Duration, ServiceLocator } from 'activity-sampling-shared';
 import { Timer } from '../infrastructure/timer.js';
 import { store } from './store.js';
 
-const api = globalThis.activitySampling?.api ?? Api.create();
+export const serviceLocator = new ServiceLocator();
+
 const timer = new Timer((delay) =>
   services.timerTicked({ duration: new Duration(delay) }, store),
 );
@@ -26,10 +26,12 @@ export async function setActivity({ client, project, task, notes }) {
 }
 
 export async function logActivity() {
+  const api = serviceLocator.resolve('api');
   await services.logActivity(undefined, store, api);
   await services.getRecentActivities(store, api);
 }
 
 export async function getRecentActivities() {
+  const api = serviceLocator.resolve('api');
   await services.getRecentActivities(store, api);
 }
