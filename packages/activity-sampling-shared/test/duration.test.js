@@ -49,6 +49,52 @@ describe('Duration', () => {
     });
   });
 
+  describe('Value', () => {
+    test('Returns hours', () => {
+      const duration = new Duration('PT8H30M');
+
+      expect(duration.hours).toEqual(8.5);
+    });
+
+    test('Returns minutes', () => {
+      const duration = new Duration('PT8H30M24S');
+
+      expect(duration.minutes).toEqual(510.4);
+    });
+
+    test('Returns seconds', () => {
+      const duration = new Duration('PT8H30M24S');
+
+      expect(duration.seconds).toEqual(30624);
+    });
+
+    test('Returns milliseconds', () => {
+      const duration = new Duration('PT8H30M24.200S');
+
+      expect(duration.millis).toEqual(30624200);
+    });
+  });
+
+  describe('Part', () => {
+    const duration = new Duration('PT8H30M24.500S');
+
+    test('Returns hours part', () => {
+      expect(duration.hoursPart).toEqual(8);
+    });
+
+    test('Returns minutes part', () => {
+      expect(duration.minutesPart).toEqual(30);
+    });
+
+    test('Returns seconds part', () => {
+      expect(duration.secondsPart).toEqual(24.5);
+    });
+
+    test('Returns milliseconds part', () => {
+      expect(duration.millisPart).toEqual(500);
+    });
+  });
+
   describe('Add duration', () => {
     test('Adds duration', () => {
       let duration = new Duration(3600);

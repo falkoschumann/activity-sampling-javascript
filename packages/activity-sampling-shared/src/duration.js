@@ -21,16 +21,46 @@ export class Duration {
   }
 
   static parse(isoString) {
-    let match = isoString.match(/^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/);
+    const match = isoString.match(
+      /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)(?:\.(\d+))?S)?$/,
+    );
     if (match == null) {
       throw new TypeError('Invalid Duration');
     }
 
-    let hours = Number(match[1] || 0);
-    let minutes = Number(match[2] || 0);
-    let seconds = Number(match[3] || 0);
-    seconds += hours * 3600 + minutes * 60;
-    return new Duration(seconds);
+    const hours = Number(match[1] || 0);
+    const minutes = Number(match[2] || 0);
+    const seconds = Number(match[3] || 0);
+    const millis = Number(match[4] || 0);
+    return new Duration(hours * 3600 + minutes * 60 + seconds + millis / 1000);
+  }
+
+  get hours() {
+    return this.seconds / 3600;
+  }
+
+  get hoursPart() {
+    return Math.floor(this.seconds / 3600);
+  }
+
+  get minutes() {
+    return this.seconds / 60;
+  }
+
+  get minutesPart() {
+    return Math.floor((this.seconds - this.hoursPart * 3600) / 60);
+  }
+
+  get secondsPart() {
+    return this.seconds - this.hoursPart * 3600 - this.minutesPart * 60;
+  }
+
+  get millis() {
+    return this.seconds * 1000;
+  }
+
+  get millisPart() {
+    return Math.round(this.seconds * 1000) % 1000;
   }
 
   add(other) {
@@ -40,15 +70,15 @@ export class Duration {
 
   toISOString() {
     let result = 'PT';
-    let hours = Math.floor(this.seconds / 3600);
+    let hours = this.hoursPart;
     if (hours > 0) {
       result += `${hours}H`;
     }
-    let minutes = Math.floor((this.seconds - hours * 3600) / 60);
+    let minutes = this.minutesPart;
     if (minutes > 0) {
       result += `${minutes}M`;
     }
-    let seconds = this.seconds - hours * 3600 - minutes * 60;
+    let seconds = this.secondsPart;
     if (seconds > 0) {
       result += `${seconds}S`;
     }
@@ -67,16 +97,11 @@ export class Duration {
   }
 
   toString({ style = 'medium' } = {}) {
-    let hours = Math.floor(this.seconds / 3600);
-    let minutes = Math.floor((this.seconds - hours * 3600) / 60);
-    let seconds = this.seconds - hours * 3600 - minutes * 60;
-    let string = `${hours.toString().padStart(2, '0')}:${minutes
-      .toString()
-      .padStart(2, '0')}`;
-    if (style === 'short') {
-      return string;
-    }
-    return string + `:${seconds.toString().padStart(2, '0')}`;
+    let hours = String(this.hoursPart).padStart(2, '0');
+    let minutes = String(this.minutesPart).padStart(2, '0');
+    let seconds = String(this.secondsPart).padStart(2, '0');
+    let string = `${hours}:${minutes}`;
+    return style === 'short' ? string : `${string}:${seconds}`;
   }
 
   valueOf() {
