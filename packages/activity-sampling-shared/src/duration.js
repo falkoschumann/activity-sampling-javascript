@@ -2,17 +2,17 @@ export class Duration {
   static ZERO = new Duration(0);
 
   /**
-   * @param {number|string|Duration} [value=0] - The duration in seconds or an ISO 8601 string.
+   * @param {number|string|Duration} [value=0] - The duration in millis or an ISO 8601 string.
    */
   constructor(value) {
     if (value == null) {
-      this.seconds = 0;
+      this.millis = 0;
     } else if (typeof value === 'string') {
-      this.seconds = Duration.parse(value).seconds;
+      this.millis = Duration.parse(value).millis;
     } else if (typeof value === 'number') {
-      this.seconds = value;
+      this.millis = value;
     } else if (value instanceof Duration) {
-      this.seconds = value.seconds;
+      this.millis = value.millis;
     } else {
       throw new TypeError(
         'The parameter `value` must be a number, an ISO 8601 string or an other `Duration` object.',
@@ -32,39 +32,49 @@ export class Duration {
     const minutes = Number(match[2] || 0);
     const seconds = Number(match[3] || 0);
     const millis = Number(match[4] || 0);
-    return new Duration(hours * 3600 + minutes * 60 + seconds + millis / 1000);
+    return new Duration(
+      hours * 3600000 + minutes * 60000 + seconds * 1000 + millis,
+    );
   }
 
   get hours() {
-    return this.seconds / 3600;
+    return this.millis / 3600000;
   }
 
   get hoursPart() {
-    return Math.floor(this.seconds / 3600);
+    return Math.floor(this.millis / 3600000);
   }
 
   get minutes() {
-    return this.seconds / 60;
+    return this.millis / 60000;
   }
 
   get minutesPart() {
-    return Math.floor((this.seconds - this.hoursPart * 3600) / 60);
+    return Math.floor((this.millis - this.hoursPart * 3600000) / 60000);
+  }
+
+  get seconds() {
+    return this.millis / 1000;
   }
 
   get secondsPart() {
-    return this.seconds - this.hoursPart * 3600 - this.minutesPart * 60;
-  }
-
-  get millis() {
-    return this.seconds * 1000;
+    return Math.floor(
+      (this.millis - this.hoursPart * 3600000 - this.minutesPart * 60000) /
+        1000,
+    );
   }
 
   get millisPart() {
-    return Math.round(this.seconds * 1000) % 1000;
+    return (
+      this.millis -
+      this.hoursPart * 3600000 -
+      this.minutesPart * 60000 -
+      this.secondsPart * 1000
+    );
   }
 
   add(other) {
-    this.seconds += other;
+    this.millis += other;
     return this;
   }
 
@@ -105,6 +115,6 @@ export class Duration {
   }
 
   valueOf() {
-    return this.seconds;
+    return this.millis;
   }
 }

@@ -10,10 +10,10 @@ describe('Duration', () => {
       expect(duration.seconds).toEqual(0);
     });
 
-    test('Creates duration with given seconds', () => {
+    test('Creates duration with given millis', () => {
       let duration = new Duration(3600);
 
-      expect(duration.seconds).toEqual(3600);
+      expect(duration.millis).toEqual(3600);
     });
 
     test('Creates duration from ISO 8601 string', () => {
@@ -87,7 +87,7 @@ describe('Duration', () => {
     });
 
     test('Returns seconds part', () => {
-      expect(duration.secondsPart).toEqual(24.5);
+      expect(duration.secondsPart).toEqual(24);
     });
 
     test('Returns milliseconds part', () => {
@@ -115,31 +115,31 @@ describe('Duration', () => {
 
   describe('Convert to ISO 8601 string', () => {
     test('Returns ISO 8601 string', () => {
-      let duration = new Duration(3661);
+      let duration = new Duration(3661000);
 
       expect(duration.toISOString()).toEqual('PT1H1M1S');
     });
 
     test('Returns ISO 8601 string with hours', () => {
-      let duration = new Duration(3600);
+      let duration = new Duration(3600000);
 
       expect(duration.toISOString()).toEqual('PT1H');
     });
 
     test('Returns ISO 8601 string with minutes', () => {
-      let duration = new Duration(60);
+      let duration = new Duration(60000);
 
       expect(duration.toISOString()).toEqual('PT1M');
     });
 
     test('Returns ISO 8601 string with seconds', () => {
-      let duration = new Duration(1);
+      let duration = new Duration(1000);
 
       expect(duration.toISOString()).toEqual('PT1S');
     });
 
     test('Returns ISO 8601 string with seconds', () => {
-      let duration = new Duration(619200);
+      let duration = new Duration(619200000);
 
       expect(duration.toISOString()).toEqual('PT172H');
     });
@@ -147,7 +147,7 @@ describe('Duration', () => {
 
   describe('Convert to JSON', () => {
     test('Returns ISO string', () => {
-      let duration = new Duration(3600);
+      let duration = new Duration(3600000);
 
       expect(duration.toJSON()).toEqual('PT1H');
     });
@@ -155,19 +155,19 @@ describe('Duration', () => {
 
   describe('Convert to string', () => {
     test('Returns medium string as default', () => {
-      let duration = new Duration(3661);
+      let duration = new Duration(3661000);
 
       expect(duration.toString({ style: 'foo' })).toEqual('01:01:01');
     });
 
     test('Returns short string', () => {
-      let duration = new Duration(3661);
+      let duration = new Duration(3661000);
 
       expect(duration.toString({ style: 'short' })).toEqual('01:01');
     });
 
     test('Is used by string interpolation', () => {
-      let duration = new Duration(3661);
+      let duration = new Duration(3661000);
 
       expect(`${duration}`).toEqual('01:01:01');
     });
