@@ -1,10 +1,12 @@
-import * as services from '../application/services.js';
 import { Duration, ServiceLocator } from 'activity-sampling-shared';
+
+import * as services from '../application/services.js';
 import { Timer } from '../infrastructure/timer.js';
 import { store } from './store.js';
 
 export const serviceLocator = new ServiceLocator();
 
+// TODO replace Timer with Notifier
 const timer = new Timer((delay) =>
   services.timerTicked({ duration: new Duration(delay) }, store),
 );
