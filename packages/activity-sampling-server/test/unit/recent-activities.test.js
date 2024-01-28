@@ -143,7 +143,7 @@ describe('Recent activities', () => {
 
       expect(result.timeSummary).toEqual({
         hoursToday: new Duration('PT30M'),
-        hoursYesterday: Duration.ZERO,
+        hoursYesterday: Duration.zero(),
         hoursThisWeek: new Duration('PT50M'),
         hoursThisMonth: new Duration('PT1H5M'),
       });
@@ -205,7 +205,7 @@ describe('Recent activities', () => {
 
       expect(result.timeSummary).toEqual({
         hoursToday: new Duration('PT30M'),
-        hoursYesterday: Duration.ZERO,
+        hoursYesterday: Duration.zero(),
         hoursThisWeek: new Duration('PT30M'),
         hoursThisMonth: new Duration('PT50M'),
       });

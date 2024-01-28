@@ -1,5 +1,24 @@
 export class Duration {
-  static ZERO = new Duration(0);
+  static zero() {
+    return new Duration(0);
+  }
+
+  static parse(isoString) {
+    const match = isoString.match(
+      /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)(?:\.(\d+))?S)?$/,
+    );
+    if (match == null) {
+      throw new TypeError('Invalid Duration');
+    }
+
+    const hours = Number(match[1] || 0);
+    const minutes = Number(match[2] || 0);
+    const seconds = Number(match[3] || 0);
+    const millis = Number(match[4] || 0);
+    return new Duration(
+      hours * 3600000 + minutes * 60000 + seconds * 1000 + millis,
+    );
+  }
 
   /**
    * @param {number|string|Duration} [value=0] - The duration in millis or an ISO 8601 string.
@@ -18,23 +37,6 @@ export class Duration {
         'The parameter `value` must be a number, an ISO 8601 string or an other `Duration` object.',
       );
     }
-  }
-
-  static parse(isoString) {
-    const match = isoString.match(
-      /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)(?:\.(\d+))?S)?$/,
-    );
-    if (match == null) {
-      throw new TypeError('Invalid Duration');
-    }
-
-    const hours = Number(match[1] || 0);
-    const minutes = Number(match[2] || 0);
-    const seconds = Number(match[3] || 0);
-    const millis = Number(match[4] || 0);
-    return new Duration(
-      hours * 3600000 + minutes * 60000 + seconds * 1000 + millis,
-    );
   }
 
   get hours() {
@@ -75,6 +77,11 @@ export class Duration {
 
   add(other) {
     this.millis += other;
+    return this;
+  }
+
+  subtract(other) {
+    this.millis -= other;
     return this;
   }
 

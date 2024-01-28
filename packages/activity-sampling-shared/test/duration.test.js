@@ -113,6 +113,24 @@ describe('Duration', () => {
     });
   });
 
+  describe('Subtract duration', () => {
+    test('Subtracts duration', () => {
+      let duration = new Duration(3600);
+
+      duration.subtract(new Duration(1800));
+
+      expect(duration).toEqual(new Duration(1800));
+    });
+
+    test('Subtracts seconds', () => {
+      let duration = new Duration(3600);
+
+      duration.subtract(1800);
+
+      expect(duration).toEqual(new Duration(1800));
+    });
+  });
+
   describe('Convert to ISO 8601 string', () => {
     test('Returns ISO 8601 string', () => {
       let duration = new Duration(3661000);
