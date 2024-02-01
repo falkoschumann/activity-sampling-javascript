@@ -120,6 +120,7 @@ function activityLogged(state) {
 }
 
 function recentActivitiesLoaded(state, { recentActivities }) {
+  // TODO intialize form with most recent activity
   return { ...state, recentActivities };
 }
 

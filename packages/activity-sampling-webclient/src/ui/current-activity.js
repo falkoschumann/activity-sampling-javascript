@@ -6,7 +6,7 @@ import { Component } from './component.js';
 class CurrentActivity extends Component {
   disconnectedCallback() {
     super.disconnectedCallback();
-    actions.stopTimer();
+    actions.stopNotificationsRequested();
   }
 
   updateView() {
@@ -65,7 +65,6 @@ class CurrentActivity extends Component {
           <label class="caption" for="notes">Notes</label>
           <input
             type="text"
-            required
             disabled="${this.state.isFormDisabled ? '' : nothing}"
             id="notes"
             name="notes"
@@ -85,7 +84,7 @@ class CurrentActivity extends Component {
   #onSubmitForm(event) {
     event.preventDefault();
     if (this.#validateForm(event.target)) {
-      actions.logActivity();
+      actions.activityLogged();
     }
   }
 
@@ -117,11 +116,11 @@ class CurrentActivity extends Component {
   #handleToggleTimer() {
     let button = this.querySelector('#toggle-timer');
     if (this.state.isTimerRunning) {
-      actions.stopTimer();
+      actions.stopNotificationsRequested();
       button.setAttribute('aria-label', 'Start timer');
       button.setAttribute('aria-pressed', 'false');
     } else {
-      actions.startTimer();
+      actions.notificationsRequested();
       button.setAttribute('aria-label', 'Stop timer');
       button.setAttribute('aria-pressed', 'true');
     }

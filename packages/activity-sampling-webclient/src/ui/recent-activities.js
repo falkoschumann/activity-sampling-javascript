@@ -6,7 +6,7 @@ import { Component } from './component.js';
 class RecentActivities extends Component {
   connectedCallback() {
     super.connectedCallback();
-    actions.getRecentActivities();
+    actions.refreshRequest();
   }
 
   extractState(state) {
@@ -40,7 +40,7 @@ class RecentActivities extends Component {
 
   #getActivityView({ timestamp, client, project, task, notes }) {
     return html`
-      <li @click=${() => this.#onClick({ client, project, task, notes })}>
+      <li @dblclick=${() => this.#onSelected({ client, project, task, notes })}>
         <div>
           <strong
             >${timestamp.toLocaleTimeString(undefined, {
@@ -56,8 +56,8 @@ class RecentActivities extends Component {
     `;
   }
 
-  #onClick({ client, project, task, notes }) {
-    actions.setActivity({ client, project, task, notes });
+  #onSelected({ client, project, task, notes }) {
+    actions.activitySelected({ client, project, task, notes });
   }
 
   #getTimeSummaryView() {

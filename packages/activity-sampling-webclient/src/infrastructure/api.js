@@ -4,6 +4,8 @@ import {
   OutputTracker,
 } from 'activity-sampling-shared';
 
+// TODO create DTO classes
+
 export class Api extends EventTarget {
   static create({ baseUrl = '/api' } = {}) {
     return new Api(baseUrl, globalThis.fetch.bind(globalThis));

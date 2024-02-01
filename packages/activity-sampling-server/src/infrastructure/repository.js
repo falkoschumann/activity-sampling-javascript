@@ -5,6 +5,8 @@ import { parse, stringify } from 'csv';
 
 import { Duration } from 'activity-sampling-shared';
 
+// TODO make repository nullable
+
 export class Repository {
   #fileName;
 
