@@ -64,3 +64,14 @@ export async function getHoursWorked(
   let hoursWorked = await api.getHoursWorked();
   store.dispatch({ type: 'hours-worked-loaded', hoursWorked });
 }
+
+export default {
+  startTimer,
+  stopTimer,
+  timerTicked,
+  activityUpdated,
+  setActivity,
+  logActivity,
+  getRecentActivities,
+  getHoursWorked,
+};

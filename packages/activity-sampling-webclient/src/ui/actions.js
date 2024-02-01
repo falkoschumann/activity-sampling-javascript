@@ -1,8 +1,8 @@
 import { Duration, ServiceLocator } from 'activity-sampling-shared';
 
-import * as services from '../application/services.js';
 import { Timer } from '../infrastructure/timer.js';
 import { store } from './store.js';
+import services from '../application/services.js';
 
 export const serviceLocator = new ServiceLocator();
 
@@ -37,3 +37,10 @@ export async function getRecentActivities() {
   const api = serviceLocator.resolve('api');
   await services.getRecentActivities(store, api);
 }
+
+export default {
+  activityLogged,
+  refreshRequest,
+  activityUpdated,
+  activitySelected,
+};

@@ -1,6 +1,6 @@
 import { html, render } from 'lit-html';
 
-import { store } from './store.js';
+import { store } from './actions.js';
 
 export class Component extends HTMLElement {
   constructor() {
