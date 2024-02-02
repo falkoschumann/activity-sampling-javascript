@@ -4,8 +4,6 @@ import {
   OutputTracker,
 } from 'activity-sampling-shared';
 
-// TODO create DTO classes
-
 export class Api extends EventTarget {
   static create({ baseUrl = '/api' } = {}) {
     return new Api(baseUrl, globalThis.fetch.bind(globalThis));
@@ -29,13 +27,13 @@ export class Api extends EventTarget {
   async getRecentActivities() {
     let response = await this.#fetch(`${this.#baseUrl}/recent-activities`);
     let dto = await response.json();
-    return mapRecentActivitiesDto(dto);
+    return convertRecentActivities(dto);
   }
 
   async getHoursWorked() {
     let response = await this.#fetch(`${this.#baseUrl}/hours-worked`);
     let dto = await response.json();
-    return mapHoursWorked(dto);
+    return convertHoursWorked(dto);
   }
 
   async logActivity(activity) {
@@ -55,7 +53,7 @@ export class Api extends EventTarget {
   }
 }
 
-function mapRecentActivitiesDto(dto) {
+function convertRecentActivities(dto) {
   return {
     workingDays: dto.workingDays.map((dtoDay) => ({
       date: new Date(dtoDay.date),
@@ -77,7 +75,7 @@ function mapRecentActivitiesDto(dto) {
   };
 }
 
-function mapHoursWorked(dto) {
+function convertHoursWorked(dto) {
   return {
     clients: dto.clients.map((dtoClient) => ({
       name: dtoClient.name,
@@ -86,10 +84,10 @@ function mapHoursWorked(dto) {
   };
 }
 
-function createFetchStub(activities) {
-  const responses = ConfigurableResponses.create(activities);
+function createFetchStub(responses) {
+  const configurableResponses = ConfigurableResponses.create(responses);
   return async function () {
-    const response = responses.next();
+    const response = configurableResponses.next();
     return new ResponseStub(response);
   };
 }
