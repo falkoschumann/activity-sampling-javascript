@@ -8,43 +8,36 @@ Periodically ask the user about their current activity and log it for analysis.
 
 ### Log Activity
 
--   [x] Enters activity
--   [x] Asks periodically what I am working on
--   [x] Logs the activity
--   [x] Selects an activity from recent activities
+-   Logs the activity with client, project, task and optional notes
+-   Selects an activity from recent activities
+-   Asks periodically what I am working on
+-   Starts countdown with the default interval when the application starts
 
 ### Recent Activities
 
--   [x] Contains working days
--   [x] Contains time summary
+-   Contains last activity
+-   Contains logged activities by working days
+-   Contains time summary
 
 ### Hours worked
 
--   [ ] Summarize hours worked for clients
--   [ ] Summarize hours worked on projects
--   [ ] Summarize hours worked on tasks
--   [ ] Summarize hours worked per day
--   [ ] Summarize hours worked per week
--   [ ] Summarize hours worked per month
--   [ ] Summarize hours worked per year
--   [ ] Summarize the total hours worked
+-   Summarizes hours worked for clients
+-   Summarizes hours worked on projects
+-   Summarizes hours worked on tasks
+-   Summarizes hours worked per day
+-   Summarizes hours worked per week
+-   Summarizes hours worked per month
+-   Summarizes hours worked per year
+-   Summarizes the total hours worked
 
 ### Timesheet
 
--   [ ] Summarize hours worked on projects per week
--   [ ] Summarize hours worked on projects per month
-
-### Change capacity
-
--   [ ] Set weekly capacity
-
-### Update holidays
-
--   [ ] Consider holidays in capacity
-
-### Change vacation
-
--   [ ] Consider vacation in capacity
+-   Summarizes hours worked on projects per day
+-   Summarizes hours worked on projects per week
+-   Summarizes hours worked on projects per month
+-   Comparse with capacity
+-   Takes holidays into account
+-   Takes vacation into account
 
 ## Events
 
