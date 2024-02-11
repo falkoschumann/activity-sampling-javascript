@@ -12,7 +12,7 @@ import {
   stopTimer,
 } from '../../src/application/services.js';
 import { initialState, reducer } from '../../src/domain/reducer.js';
-import { Store } from '../../src/domain/store.js';
+import { Store } from '../../src/util/store.js';
 import { createActivity } from '../testdata.js';
 import { Api } from '../../src/infrastructure/api.js';
 

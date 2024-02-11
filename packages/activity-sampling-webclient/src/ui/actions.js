@@ -2,7 +2,7 @@ import { Duration, ServiceLocator } from 'activity-sampling-shared';
 
 import services from '../application/services.js';
 import { reducer } from '../domain/reducer.js';
-import { createStore } from '../domain/store.js';
+import { createStore } from '../util/store.js';
 import { Api } from '../infrastructure/api.js';
 import { Notifier } from './notifier.js';
 

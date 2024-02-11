@@ -1,5 +1,5 @@
 /**
- * @typedef {import('../domain/store.js').Store} Store
+ * @typedef {import('../util/store.js').Store} Store
  * @typedef {import('../infrastructure/api.js').Api} Api
  */
 
