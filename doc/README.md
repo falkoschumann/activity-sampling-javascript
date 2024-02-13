@@ -1,6 +1,7 @@
 # Activity Sampling
 
-Periodically ask the user about their current activity and log it for analysis.
+Periodically asks the user about their current activity and logs it for
+analysis.
 
 ## Domain
 
@@ -15,9 +16,9 @@ Periodically ask the user about their current activity and log it for analysis.
 
 ### Recent Activities
 
--   Contains last activity
--   Contains logged activities by working days
--   Contains time summary
+-   Determines last activity
+-   Groups activities by working days
+-   Summarizes houres worked today, yesterday, this week and this month
 
 ### Hours worked
 
@@ -42,3 +43,7 @@ Periodically ask the user about their current activity and log it for analysis.
 ## Events
 
 ![Events](events.png)
+
+## Architecture
+
+![Container Diagram](./container-diagram.png)
