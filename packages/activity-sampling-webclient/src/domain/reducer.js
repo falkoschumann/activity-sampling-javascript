@@ -1,7 +1,7 @@
 import { Duration } from 'activity-sampling-shared';
 
 export const initialState = {
-  activityForm: {
+  currentActivity: {
     timestamp: undefined,
     duration: new Duration('PT30M'),
     client: '',
@@ -11,7 +11,7 @@ export const initialState = {
     isFormDisabled: false,
     remainingTime: new Duration('PT30M'),
     progress: 0,
-    isTimerRunning: false,
+    isTimerRunning: false, // TODO rename to isCountdownRunning
   },
   recentActivities: {
     workingDays: [],
@@ -22,22 +22,28 @@ export const initialState = {
       hoursThisMonth: new Duration(),
     },
   },
+  hoursWorked: {
+    report: [],
+    totalHours: new Duration(),
+  },
 };
 
 export function reducer(state = initialState, action) {
   switch (action.type) {
-    case 'timer-started':
-      return timerStarted(state);
+    case 'notification-scheduled':
+      return notificationScheduled(state, action);
+    case 'countdown-progressed':
+      return countdownProgressed(state, action);
+    case 'notification-acknowledged':
+      return notificationAcknowledged(state, action);
     case 'timer-stopped':
-      return timerStopped(state);
-    case 'timer-ticked':
-      return timerTicked(state, action);
+      return timerStopped(state, action);
     case 'activity-updated':
       return activityUpdated(state, action);
-    case 'set-activity':
-      return setActivity(state, action);
+    case 'activity-selected':
+      return activitySelected(state, action);
     case 'activity-logged':
-      return activityLogged(state);
+      return activityLogged(state, action);
     case 'recent-activities-loaded':
       return recentActivitiesLoaded(state, action);
     case 'hours-worked-loaded':
@@ -47,15 +53,41 @@ export function reducer(state = initialState, action) {
   }
 }
 
-function timerStarted(state) {
+function notificationScheduled(state, { deliverIn }) {
   return {
     ...state,
-    activityForm: {
-      ...state.activityForm,
+    currentActivity: {
+      ...state.currentActivity,
       isFormDisabled: true,
-      remainingTime: state.activityForm.duration,
+      remainingTime: new Duration(deliverIn),
       progress: 0,
       isTimerRunning: true,
+    },
+  };
+}
+
+function countdownProgressed(state, { remaining }) {
+  let remainingTime = new Duration(remaining);
+  let progress = 1 - remainingTime / state.currentActivity.duration;
+  let currentActivity = {
+    ...state.currentActivity,
+    remainingTime,
+    progress,
+  };
+  return { ...state, currentActivity };
+}
+
+function notificationAcknowledged(state, { client, project, task, notes }) {
+  const isFormDisabled = state.currentActivity.isTimerRunning;
+  return {
+    ...state,
+    currentActivity: {
+      ...state.currentActivity,
+      client,
+      project,
+      task,
+      notes,
+      isFormDisabled,
     },
   };
 }
@@ -63,65 +95,72 @@ function timerStarted(state) {
 function timerStopped(state) {
   return {
     ...state,
-    activityForm: {
-      ...state.activityForm,
+    currentActivity: {
+      ...state.currentActivity,
       isFormDisabled: false,
-      remainingTime: state.activityForm.duration,
+      remainingTime: state.currentActivity.duration,
       progress: 0,
       isTimerRunning: false,
     },
   };
 }
 
-function timerTicked(state, { duration }) {
-  let isFormDisabled = state.activityForm.isFormDisabled;
-  let remainingTime = new Duration(state.activityForm.remainingTime - duration);
-  let progress = 1 - remainingTime / state.activityForm.duration;
-  if (remainingTime <= 0) {
-    isFormDisabled = false;
-    remainingTime = state.activityForm.duration;
-    progress = 0;
-  }
-  let activityForm = {
-    ...state.activityForm,
-    isFormDisabled,
-    remainingTime,
-    progress,
-  };
-  return { ...state, activityForm };
-}
-
 function activityUpdated(state, { name, value }) {
   return {
     ...state,
-    activityForm: { ...state.activityForm, [name]: value },
+    currentActivity: { ...state.currentActivity, [name]: value },
   };
 }
 
-function setActivity(state, { client, project, task, notes }) {
+function activitySelected(state, { client, project, task, notes }) {
   return {
     ...state,
-    activityForm: { ...state.activityForm, client, project, task, notes },
+    currentActivity: {
+      ...state.currentActivity,
+      activity: {
+        ...state.currentActivity.activity,
+        client,
+        project,
+        task,
+        notes,
+      },
+    },
   };
 }
 
 function activityLogged(state) {
-  let isFormDisabled = state.activityForm.isFormDisabled;
-  if (state.activityForm.isTimerRunning) {
+  let isFormDisabled = state.currentActivity.isFormDisabled;
+  if (state.currentActivity.isTimerRunning) {
     isFormDisabled = true;
   }
   return {
     ...state,
-    activityForm: {
-      ...state.activityForm,
+    currentActivity: {
+      ...state.currentActivity,
       isFormDisabled,
     },
   };
 }
 
 function recentActivitiesLoaded(state, { recentActivities }) {
-  // TODO intialize form with most recent activity
-  return { ...state, recentActivities };
+  let lastActivity = recentActivities.workingDays[0]?.activities[0];
+  if (!lastActivity) {
+    lastActivity = {
+      timestamp: undefined,
+      client: '',
+      project: '',
+      task: '',
+      notes: '',
+    };
+  }
+  return {
+    ...state,
+    currentActivity: {
+      ...state.currentActivity,
+      ...lastActivity,
+    },
+    recentActivities,
+  };
 }
 
 function hoursWorkedLoaded(state, { hoursWorked }) {

@@ -18,7 +18,7 @@ class CurrentActivity extends Component {
   }
 
   extractState(state) {
-    return state.activityForm;
+    return state.currentActivity;
   }
 
   getView() {

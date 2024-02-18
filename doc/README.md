@@ -16,9 +16,10 @@ analysis.
 
 ### Recent Activities
 
--   Determines last activity
 -   Groups activities by working days
 -   Summarizes houres worked today, yesterday, this week and this month
+-   Asumes last activity as current activity
+-   Resets state if activity log is empty
 
 ### Hours worked
 

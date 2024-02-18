@@ -1,173 +1,32 @@
-import { describe, expect, jest, test } from '@jest/globals';
+import { beforeEach, describe, expect, test } from '@jest/globals';
 
 import { Duration } from 'activity-sampling-shared';
-import {
-  activityUpdated,
-  getHoursWorked,
-  getRecentActivities,
-  logActivity,
-  timerTicked,
-  setActivity,
-  startTimer,
-  stopTimer,
-} from '../../src/application/services.js';
+
+import services from '../../src/application/services.js';
 import { initialState, reducer } from '../../src/domain/reducer.js';
-import { Store } from '../../src/util/store.js';
-import { createActivity } from '../testdata.js';
 import { Api } from '../../src/infrastructure/api.js';
+import { Store } from '../../src/util/store.js';
+import { createActivity, createActivityDto } from '../testdata.js';
 
 describe('Services', () => {
   describe('Log activity', () => {
-    test('Enters activity', async () => {
-      let store = createStore();
-
-      await activityUpdated({ name: 'client', value: 'c1' }, store);
-      await activityUpdated({ name: 'project', value: 'p1' }, store);
-      await activityUpdated({ name: 'task', value: 't1' }, store);
-      await activityUpdated({ name: 'notes', value: 'n1' }, store);
-
-      expect(store.getState().activityForm).toEqual({
-        ...initialState.activityForm,
-        client: 'c1',
-        project: 'p1',
-        task: 't1',
-        notes: 'n1',
-      });
-    });
-
-    describe('Asks periodically what I am working on', () => {
-      test('Starts timer', async () => {
-        let timer = new FakeTimer();
-        let store = createStore({
-          ...initialState,
-          activityForm: {
-            ...initialState.activityForm,
-            isFormDisabled: false,
-            remainingTime: new Duration('PT20M'),
-            progress: 0.2,
-            isTimerRunning: false,
-          },
-        });
-
-        startTimer(store, timer);
-
-        expect(store.getState().activityForm).toEqual({
-          ...initialState.activityForm,
-          isFormDisabled: true,
-          remainingTime: new Duration('PT30M'),
-          progress: 0,
-          isTimerRunning: true,
-        });
-        expect(timer.start).toBeCalledTimes(1);
-      });
-
-      test('Increases progress and decreases remaining time', async () => {
-        let store = createStore({
-          ...initialState,
-          activityForm: {
-            ...initialState.activityForm,
-            isFormDisabled: true,
-            remainingTime: new Duration('PT21M'),
-            progress: 0.7,
-            isTimerRunning: true,
-          },
-        });
-
-        await timerTicked({ duration: new Duration('PT3M') }, store);
-
-        expect(store.getState().activityForm).toEqual({
-          ...initialState.activityForm,
-          isFormDisabled: true,
-          remainingTime: new Duration('PT18M'),
-          progress: 0.4,
-          isTimerRunning: true,
-        });
-      });
-
-      test('Finishs current task', async () => {
-        let store = createStore({
-          ...initialState,
-          activityForm: {
-            ...initialState.activityForm,
-            timestamp: undefined,
-            isFormDisabled: true,
-            remainingTime: new Duration('PT1M'),
-            progress: 0.97,
-            isTimerRunning: true,
-          },
-        });
-
-        await timerTicked({ duration: new Duration('PT1M') }, store);
-
-        expect(store.getState().activityForm).toEqual({
-          ...initialState.activityForm,
-          timestamp: undefined,
-          isFormDisabled: false,
-          remainingTime: new Duration('PT30M'),
-          progress: 0,
-          isTimerRunning: true,
-        });
-      });
-
-      test('Stops timer and resets activity form', async () => {
-        let store = createStore({
-          ...initialState,
-          activityForm: {
-            ...initialState.activityForm,
-            isFormDisabled: true,
-            remainingTime: new Duration('PT12M'),
-            progress: 0.6,
-            isTimerRunning: true,
-          },
-        });
-        let timer = new FakeTimer();
-
-        await stopTimer(store, timer);
-
-        expect(store.getState().activityForm).toEqual({
-          ...initialState.activityForm,
-          isFormDisabled: false,
-          remainingTime: new Duration('PT30M'),
-          progress: 0,
-          isTimerRunning: false,
-        });
-        expect(timer.stop).toBeCalledTimes(1);
-      });
-    });
-
-    describe('Logs the activity', () => {
-      test('Leaves the form enabled if timer is not running', async () => {
-        let store = createStore({
-          ...initialState,
-          activityForm: {
-            ...initialState.activityForm,
-            client: 'c1',
-            project: 'p1',
-            task: 't1',
-            notes: 'n1',
-            isFormDisabled: false,
-            isTimerRunning: false,
-          },
-        });
-        let api = Api.createNull({
-          responses: [{ status: 201 }],
-        });
+    describe('Logs the activity with client, project, task and optional notes', () => {
+      test('Logs the activity without notes', async () => {
+        let store = createStore();
+        let api = Api.createNull();
         const activitiesLogged = api.trackActivitiesLogged();
 
-        await logActivity(
-          { timestamp: new Date('2023-10-07T13:30Z') },
-          store,
-          api,
-        );
+        await services.activityUpdated({ name: 'client', value: 'c1' }, store);
+        await services.activityUpdated({ name: 'project', value: 'p1' }, store);
+        await services.activityUpdated({ name: 'task', value: 't1' }, store);
+        await services.logActivity(store, api, new Date('2023-10-07T13:30Z'));
 
-        expect(store.getState().activityForm).toEqual({
-          ...initialState.activityForm,
+        expect(store.getState().currentActivity).toEqual({
+          ...initialState.currentActivity,
           client: 'c1',
           project: 'p1',
           task: 't1',
-          notes: 'n1',
-          isFormDisabled: false,
-          isTimerRunning: false,
+          notes: '',
         });
         expect(activitiesLogged.data).toEqual([
           {
@@ -176,43 +35,28 @@ describe('Services', () => {
             client: 'c1',
             project: 'p1',
             task: 't1',
-            notes: 'n1',
+            notes: '',
           },
         ]);
       });
 
-      test('Disables the form if timer is running', async () => {
-        let store = createStore({
-          ...initialState,
-          activityForm: {
-            ...initialState.activityForm,
-            client: 'c1',
-            project: 'p1',
-            task: 't1',
-            notes: 'n1',
-            isFormDisabled: false,
-            isTimerRunning: true,
-          },
-        });
-        let api = Api.createNull({
-          responses: [{ status: 201 }],
-        });
+      test('Logs the activity with notes', async () => {
+        let store = createStore();
+        let api = Api.createNull();
         const activitiesLogged = api.trackActivitiesLogged();
 
-        await logActivity(
-          { timestamp: new Date('2023-10-07T13:30Z') },
-          store,
-          api,
-        );
+        await services.activityUpdated({ name: 'client', value: 'c1' }, store);
+        await services.activityUpdated({ name: 'project', value: 'p1' }, store);
+        await services.activityUpdated({ name: 'task', value: 't1' }, store);
+        await services.activityUpdated({ name: 'notes', value: 'n1' }, store);
+        await services.logActivity(store, api, new Date('2023-10-07T13:30Z'));
 
-        expect(store.getState().activityForm).toEqual({
-          ...initialState.activityForm,
+        expect(store.getState().currentActivity).toEqual({
+          ...initialState.currentActivity,
           client: 'c1',
           project: 'p1',
           task: 't1',
           notes: 'n1',
-          isFormDisabled: true,
-          isTimerRunning: true,
         });
         expect(activitiesLogged.data).toEqual([
           {
@@ -230,61 +74,209 @@ describe('Services', () => {
     test('Selects an activity from recent activities', async () => {
       let store = createStore();
 
-      await setActivity(
-        {
-          client: 'foo',
-          project: 'bar',
-          task: 'lorem',
-          notes: 'ipsum',
-        },
+      await services.activitySelected(
+        { client: 'c1', project: 'p1', task: 't1', notes: 'n1' },
         store,
       );
 
-      expect(store.getState().activityForm).toEqual({
-        ...initialState.activityForm,
-        client: 'foo',
-        project: 'bar',
-        task: 'lorem',
-        notes: 'ipsum',
+      expect(store.getState().currentActivity).toEqual({
+        ...initialState.currentActivity,
+        activity: {
+          ...initialState.currentActivity.activity,
+          client: 'c1',
+          project: 'p1',
+          task: 't1',
+          notes: 'n1',
+        },
       });
     });
+
+    describe.skip('Asks periodically what I am working on', () => {
+      // TODO disable form if countdown is running
+      // TODO if timestamp is undefined, use current time
+
+      test('Handles notifications scheduled', async () => {
+        let store = createStore({
+          ...initialState,
+          currentActivity: {
+            ...initialState.currentActivity,
+            isFormDisabled: false,
+            remainingTime: new Duration('PT24M'),
+            progress: 0.2,
+            isTimerRunning: false,
+          },
+        });
+
+        services.notificationScheduled(
+          { deliverIn: new Duration('PT30M') },
+          store,
+        );
+
+        expect(store.getState().currentActivity).toEqual({
+          ...initialState.currentActivity,
+          isFormDisabled: true,
+          remainingTime: new Duration('PT30M'),
+          progress: 0,
+          isTimerRunning: true,
+        });
+      });
+
+      describe('Countdown progressed', () => {
+        test('Progresses countdown', async () => {
+          let store = createStore({
+            ...initialState,
+            currentActivity: {
+              ...initialState.currentActivity,
+              isFormDisabled: true,
+              remainingTime: new Duration('PT21M'),
+              progress: 0.7,
+              isTimerRunning: true,
+            },
+          });
+
+          await services.countdownProgressed(
+            { remaining: new Duration('PT18M') },
+            store,
+          );
+
+          expect(store.getState().currentActivity).toEqual({
+            ...initialState.currentActivity,
+            isFormDisabled: true,
+            remainingTime: new Duration('PT18M'),
+            progress: 0.4,
+            isTimerRunning: true,
+          });
+        });
+
+        test.skip('Enables form when the countdown has elapsed', async () => {
+          let store = createStore({
+            ...initialState,
+            currentActivity: {
+              ...initialState.currentActivity,
+              timestamp: undefined,
+              isFormDisabled: true,
+              remainingTime: new Duration('PT1M'),
+              progress: 0.97,
+              isTimerRunning: true,
+            },
+          });
+
+          await services.countdownProgressed(
+            { remaining: new Duration('PT0M') },
+            store,
+          );
+
+          expect(store.getState().currentActivity).toEqual({
+            ...initialState.currentActivity,
+            timestamp: undefined,
+            isFormDisabled: false,
+            remainingTime: new Duration('PT0M'),
+            progress: 1,
+            isTimerRunning: true,
+          });
+        });
+      });
+
+      describe('Notification acknowledged', () => {
+        test('Updates activity and disables form when countdown is running', async () => {
+          let store = createStore({
+            ...initialState,
+            currentActivity: {
+              ...initialState.currentActivity,
+              client: 'c1',
+              project: 'p1',
+              task: 't1',
+              notes: 'n1',
+              isFormDisabled: false,
+              isTimerRunning: true,
+            },
+          });
+
+          await services.notificationAcknowledged(
+            { client: 'c2', project: 'p2', task: 't2', notes: 'n2' },
+            store,
+          );
+
+          expect(store.getState().currentActivity).toEqual({
+            ...initialState.currentActivity,
+            client: 'c2',
+            project: 'p2',
+            task: 't2',
+            notes: 'n2',
+            isFormDisabled: true,
+            isTimerRunning: true,
+          });
+        });
+      });
+
+      test('Updates activity and leave form enabled when countdown is not running', async () => {
+        let store = createStore({
+          ...initialState,
+          currentActivity: {
+            ...initialState.currentActivity,
+            client: 'c1',
+            project: 'p1',
+            task: 't1',
+            notes: 'n1',
+            isFormDisabled: false,
+            isTimerRunning: false,
+          },
+        });
+
+        await services.notificationAcknowledged(
+          { client: 'c2', project: 'p2', task: 't2', notes: 'n2' },
+          store,
+        );
+
+        expect(store.getState().currentActivity).toEqual({
+          ...initialState.currentActivity,
+          client: 'c2',
+          project: 'p2',
+          task: 't2',
+          notes: 'n2',
+          isFormDisabled: false,
+          isTimerRunning: false,
+        });
+      });
+    });
+
+    test.todo(
+      'Starts countdown with the default interval when the application starts',
+    );
   });
 
   describe('Recent activities', () => {
-    test('Gets working days and time summary', async () => {
-      const store = createStore();
-      const api = Api.createNull({
-        responses: [
-          {
-            body: {
-              workingDays: [
-                {
-                  date: new Date('2023-10-07T00:00Z'),
-                  activities: [
-                    createActivity({
-                      timestamp: new Date('2023-10-07T13:00Z'),
-                    }),
-                    createActivity({
-                      timestamp: new Date('2023-10-07T12:30Z'),
-                    }),
-                    createActivity({
-                      timestamp: new Date('2023-10-07T12:00Z'),
-                    }),
-                  ],
-                },
-              ],
-              timeSummary: {
-                hoursToday: 1.5,
-                hoursYesterday: 0,
-                hoursThisWeek: 1.5,
-                hoursThisMonth: 1.5,
+    /** @type {Store} */ let store;
+    /** @type {Api} */ let api;
+
+    beforeEach(() => {
+      store = createStore();
+      api = Api.createNull({
+        responses: {
+          body: {
+            workingDays: [
+              {
+                date: new Date('2023-10-07T00:00Z'),
+                activities: [
+                  createActivityDto({ timestamp: '2023-10-07T13:00Z' }),
+                  createActivityDto({ timestamp: '2023-10-07T12:30Z' }),
+                  createActivityDto({ timestamp: '2023-10-07T12:00Z' }),
+                ],
               },
+            ],
+            timeSummary: {
+              hoursToday: 'PT1H30M',
+              hoursYesterday: 'PT0S',
+              hoursThisWeek: 'PT1H30M',
+              hoursThisMonth: 'PT1H30M',
             },
           },
-        ],
+        },
       });
+    });
 
-      await getRecentActivities(store, api);
+    test('Groups activities by working days', async () => {
+      await services.selectRecentActivities(store, api);
 
       expect(store.getState().recentActivities.workingDays).toEqual([
         {
@@ -297,10 +289,106 @@ describe('Services', () => {
         },
       ]);
     });
+
+    test('Summarizes houres worked today, yesterday, this week and this month', async () => {
+      await services.selectRecentActivities(store, api);
+
+      expect(store.getState().recentActivities.timeSummary).toEqual({
+        hoursToday: new Duration('PT1H30M'),
+        hoursYesterday: new Duration(),
+        hoursThisWeek: new Duration('PT1H30M'),
+        hoursThisMonth: new Duration('PT1H30M'),
+      });
+    });
+
+    test('Asumes last activity as current activity', async () => {
+      await services.selectRecentActivities(store, api);
+
+      const lastActivity = createActivity({
+        timestamp: new Date('2023-10-07T13:00Z'),
+      });
+      expect(store.getState().currentActivity).toEqual({
+        ...initialState.currentActivity,
+        ...lastActivity,
+      });
+    });
+
+    test('Resets last activity if activity log is empty', async () => {
+      const currentState = {
+        ...initialState,
+        currentActivity: {
+          timestamp: new Date('2023-10-07T13:00Z'),
+          duration: new Duration('PT20M'),
+          client: 'c1',
+          project: 'p1',
+          task: 't1',
+          notes: 'n1',
+          isFormDisabled: true,
+          remainingTime: new Duration('PT3M'),
+          progress: 0.9,
+          isTimerRunning: true,
+        },
+        recentActivities: {
+          workingDays: [
+            {
+              date: new Date('2023-10-07T00:00Z'),
+              activities: [
+                createActivity({ timestamp: '2023-10-07T13:00Z' }),
+                createActivity({ timestamp: '2023-10-07T12:30Z' }),
+                createActivity({ timestamp: '2023-10-07T12:00Z' }),
+              ],
+            },
+          ],
+          timeSummary: {
+            hoursToday: new Duration('PT1H30M'),
+            hoursYesterday: new Duration('PT0S'),
+            hoursThisWeek: new Duration('PT1H30M'),
+            hoursThisMonth: new Duration('PT1H30M'),
+          },
+        },
+      };
+      const store = createStore(currentState);
+      const api = Api.createNull({
+        responses: {
+          body: {
+            workingDays: [],
+            timeSummary: {
+              hoursToday: 'PT0S',
+              hoursYesterday: 'PT0S',
+              hoursThisWeek: 'PT0S',
+              hoursThisMonth: 'PT0S',
+            },
+          },
+        },
+      });
+
+      await services.selectRecentActivities(store, api);
+
+      expect(store.getState()).toEqual({
+        ...currentState,
+        currentActivity: {
+          ...currentState.currentActivity,
+          timestamp: undefined,
+          client: '',
+          project: '',
+          task: '',
+          notes: '',
+        },
+        recentActivities: {
+          workingDays: [],
+          timeSummary: {
+            hoursToday: new Duration('PT0S'),
+            hoursYesterday: new Duration('PT0S'),
+            hoursThisWeek: new Duration('PT0S'),
+            hoursThisMonth: new Duration('PT0S'),
+          },
+        },
+      });
+    });
   });
 
   describe('Hours worked', () => {
-    test('Summarize hours worked for clients', async () => {
+    test('Summarizes hours worked for clients', async () => {
       let store = createStore();
       const api = Api.createNull({
         responses: [
@@ -317,7 +405,7 @@ describe('Services', () => {
         ],
       });
 
-      await getHoursWorked(store, api);
+      await services.selectHoursWorked(store, api);
 
       expect(store.getState().hoursWorked).toEqual({
         clients: [
@@ -328,14 +416,26 @@ describe('Services', () => {
         ],
       });
     });
+
+    test.todo('Summarizes hours worked on projects');
+    test.todo('Summarizes hours worked on tasks');
+    test.todo('Summarizes hours worked per day');
+    test.todo('Summarizes hours worked per week');
+    test.todo('Summarizes hours worked per month');
+    test.todo('Summarizes hours worked per year');
+    test.todo('Summarizes the total hours worked');
+  });
+
+  describe('Timesheet', () => {
+    test.todo('Summarizes hours worked on projects per day');
+    test.todo('Summarizes hours worked on projects per week');
+    test.todo('Summarizes hours worked on projects per month');
+    test.todo('Comparse with capacity');
+    test.todo('Takes holidays into account');
+    test.todo('Takes vacation into account');
   });
 });
 
 function createStore(state = initialState) {
   return new Store(reducer, state);
-}
-
-class FakeTimer {
-  start = jest.fn();
-  stop = jest.fn();
 }

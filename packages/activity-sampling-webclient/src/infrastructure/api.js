@@ -24,24 +24,25 @@ export class Api extends EventTarget {
     this.#fetch = fetch;
   }
 
-  async getRecentActivities() {
+  async loadRecentActivities() {
     let response = await this.#fetch(`${this.#baseUrl}/recent-activities`);
     let dto = await response.json();
     return convertRecentActivities(dto);
   }
 
-  async getHoursWorked() {
+  async loadHoursWorked() {
     let response = await this.#fetch(`${this.#baseUrl}/hours-worked`);
     let dto = await response.json();
     return convertHoursWorked(dto);
   }
 
-  async logActivity(activity) {
-    let dto = JSON.stringify(activity);
+  async logActivity({ timestamp, duration, client, project, task, notes }) {
+    const activity = { timestamp, duration, client, project, task, notes };
+    let body = JSON.stringify(activity);
     await this.#fetch(`${this.#baseUrl}/log-activity`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: dto,
+      body,
     });
     this.dispatchEvent(
       new CustomEvent('activity-logged', { detail: activity }),

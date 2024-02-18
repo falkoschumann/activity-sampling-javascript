@@ -1,35 +1,51 @@
 /**
  * @typedef {import('../util/store.js').Store} Store
  * @typedef {import('../infrastructure/api.js').Api} Api
+ * @typedef {import('../infrastructure/clock.js').Clock} Clock
  */
 
-export async function startTimer(/** @type {Store} */ store, timer) {
-  timer.start();
-  store.dispatch({ type: 'timer-started' });
+// TODO use Java Clock{fixed(), system(), offset(), tick(), date(), millis()}?
+// TODO use Java Timer{schedule(), cancel()}?
+
+export async function logActivity(
+  /** @type {Store} */ store,
+  /** @type {Api} */ api,
+  currentTime = new Date(),
+) {
+  console.log('logActivity');
+  let { duration, client, project, task, notes } =
+    store.getState().currentActivity;
+  const activity = {
+    timestamp: currentTime,
+    duration,
+    client,
+    project,
+    task,
+    notes,
+  };
+  await api.logActivity(activity);
+  store.dispatch({ type: 'activity-logged' });
 }
 
-export async function stopTimer(/** @type {Store} */ store, timer) {
-  timer.stop();
-  store.dispatch({ type: 'timer-stopped' });
+export async function notificationScheduled({ deliverIn }, store) {
+  store.dispatch({ type: 'notification-scheduled', deliverIn });
 }
 
-export async function timerTicked({ duration }, /** @type {Store} */ store) {
-  store.dispatch({ type: 'timer-ticked', duration });
-}
-
-export async function activityUpdated(
-  { name, value },
+export async function countdownProgressed(
+  { remaining },
   /** @type {Store} */ store,
 ) {
-  store.dispatch({ type: 'activity-updated', name, value });
+  console.log('countdownProgressed', { remaining });
+  store.dispatch({ type: 'countdownProgressed', remaining });
 }
 
-export async function setActivity(
+export async function notificationAcknowledged(
   { client, project, task, notes },
   /** @type {Store} */ store,
 ) {
+  console.log('notificationAcknowledged', { client, project, task, notes });
   store.dispatch({
-    type: 'set-activity',
+    type: 'notification-acknowledged',
     client,
     project,
     task,
@@ -37,41 +53,60 @@ export async function setActivity(
   });
 }
 
-export async function logActivity(
-  { timestamp = new Date() } = {},
-  /** @type {Store} */ store,
-  /** @type {Api} */ api,
-) {
-  let duration = store.getState().activityForm.duration;
-  let { client, project, task, notes } = store.getState().activityForm;
-  let activity = { timestamp, duration, client, project, task, notes };
-  await api.logActivity(activity);
-  store.dispatch({ type: 'activity-logged' });
+// TODO remove or rename
+export async function stopTimer(/** @type {Store} */ store, timer) {
+  console.log('stopTimer');
+  timer.stop();
+  store.dispatch({ type: 'timer-stopped' });
 }
 
-export async function getRecentActivities(
+export async function activityUpdated(
+  { name, value },
+  /** @type {Store} */ store,
+) {
+  console.log('activityUpdated', { name, value });
+  store.dispatch({ type: 'activity-updated', name, value });
+}
+
+export async function activitySelected(
+  { client, project, task, notes },
+  /** @type {Store} */ store,
+) {
+  console.log('activitySelected', { client, project, task, notes });
+  store.dispatch({
+    type: 'activity-selected',
+    client,
+    project,
+    task,
+    notes,
+  });
+}
+
+export async function selectRecentActivities(
   /** @type {Store} */ store,
   /** @type {Api} */ api,
 ) {
-  let recentActivities = await api.getRecentActivities();
+  console.log('selectRecentActivities');
+  let recentActivities = await api.loadRecentActivities();
   store.dispatch({ type: 'recent-activities-loaded', recentActivities });
 }
 
-export async function getHoursWorked(
+export async function selectHoursWorked(
   /** @type {Store} */ store,
   /** @type {Api} */ api,
 ) {
-  let hoursWorked = await api.getHoursWorked();
+  console.log('selectHoursWorked');
+  let hoursWorked = await api.loadHoursWorked();
   store.dispatch({ type: 'hours-worked-loaded', hoursWorked });
 }
 
 export default {
-  startTimer,
-  stopTimer,
-  timerTicked,
-  activityUpdated,
-  setActivity,
   logActivity,
-  getRecentActivities,
-  getHoursWorked,
+  notificationScheduled,
+  notificationAcknowledged,
+  countdownProgressed,
+  activityUpdated,
+  activitySelected,
+  selectRecentActivities,
+  selectHoursWorked,
 };

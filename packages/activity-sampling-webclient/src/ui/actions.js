@@ -1,9 +1,9 @@
-import { Duration, ServiceLocator } from 'activity-sampling-shared';
+import { ServiceLocator } from 'activity-sampling-shared';
 
 import services from '../application/services.js';
 import { reducer } from '../domain/reducer.js';
-import { createStore } from '../util/store.js';
 import { Api } from '../infrastructure/api.js';
+import { createStore } from '../util/store.js';
 import { Notifier } from './notifier.js';
 
 export const store = createStore(reducer);
@@ -20,21 +20,22 @@ export async function activityLogged() {
   // TODO use form data instead of store?
   const api = serviceLocator.resolve('api');
   await services.logActivity(undefined, store, api);
-  await services.getRecentActivities(store, api);
+  await services.selectRecentActivities(store, api);
   activityChanged();
 }
 
-export async function notificationsRequested() {
-  notifer.start(new Duration('PT1M'));
+export async function notificationsRequested({ deliverIn }) {
+  notifer.start(deliverIn);
 }
 
 export async function stopNotificationsRequested() {
   notifer.stop();
+  // TODO update state: currentActivity.isTimerRunning
 }
 
-export async function refreshRequest() {
+export async function refreshRequested() {
   const api = serviceLocator.resolve('api');
-  await services.getRecentActivities(store, api);
+  await services.selectRecentActivities(store, api);
   activityChanged();
 }
 
@@ -45,22 +46,25 @@ export async function activityUpdated({ name, value }) {
 
 export async function activitySelected({ client, project, task, notes }) {
   // TODO use UI event instead of store?
-  await services.setActivity({ client, project, task, notes }, store);
+  await services.activitySelected({ client, project, task, notes }, store);
 }
 
 function activityChanged() {
-  notifer.currentActivity = store.getState().activityForm.task;
+  notifer.currentActivity = store.getState().currentActivity.task;
 }
 
 notifer.addEventListener('notification-scheduled', ({ deliverIn }) =>
   services.notificationScheduled({ deliverIn }, store),
 );
+
 notifer.addEventListener('countdown-progressed', ({ remaining }) =>
   services.countdownProgressed({ remaining }, store),
 );
-notifer.addEventListener('notification-presented', () =>
-  services.notificationPresented(store),
-);
+
+notifer.addEventListener('notification-presented', () => {
+  // TODO is there something to do here
+});
+
 notifer.addEventListener('notification-acknowledged', ({ activity }) =>
   services.notificationAcknowledged({ activity }, store),
 );
@@ -69,7 +73,7 @@ export default {
   activityLogged,
   notificationsRequested,
   stopNotificationsRequested,
-  refreshRequest,
+  refreshRequest: refreshRequested,
   activityUpdated,
   activitySelected,
 };
