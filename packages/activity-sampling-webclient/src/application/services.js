@@ -4,19 +4,18 @@
  * @typedef {import('../infrastructure/clock.js').Clock} Clock
  */
 
-// TODO use Java Clock{fixed(), system(), offset(), tick(), date(), millis()}?
 // TODO use Java Timer{schedule(), cancel()}?
 
 export async function logActivity(
   /** @type {Store} */ store,
   /** @type {Api} */ api,
-  currentTime = new Date(),
+  /** @type {Clock} */ clock,
 ) {
   console.log('logActivity');
   let { duration, client, project, task, notes } =
     store.getState().currentActivity;
   const activity = {
-    timestamp: currentTime,
+    timestamp: clock.date(),
     duration,
     client,
     project,
@@ -28,6 +27,7 @@ export async function logActivity(
 }
 
 export async function notificationScheduled({ deliverIn }, store) {
+  console.log('notificationScheduled', { deliverIn });
   store.dispatch({ type: 'notification-scheduled', deliverIn });
 }
 

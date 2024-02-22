@@ -5,6 +5,7 @@ import { Duration } from 'activity-sampling-shared';
 import services from '../../src/application/services.js';
 import { initialState, reducer } from '../../src/domain/reducer.js';
 import { Api } from '../../src/infrastructure/api.js';
+import { Clock } from '../../src/infrastructure/clock.js';
 import { Store } from '../../src/util/store.js';
 import { createActivity, createActivityDto } from '../testdata.js';
 
@@ -12,14 +13,15 @@ describe('Services', () => {
   describe('Log activity', () => {
     describe('Logs the activity with client, project, task and optional notes', () => {
       test('Logs the activity without notes', async () => {
-        let store = createStore();
-        let api = Api.createNull();
+        const store = createStore();
+        const api = Api.createNull();
+        const clock = Clock.createNull({ fixed: '2023-10-07T13:30Z' });
         const activitiesLogged = api.trackActivitiesLogged();
 
         await services.activityUpdated({ name: 'client', value: 'c1' }, store);
         await services.activityUpdated({ name: 'project', value: 'p1' }, store);
         await services.activityUpdated({ name: 'task', value: 't1' }, store);
-        await services.logActivity(store, api, new Date('2023-10-07T13:30Z'));
+        await services.logActivity(store, api, clock);
 
         expect(store.getState().currentActivity).toEqual({
           ...initialState.currentActivity,
@@ -41,15 +43,16 @@ describe('Services', () => {
       });
 
       test('Logs the activity with notes', async () => {
-        let store = createStore();
-        let api = Api.createNull();
+        const store = createStore();
+        const api = Api.createNull();
+        const clock = Clock.createNull({ fixed: '2023-10-07T13:30Z' });
         const activitiesLogged = api.trackActivitiesLogged();
 
         await services.activityUpdated({ name: 'client', value: 'c1' }, store);
         await services.activityUpdated({ name: 'project', value: 'p1' }, store);
         await services.activityUpdated({ name: 'task', value: 't1' }, store);
         await services.activityUpdated({ name: 'notes', value: 'n1' }, store);
-        await services.logActivity(store, api, new Date('2023-10-07T13:30Z'));
+        await services.logActivity(store, api, clock);
 
         expect(store.getState().currentActivity).toEqual({
           ...initialState.currentActivity,
@@ -72,7 +75,7 @@ describe('Services', () => {
     });
 
     test('Selects an activity from recent activities', async () => {
-      let store = createStore();
+      const store = createStore();
 
       await services.activitySelected(
         { client: 'c1', project: 'p1', task: 't1', notes: 'n1' },
@@ -92,11 +95,14 @@ describe('Services', () => {
     });
 
     describe.skip('Asks periodically what I am working on', () => {
-      // TODO disable form if countdown is running
-      // TODO if timestamp is undefined, use current time
+      // TODO start countdown and disable form
+      // TODO progress countdown and update remaining time
+      // TODO enable form when countdown has elapsed
+      // TODO disable form when activity is logged with last elapsed countdown
+      // TODO stop countdown and enable form
 
       test('Handles notifications scheduled', async () => {
-        let store = createStore({
+        const store = createStore({
           ...initialState,
           currentActivity: {
             ...initialState.currentActivity,
@@ -123,7 +129,7 @@ describe('Services', () => {
 
       describe('Countdown progressed', () => {
         test('Progresses countdown', async () => {
-          let store = createStore({
+          const store = createStore({
             ...initialState,
             currentActivity: {
               ...initialState.currentActivity,
@@ -149,7 +155,7 @@ describe('Services', () => {
         });
 
         test.skip('Enables form when the countdown has elapsed', async () => {
-          let store = createStore({
+          const store = createStore({
             ...initialState,
             currentActivity: {
               ...initialState.currentActivity,
@@ -179,7 +185,7 @@ describe('Services', () => {
 
       describe('Notification acknowledged', () => {
         test('Updates activity and disables form when countdown is running', async () => {
-          let store = createStore({
+          const store = createStore({
             ...initialState,
             currentActivity: {
               ...initialState.currentActivity,
@@ -210,7 +216,7 @@ describe('Services', () => {
       });
 
       test('Updates activity and leave form enabled when countdown is not running', async () => {
-        let store = createStore({
+        const store = createStore({
           ...initialState,
           currentActivity: {
             ...initialState.currentActivity,
@@ -389,7 +395,7 @@ describe('Services', () => {
 
   describe('Hours worked', () => {
     test('Summarizes hours worked for clients', async () => {
-      let store = createStore();
+      const store = createStore();
       const api = Api.createNull({
         responses: [
           {
