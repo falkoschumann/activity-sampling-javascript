@@ -2,16 +2,18 @@ import { Duration } from 'activity-sampling-shared';
 
 export const initialState = {
   currentActivity: {
-    // TODO activity: {}
-    timestamp: undefined,
-    duration: new Duration('PT30M'),
-    client: '',
-    project: '',
-    task: '',
-    notes: '',
+    activity: {
+      timestamp: undefined,
+      duration: new Duration('PT30M'),
+      client: '',
+      project: '',
+      task: '',
+      notes: '',
+    },
     isFormDisabled: false,
     countdown: {
       isRunning: false,
+      period: new Duration('PT30M'),
       remainingTime: new Duration('PT30M'),
       progress: 0.0,
     },
@@ -57,7 +59,13 @@ export function reducer(state = initialState, action) {
 function activityUpdated(state, { name, value }) {
   return {
     ...state,
-    currentActivity: { ...state.currentActivity, [name]: value },
+    currentActivity: {
+      ...state.currentActivity,
+      activity: {
+        ...state.currentActivity.activity,
+        [name]: value,
+      },
+    },
   };
 }
 
@@ -70,7 +78,7 @@ function activityLogged(state, { activity }) {
     ...state,
     currentActivity: {
       ...state.currentActivity,
-      ...activity,
+      activity,
       isFormDisabled,
     },
   };
@@ -125,15 +133,17 @@ function countdownProgressed(state, { timestamp, duration }) {
     isFormDisabled = false;
     duration = new Duration(state.currentActivity.countdown.period);
   } else {
-    timestamp = state.currentActivity.timestamp;
-    duration = state.currentActivity.duration;
+    ({ timestamp, duration } = state.currentActivity.activity);
   }
   return {
     ...state,
     currentActivity: {
       ...state.currentActivity,
-      timestamp,
-      duration,
+      activity: {
+        ...state.currentActivity.activity,
+        timestamp,
+        duration,
+      },
       isFormDisabled,
       countdown: {
         ...state.currentActivity.countdown,

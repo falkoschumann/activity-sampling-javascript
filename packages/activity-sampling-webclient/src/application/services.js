@@ -21,12 +21,10 @@ export async function logActivity(
   /** @type {Clock} */ clock,
 ) {
   console.log('logActivity');
-  let { timestamp, duration, client, project, task, notes } =
-    store.getState().currentActivity;
-  if (!timestamp) {
-    timestamp = clock.date();
+  let activity = { ...store.getState().currentActivity.activity };
+  if (!activity.timestamp) {
+    activity.timestamp = clock.date();
   }
-  const activity = { timestamp, duration, client, project, task, notes };
   await api.logActivity(activity);
   store.dispatch({ type: 'activity-logged', activity });
 }
