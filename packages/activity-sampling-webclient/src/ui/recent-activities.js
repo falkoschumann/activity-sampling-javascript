@@ -17,6 +17,8 @@ class RecentActivities extends Component {
     return html` ${this.#getWorkingDaysView()} ${this.#getTimeSummaryView()} `;
   }
 
+  // TODO rename to workingDaysTemlate?
+  //   see https://lit.dev/docs/components/rendering/
   #getWorkingDaysView() {
     return html`
       <div class="working-days">

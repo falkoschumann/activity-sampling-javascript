@@ -5,10 +5,6 @@ import './recent-activities.js';
 import { Component } from './component.js';
 
 class ActivitySamplingApp extends Component {
-  connectedCallback() {
-    super.connectedCallback();
-  }
-
   getView() {
     return html`
       <h1>Activity Sampling</h1>

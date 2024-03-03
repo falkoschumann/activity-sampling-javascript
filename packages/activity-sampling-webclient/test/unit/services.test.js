@@ -8,6 +8,7 @@ import { Api } from '../../src/infrastructure/api.js';
 import { Clock } from '../../src/infrastructure/clock.js';
 import { Store } from '../../src/util/store.js';
 import { createActivity, createActivityDto } from '../testdata.js';
+import { Timer } from '../../src/infrastructure/timer.js';
 
 describe('Services', () => {
   describe('Log activity', () => {
@@ -25,6 +26,7 @@ describe('Services', () => {
 
         expect(store.getState().currentActivity).toEqual({
           ...initialState.currentActivity,
+          timestamp: new Date('2023-10-07T13:30Z'),
           client: 'c1',
           project: 'p1',
           task: 't1',
@@ -56,6 +58,7 @@ describe('Services', () => {
 
         expect(store.getState().currentActivity).toEqual({
           ...initialState.currentActivity,
+          timestamp: new Date('2023-10-07T13:30Z'),
           client: 'c1',
           project: 'p1',
           task: 't1',
@@ -94,154 +97,212 @@ describe('Services', () => {
       });
     });
 
-    describe.skip('Asks periodically what I am working on', () => {
-      // TODO start countdown and disable form
-      // TODO progress countdown and update remaining time
-      // TODO enable form when countdown has elapsed
-      // TODO disable form when activity is logged with last elapsed countdown
-      // TODO stop countdown and enable form
+    describe('Asks periodically what I am working on', () => {
+      test('Starts countdown and disable form', () => {
+        const store = createStore();
+        const timer = Timer.createNull();
+        const clock = Clock.createNull({ fixed: '2024-03-03T16:53Z' });
+        const scheduledTasks = timer.trackScheduledTasks();
 
-      test('Handles notifications scheduled', async () => {
-        const store = createStore({
-          ...initialState,
-          currentActivity: {
-            ...initialState.currentActivity,
-            isFormDisabled: false,
-            remainingTime: new Duration('PT24M'),
-            progress: 0.2,
-            isTimerRunning: false,
-          },
-        });
-
-        services.notificationScheduled(
-          { deliverIn: new Duration('PT30M') },
+        services.askPeriodically(
+          { period: new Duration('PT20M') },
           store,
+          timer,
+          clock,
         );
 
         expect(store.getState().currentActivity).toEqual({
           ...initialState.currentActivity,
           isFormDisabled: true,
-          remainingTime: new Duration('PT30M'),
-          progress: 0,
-          isTimerRunning: true,
-        });
-      });
-
-      describe('Countdown progressed', () => {
-        test('Progresses countdown', async () => {
-          const store = createStore({
-            ...initialState,
-            currentActivity: {
-              ...initialState.currentActivity,
-              isFormDisabled: true,
-              remainingTime: new Duration('PT21M'),
-              progress: 0.7,
-              isTimerRunning: true,
-            },
-          });
-
-          await services.countdownProgressed(
-            { remaining: new Duration('PT18M') },
-            store,
-          );
-
-          expect(store.getState().currentActivity).toEqual({
-            ...initialState.currentActivity,
-            isFormDisabled: true,
-            remainingTime: new Duration('PT18M'),
-            progress: 0.4,
-            isTimerRunning: true,
-          });
-        });
-
-        test.skip('Enables form when the countdown has elapsed', async () => {
-          const store = createStore({
-            ...initialState,
-            currentActivity: {
-              ...initialState.currentActivity,
-              timestamp: undefined,
-              isFormDisabled: true,
-              remainingTime: new Duration('PT1M'),
-              progress: 0.97,
-              isTimerRunning: true,
-            },
-          });
-
-          await services.countdownProgressed(
-            { remaining: new Duration('PT0M') },
-            store,
-          );
-
-          expect(store.getState().currentActivity).toEqual({
-            ...initialState.currentActivity,
-            timestamp: undefined,
-            isFormDisabled: false,
-            remainingTime: new Duration('PT0M'),
-            progress: 1,
-            isTimerRunning: true,
-          });
-        });
-      });
-
-      describe('Notification acknowledged', () => {
-        test('Updates activity and disables form when countdown is running', async () => {
-          const store = createStore({
-            ...initialState,
-            currentActivity: {
-              ...initialState.currentActivity,
-              client: 'c1',
-              project: 'p1',
-              task: 't1',
-              notes: 'n1',
-              isFormDisabled: false,
-              isTimerRunning: true,
-            },
-          });
-
-          await services.notificationAcknowledged(
-            { client: 'c2', project: 'p2', task: 't2', notes: 'n2' },
-            store,
-          );
-
-          expect(store.getState().currentActivity).toEqual({
-            ...initialState.currentActivity,
-            client: 'c2',
-            project: 'p2',
-            task: 't2',
-            notes: 'n2',
-            isFormDisabled: true,
-            isTimerRunning: true,
-          });
-        });
-      });
-
-      test('Updates activity and leave form enabled when countdown is not running', async () => {
-        const store = createStore({
-          ...initialState,
-          currentActivity: {
-            ...initialState.currentActivity,
-            client: 'c1',
-            project: 'p1',
-            task: 't1',
-            notes: 'n1',
-            isFormDisabled: false,
-            isTimerRunning: false,
+          countdown: {
+            isRunning: true,
+            period: new Duration('PT20M'),
+            remainingTime: new Duration('PT20M'),
+            progress: 0.0,
           },
         });
+        expect(scheduledTasks.data).toEqual([
+          { task: expect.any(Function), period: 1000 },
+        ]);
+      });
 
-        await services.notificationAcknowledged(
-          { client: 'c2', project: 'p2', task: 't2', notes: 'n2' },
+      test('Progresses countdown and update remaining time', () => {
+        const store = createStore();
+        const timer = Timer.createNull();
+        const clock = Clock.createNull({ fixed: '2024-03-03T16:53Z' });
+        services.askPeriodically(
+          { period: new Duration('PT1M') },
           store,
+          timer,
+          clock,
         );
+
+        timer.simulateTaskExecution({ times: 1 });
 
         expect(store.getState().currentActivity).toEqual({
           ...initialState.currentActivity,
-          client: 'c2',
-          project: 'p2',
-          task: 't2',
-          notes: 'n2',
+          isFormDisabled: true,
+          countdown: {
+            isRunning: true,
+            period: new Duration('PT1M'),
+            remainingTime: new Duration('PT59S'),
+            progress: expect.closeTo(0.02),
+          },
+        });
+      });
+
+      test('Progresses countdown until end of the period', () => {
+        const store = createStore();
+        const timer = Timer.createNull();
+        const clock = Clock.createNull({ fixed: '2024-03-03T16:53Z' });
+        services.askPeriodically(
+          { period: new Duration('PT1M') },
+          store,
+          timer,
+          clock,
+        );
+
+        timer.simulateTaskExecution({ times: 59 });
+
+        expect(store.getState().currentActivity).toEqual({
+          ...initialState.currentActivity,
+          isFormDisabled: true,
+          countdown: {
+            isRunning: true,
+            period: new Duration('PT1M'),
+            remainingTime: new Duration('PT1S'),
+            progress: expect.closeTo(0.98),
+          },
+        });
+      });
+
+      test('Enables form when countdown has elapsed', () => {
+        const store = createStore();
+        const timer = Timer.createNull();
+        const clock = Clock.createNull({ fixed: '2024-03-03T16:53Z' });
+        services.askPeriodically(
+          { period: new Duration('PT1M') },
+          store,
+          timer,
+          clock,
+        );
+
+        timer.simulateTaskExecution({ times: 60 });
+
+        expect(store.getState().currentActivity).toEqual({
+          ...initialState.currentActivity,
+          timestamp: new Date('2024-03-03T16:53Z'),
+          duration: new Duration('PT1M'),
           isFormDisabled: false,
-          isTimerRunning: false,
+          countdown: {
+            isRunning: true,
+            period: new Duration('PT1M'),
+            remainingTime: new Duration('PT0S'),
+            progress: 1.0,
+          },
+        });
+      });
+
+      test('Restarts the countdown when the period has expired', () => {
+        const store = createStore();
+        const timer = Timer.createNull();
+        const clock = Clock.createNull({ fixed: '2024-03-03T16:53Z' });
+        services.askPeriodically(
+          { period: new Duration('PT1M') },
+          store,
+          timer,
+          clock,
+        );
+
+        timer.simulateTaskExecution({ times: 61 });
+
+        expect(store.getState().currentActivity).toEqual({
+          ...initialState.currentActivity,
+          timestamp: new Date('2024-03-03T16:53Z'),
+          duration: new Duration('PT1M'),
+          isFormDisabled: false,
+          countdown: {
+            isRunning: true,
+            period: new Duration('PT1M'),
+            remainingTime: new Duration('PT59S'),
+            progress: expect.closeTo(0.02),
+          },
+        });
+      });
+
+      test('Disables form when activity is logged with last elapsed countdown', async () => {
+        const store = createStore();
+        const timer = Timer.createNull();
+        const clock1 = Clock.createNull({ fixed: '2024-03-03T16:53Z' });
+        const clock2 = Clock.createNull({ fixed: '2024-03-03T16:56Z' });
+        const api = Api.createNull();
+        const activitiesLogged = api.trackActivitiesLogged();
+        services.askPeriodically(
+          { period: new Duration('PT1M') },
+          store,
+          timer,
+          clock1,
+        );
+        timer.simulateTaskExecution({ times: 61 });
+
+        await services.activityUpdated({ name: 'client', value: 'c1' }, store);
+        await services.activityUpdated({ name: 'project', value: 'p1' }, store);
+        await services.activityUpdated({ name: 'task', value: 't1' }, store);
+        await services.logActivity(store, api, clock2);
+
+        expect(activitiesLogged.data).toEqual([
+          {
+            timestamp: new Date('2024-03-03T16:53Z'),
+            duration: new Duration('PT1M'),
+            client: 'c1',
+            project: 'p1',
+            task: 't1',
+            notes: '',
+          },
+        ]);
+        expect(store.getState().currentActivity).toEqual({
+          ...initialState.currentActivity,
+          timestamp: new Date('2024-03-03T16:53Z'),
+          duration: new Duration('PT1M'),
+          client: 'c1',
+          project: 'p1',
+          task: 't1',
+          notes: '',
+          isFormDisabled: true,
+          countdown: {
+            isRunning: true,
+            period: new Duration('PT1M'),
+            remainingTime: new Duration('PT59S'),
+            progress: expect.closeTo(0.02),
+          },
+        });
+      });
+
+      test('Stops countdown and enable form', () => {
+        const store = createStore();
+        const timer = Timer.createNull();
+        const clock = Clock.createNull({ fixed: '2024-03-03T16:53Z' });
+        const canceled = timer.trackCanceledTasks();
+        services.askPeriodically(
+          { period: new Duration('PT1M') },
+          store,
+          timer,
+          clock,
+        );
+        timer.simulateTaskExecution({ times: 20 });
+
+        services.stopAskingPeriodically(store, timer);
+
+        expect(canceled.data).toHaveLength(1);
+        expect(store.getState().currentActivity).toEqual({
+          ...initialState.currentActivity,
+          isFormDisabled: false,
+          countdown: {
+            isRunning: false,
+            period: new Duration('PT1M'),
+            remainingTime: Duration.zero(),
+            progress: 0.0,
+          },
         });
       });
     });
@@ -442,6 +503,6 @@ describe('Services', () => {
   });
 });
 
-function createStore(state = initialState) {
+function createStore(state) {
   return new Store(reducer, state);
 }

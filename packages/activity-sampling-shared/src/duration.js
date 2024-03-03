@@ -1,22 +1,24 @@
 export class Duration {
   static zero() {
-    return new Duration(0);
+    return new Duration();
   }
 
+  /** Parse a string like `[-]PT[hH][mM][s[.f]S]`. */
   static parse(isoString) {
     const match = isoString.match(
-      /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)(?:\.(\d+))?S)?$/,
+      /^(-)?PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+\.?\d*)S)?$/,
     );
     if (match == null) {
-      throw new TypeError('Invalid Duration');
+      return new Duration(NaN);
     }
 
-    const hours = Number(match[1] || 0);
-    const minutes = Number(match[2] || 0);
-    const seconds = Number(match[3] || 0);
-    const millis = Number(match[4] || 0);
+    const sign = match[1] === '-' ? -1 : 1;
+    const hours = Number(match[2] || 0);
+    const minutes = Number(match[3] || 0);
+    const seconds = Number(match[4] || 0);
+    const millis = Number(match[5] || 0);
     return new Duration(
-      hours * 3600000 + minutes * 60000 + seconds * 1000 + millis,
+      sign * (hours * 3600000 + minutes * 60000 + seconds * 1000 + millis),
     );
   }
 
@@ -29,14 +31,24 @@ export class Duration {
     } else if (typeof value === 'string') {
       this.millis = Duration.parse(value).millis;
     } else if (typeof value === 'number') {
-      this.millis = value;
+      if (Number.isFinite(value)) {
+        this.millis = value < 0 ? Math.ceil(value) : Math.floor(value);
+      } else {
+        this.millis = NaN;
+      }
     } else if (value instanceof Duration) {
       this.millis = value.millis;
     } else {
-      throw new TypeError(
-        'The parameter `value` must be a number, an ISO 8601 string or an other `Duration` object.',
-      );
+      this.millis = NaN;
     }
+  }
+
+  get isZero() {
+    return this.millis === 0;
+  }
+
+  get isNegative() {
+    return this.millis < 0;
   }
 
   get hours() {
@@ -44,7 +56,8 @@ export class Duration {
   }
 
   get hoursPart() {
-    return Math.floor(this.millis / 3600000);
+    const value = this.millis / 3600000;
+    return this.isNegative ? Math.ceil(value) : Math.floor(value);
   }
 
   get minutes() {
@@ -52,7 +65,8 @@ export class Duration {
   }
 
   get minutesPart() {
-    return Math.floor((this.millis - this.hoursPart * 3600000) / 60000);
+    const value = (this.millis - this.hoursPart * 3600000) / 60000;
+    return this.isNegative ? Math.ceil(value) : Math.floor(value);
   }
 
   get seconds() {
@@ -60,47 +74,60 @@ export class Duration {
   }
 
   get secondsPart() {
-    return Math.floor(
+    const value =
       (this.millis - this.hoursPart * 3600000 - this.minutesPart * 60000) /
-        1000,
-    );
+      1000;
+    return this.isNegative ? Math.ceil(value) : Math.floor(value);
   }
 
   get millisPart() {
-    return (
+    const value =
       this.millis -
       this.hoursPart * 3600000 -
       this.minutesPart * 60000 -
-      this.secondsPart * 1000
-    );
+      this.secondsPart * 1000;
+    return this.isNegative ? Math.ceil(value) : Math.floor(value);
   }
 
-  add(other) {
+  absolutized() {
+    return new Duration(Math.abs(this.millis));
+  }
+
+  negated() {
+    return new Duration(-this.millis);
+  }
+
+  plus(other) {
     this.millis += other;
     return this;
   }
 
-  subtract(other) {
+  minus(other) {
     this.millis -= other;
     return this;
   }
 
   toISOString() {
+    const value = this.absolutized();
     let result = 'PT';
-    let hours = this.hoursPart;
+    const hours = value.hoursPart;
     if (hours > 0) {
       result += `${hours}H`;
     }
-    let minutes = this.minutesPart;
+    const minutes = value.minutesPart;
     if (minutes > 0) {
       result += `${minutes}M`;
     }
-    let seconds = this.secondsPart;
-    if (seconds > 0) {
-      result += `${seconds}S`;
+    const seconds = value.secondsPart;
+    const millis = value.millisPart;
+    if (seconds > 0 || millis > 0) {
+      result += `${seconds + millis / 1000}S`;
     }
     if (result === 'PT') {
       result += '0S';
+    }
+    if (this.isNegative) {
+      result = `-${result}`;
     }
     return result;
   }
@@ -114,11 +141,20 @@ export class Duration {
   }
 
   toString({ style = 'medium' } = {}) {
-    let hours = String(this.hoursPart).padStart(2, '0');
-    let minutes = String(this.minutesPart).padStart(2, '0');
-    let seconds = String(this.secondsPart).padStart(2, '0');
+    if (Number.isNaN(this.valueOf())) {
+      return 'Invalid Duration';
+    }
+
+    const value = this.absolutized();
+    const hours = String(value.hoursPart).padStart(2, '0');
+    const minutes = String(value.minutesPart).padStart(2, '0');
+    const seconds = String(value.secondsPart).padStart(2, '0');
     let string = `${hours}:${minutes}`;
-    return style === 'short' ? string : `${string}:${seconds}`;
+    string = style === 'short' ? string : `${string}:${seconds}`;
+    if (this.isNegative) {
+      string = `-${string}`;
+    }
+    return string;
   }
 
   valueOf() {

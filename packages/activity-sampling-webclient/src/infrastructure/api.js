@@ -16,7 +16,7 @@ export class Api extends EventTarget {
   }
 
   #baseUrl;
-  #fetch;
+  /** @type {typeof globalThis.fetch} */ #fetch;
 
   constructor(baseUrl, fetch) {
     super();

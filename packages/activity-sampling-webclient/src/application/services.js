@@ -2,63 +2,10 @@
  * @typedef {import('../util/store.js').Store} Store
  * @typedef {import('../infrastructure/api.js').Api} Api
  * @typedef {import('../infrastructure/clock.js').Clock} Clock
+ * * @typedef {import('../infrastructure/timer.js').Timer} Timer
  */
 
-// TODO use Java Timer{schedule(), cancel()}?
-
-export async function logActivity(
-  /** @type {Store} */ store,
-  /** @type {Api} */ api,
-  /** @type {Clock} */ clock,
-) {
-  console.log('logActivity');
-  let { duration, client, project, task, notes } =
-    store.getState().currentActivity;
-  const activity = {
-    timestamp: clock.date(),
-    duration,
-    client,
-    project,
-    task,
-    notes,
-  };
-  await api.logActivity(activity);
-  store.dispatch({ type: 'activity-logged' });
-}
-
-export async function notificationScheduled({ deliverIn }, store) {
-  console.log('notificationScheduled', { deliverIn });
-  store.dispatch({ type: 'notification-scheduled', deliverIn });
-}
-
-export async function countdownProgressed(
-  { remaining },
-  /** @type {Store} */ store,
-) {
-  console.log('countdownProgressed', { remaining });
-  store.dispatch({ type: 'countdownProgressed', remaining });
-}
-
-export async function notificationAcknowledged(
-  { client, project, task, notes },
-  /** @type {Store} */ store,
-) {
-  console.log('notificationAcknowledged', { client, project, task, notes });
-  store.dispatch({
-    type: 'notification-acknowledged',
-    client,
-    project,
-    task,
-    notes,
-  });
-}
-
-// TODO remove or rename
-export async function stopTimer(/** @type {Store} */ store, timer) {
-  console.log('stopTimer');
-  timer.stop();
-  store.dispatch({ type: 'timer-stopped' });
-}
+import { Duration } from 'activity-sampling-shared';
 
 export async function activityUpdated(
   { name, value },
@@ -66,6 +13,22 @@ export async function activityUpdated(
 ) {
   console.log('activityUpdated', { name, value });
   store.dispatch({ type: 'activity-updated', name, value });
+}
+
+export async function logActivity(
+  /** @type {Store} */ store,
+  /** @type {Api} */ api,
+  /** @type {Clock} */ clock,
+) {
+  console.log('logActivity');
+  let { timestamp, duration, client, project, task, notes } =
+    store.getState().currentActivity;
+  if (!timestamp) {
+    timestamp = clock.date();
+  }
+  const activity = { timestamp, duration, client, project, task, notes };
+  await api.logActivity(activity);
+  store.dispatch({ type: 'activity-logged', activity });
 }
 
 export async function activitySelected(
@@ -80,6 +43,32 @@ export async function activitySelected(
     task,
     notes,
   });
+}
+
+export async function askPeriodically(
+  { period },
+  /** @type {Store} */ store,
+  /** @type {Timer} */ timer,
+  /** @type {Clock} */ clock,
+) {
+  console.log('askPeriodically', { period });
+  timer.schedule(() => {
+    const timestamp = clock.date();
+    const duration = new Duration('PT1S');
+    console.log('countdown-progressed', timestamp, duration);
+    store.dispatch({
+      type: 'countdown-progressed',
+      timestamp,
+      duration,
+    });
+  }, 1000);
+  store.dispatch({ type: 'countdown-started', period });
+}
+
+export function stopAskingPeriodically(store, timer) {
+  console.log('stopAskingPeriodically');
+  timer.cancel();
+  store.dispatch({ type: 'countdown-stopped' });
 }
 
 export async function selectRecentActivities(
@@ -101,12 +90,11 @@ export async function selectHoursWorked(
 }
 
 export default {
-  logActivity,
-  notificationScheduled,
-  notificationAcknowledged,
-  countdownProgressed,
   activityUpdated,
+  logActivity,
   activitySelected,
+  askPeriodically,
   selectRecentActivities,
   selectHoursWorked,
+  stopAskingPeriodically,
 };
