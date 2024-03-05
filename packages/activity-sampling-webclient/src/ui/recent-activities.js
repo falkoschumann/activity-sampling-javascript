@@ -14,35 +14,36 @@ class RecentActivities extends Component {
   }
 
   getView() {
-    return html` ${this.#getWorkingDaysView()} ${this.#getTimeSummaryView()} `;
+    return html`${this.workingDaysTemplate()}${this.#timeSummaryTemplate()}`;
   }
 
-  // TODO rename to workingDaysTemlate?
-  //   see https://lit.dev/docs/components/rendering/
-  #getWorkingDaysView() {
+  workingDaysTemplate() {
     return html`
       <div class="working-days">
         ${this.state.workingDays.map(({ date, activities }) =>
-          this.#getWorkingDayView({ date, activities }),
+          this.#workingDayTemplate({ date, activities }),
         )}
       </div>
     `;
   }
 
-  #getWorkingDayView({ date, activities }) {
+  #workingDayTemplate({ date, activities }) {
     return html`
       <section>
         <h4>${date.toLocaleDateString(undefined, { dateStyle: 'full' })}</h4>
         <ul>
-          ${activities.map((activity) => this.#getActivityView(activity))}
+          ${activities.map((activity) => this.#activityTemplate(activity))}
         </ul>
       </section>
     `;
   }
 
-  #getActivityView({ timestamp, client, project, task, notes }) {
+  #activityTemplate({ timestamp, client, project, task, notes }) {
     return html`
-      <li @dblclick=${() => this.#onSelected({ client, project, task, notes })}>
+      <li
+        @dblclick=${() =>
+          this.#activitySelected({ client, project, task, notes })}
+      >
         <div>
           <strong
             >${timestamp.toLocaleTimeString(undefined, {
@@ -58,11 +59,11 @@ class RecentActivities extends Component {
     `;
   }
 
-  #onSelected({ client, project, task, notes }) {
+  #activitySelected({ client, project, task, notes }) {
     actions.activitySelected({ client, project, task, notes });
   }
 
-  #getTimeSummaryView() {
+  #timeSummaryTemplate() {
     return html`
       <div class="time-summary">
         <div>

@@ -22,12 +22,12 @@ class CurrentActivity extends Component {
   }
 
   getView() {
-    return html`${this.#getActivityForm()}${this.#getCurrentTaskView()}`;
+    return html`${this.#activityFormTemplate()}${this.#currentTaskTemplate()}`;
   }
 
-  #getActivityForm() {
+  #activityFormTemplate() {
     return html`
-      <form class="activity-form" @submit=${(e) => this.#onSubmitForm(e)}>
+      <form class="activity-form" @submit=${(e) => this.#formSubmitted(e)}>
         <div>
           <label class="caption" for="client">Client</label>
           <input
@@ -36,7 +36,7 @@ class CurrentActivity extends Component {
             disabled="${this.state.isFormDisabled ? '' : nothing}"
             id="client"
             name="client"
-            @keyup=${(e) => this.#onInputChanged(e)}
+            @keyup=${(e) => this.#inputChanged(e)}
           />
         </div>
         <div>
@@ -47,7 +47,7 @@ class CurrentActivity extends Component {
             disabled="${this.state.isFormDisabled ? '' : nothing}"
             id="project"
             name="project"
-            @keyup=${(e) => this.#onInputChanged(e)}
+            @keyup=${(e) => this.#inputChanged(e)}
           />
         </div>
         <div>
@@ -58,7 +58,7 @@ class CurrentActivity extends Component {
             disabled="${this.state.isFormDisabled ? '' : nothing}"
             id="task"
             name="task"
-            @keyup=${(e) => this.#onInputChanged(e)}
+            @keyup=${(e) => this.#inputChanged(e)}
           />
         </div>
         <div>
@@ -68,7 +68,7 @@ class CurrentActivity extends Component {
             disabled="${this.state.isFormDisabled ? '' : nothing}"
             id="notes"
             name="notes"
-            @keyup=${(e) => this.#onInputChanged(e)}
+            @keyup=${(e) => this.#inputChanged(e)}
           />
         </div>
         <button
@@ -81,7 +81,7 @@ class CurrentActivity extends Component {
     `;
   }
 
-  #onSubmitForm(event) {
+  #formSubmitted(event) {
     event.preventDefault();
     if (this.#validateForm(event.target)) {
       actions.activityLogged();
@@ -93,11 +93,11 @@ class CurrentActivity extends Component {
     return form.checkValidity();
   }
 
-  #onInputChanged({ target: { name, value } }) {
+  #inputChanged({ target: { name, value } }) {
     actions.activityUpdated({ name, value });
   }
 
-  #getCurrentTaskView() {
+  #currentTaskTemplate() {
     return html`
       <div class="current-task">
         <span class="caption">${this.state.remainingTime}</span>
@@ -105,7 +105,7 @@ class CurrentActivity extends Component {
         <button
           id="toggle-timer"
           aria-label="Start timer"
-          @click=${() => this.#handleToggleTimer()}
+          @click=${() => this.#timerToggled()}
         >
           <span class="material-icons">punch_clock</span>
         </button>
@@ -113,7 +113,7 @@ class CurrentActivity extends Component {
     `;
   }
 
-  #handleToggleTimer() {
+  #timerToggled() {
     let button = this.querySelector('#toggle-timer');
     if (this.state.isTimerRunning) {
       actions.stopNotificationsRequested();
