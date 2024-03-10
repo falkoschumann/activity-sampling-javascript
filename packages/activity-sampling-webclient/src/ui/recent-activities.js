@@ -59,10 +59,6 @@ class RecentActivities extends Component {
     `;
   }
 
-  #activitySelected({ client, project, task, notes }) {
-    actions.activitySelected({ client, project, task, notes });
-  }
-
   #timeSummaryTemplate() {
     return html`
       <div class="time-summary">
@@ -96,6 +92,10 @@ class RecentActivities extends Component {
         </div>
       </div>
     `;
+  }
+
+  #activitySelected({ client, project, task, notes }) {
+    actions.activitySelected({ client, project, task, notes });
   }
 }
 

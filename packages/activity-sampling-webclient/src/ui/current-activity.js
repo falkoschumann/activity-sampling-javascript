@@ -28,49 +28,10 @@ class CurrentActivity extends Component {
   #activityFormTemplate() {
     return html`
       <form class="activity-form" @submit=${(e) => this.#formSubmitted(e)}>
-        <div>
-          <label class="caption" for="client">Client</label>
-          <input
-            type="text"
-            required
-            disabled="${this.state.isFormDisabled ? '' : nothing}"
-            id="client"
-            name="client"
-            @keyup=${(e) => this.#inputChanged(e)}
-          />
-        </div>
-        <div>
-          <label class="caption" for="project">Project</label>
-          <input
-            type="text"
-            required
-            disabled="${this.state.isFormDisabled ? '' : nothing}"
-            id="project"
-            name="project"
-            @keyup=${(e) => this.#inputChanged(e)}
-          />
-        </div>
-        <div>
-          <label class="caption" for="task">Task</label>
-          <input
-            type="text"
-            required
-            disabled="${this.state.isFormDisabled ? '' : nothing}"
-            id="task"
-            name="task"
-            @keyup=${(e) => this.#inputChanged(e)}
-          />
-        </div>
-        <div>
-          <label class="caption" for="notes">Notes</label>
-          <input
-            type="text"
-            disabled="${this.state.isFormDisabled ? '' : nothing}"
-            id="notes"
-            name="notes"
-            @keyup=${(e) => this.#inputChanged(e)}
-          />
-        </div>
+        ${this.#textInputTemplate('client', 'Client', true)}
+        ${this.#textInputTemplate('project', 'Project', true)}
+        ${this.#textInputTemplate('task', 'Task', true)}
+        ${this.#textInputTemplate('notes', 'Notes')}
         <button
           type="submit"
           disabled="${this.state.isFormDisabled ? '' : nothing}"
@@ -78,6 +39,22 @@ class CurrentActivity extends Component {
           Log
         </button>
       </form>
+    `;
+  }
+
+  #textInputTemplate(id, title, required = false) {
+    return html`
+      <div>
+        <label class="caption" for="${id}">${title}</label>
+        <input
+          type="text"
+          required="${required ? '' : nothing}"
+          disabled="${this.state.isFormDisabled ? '' : nothing}"
+          id="${id}"
+          name="${id}"
+          @keyup=${(e) => this.#inputChanged(e)}
+        />
+      </div>
     `;
   }
 
@@ -98,6 +75,7 @@ class CurrentActivity extends Component {
   }
 
   #currentTaskTemplate() {
+    // TODO parametrize the period on start
     return html`
       <div class="current-task">
         <span class="caption">${this.state.remainingTime}</span>
@@ -110,6 +88,17 @@ class CurrentActivity extends Component {
           <span class="material-icons">punch_clock</span>
         </button>
       </div>
+      <select name="period" value="30">
+        <optgroup label="Period">
+          <option value="5">5 minutes</option>
+          <option value="10">10 minutes</option>
+          <option value="15">15 minutes</option>
+          <option value="20">20 minutes</option>
+          <option value="30" selected>30 minutes</option>
+          <option value="60">60 minutes</option>
+          <option value="1">1 minute</option>
+        </optgroup>
+      </select>
     `;
   }
 
