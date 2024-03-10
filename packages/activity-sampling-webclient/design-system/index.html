@@ -1,0 +1,246 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Design System</title>
+    <link rel="stylesheet" href="../fonts/all.css" />
+    <link rel="stylesheet" href="./reset.css" />
+    <link rel="stylesheet" href="./fragments.css" />
+    <link rel="stylesheet" href="./components.css" />
+    <link rel="stylesheet" href="./modules.css" />
+    <style>
+      /* TODO extract layout */
+      html,
+      body {
+        width: max-content;
+        height: 100%;
+      }
+
+      body {
+        display: flex;
+        flex-flow: column wrap;
+        align-content: flex-start;
+      }
+
+      body > section {
+        width: 440px;
+        margin: 0 24px;
+      }
+
+      body > section > div {
+        margin-bottom: 16px;
+      }
+
+      body > section > h2 {
+        padding-bottom: 8px;
+
+        color: var(--blue-700);
+        border-bottom: 2px solid var(--blue-700);
+      }
+
+      .color {
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+
+        border-radius: 4px;
+      }
+
+      .filled {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .wrapped {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Fragments -->
+
+    <section>
+      <h2>Colors</h2>
+      <div class="filled">
+        <span title="Blue 50" class="color" style="background-color: var(--blue-50)"></span>
+        <span title="Blue 100" class="color" style="background-color: var(--blue-100)"></span>
+        <span title="Blue 200" class="color" style="background-color: var(--blue-200)"></span>
+        <span title="Blue 300" class="color" style="background-color: var(--blue-300)"></span>
+        <span title="Blue 400" class="color" style="background-color: var(--blue-400)"></span>
+        <span title="Blue 500" class="color" style="background-color: var(--blue-500)"></span>
+        <span title="Blue 600" class="color" style="background-color: var(--blue-600)"></span>
+        <span title="Blue 700" class="color" style="background-color: var(--blue-700)"></span>
+        <span title="Blue 800" class="color" style="background-color: var(--blue-800)"></span>
+        <span title="Blue 900" class="color" style="background-color: var(--blue-900)"></span>
+        <span title="Blue 950" class="color" style="background-color: var(--blue-950)"></span>
+      </div>
+      <div class="filled">
+        <span title="Red 50" class="color" style="background-color: var(--red-50)"></span>
+        <span title="Red 100" class="color" style="background-color: var(--red-100)"></span>
+        <span title="Red 200" class="color" style="background-color: var(--red-200)"></span>
+        <span title="Red 300" class="color" style="background-color: var(--red-300)"></span>
+        <span title="Red 400" class="color" style="background-color: var(--red-400)"></span>
+        <span title="Red 500" class="color" style="background-color: var(--red-500)"></span>
+        <span title="Red 600" class="color" style="background-color: var(--red-600)"></span>
+        <span title="Red 700" class="color" style="background-color: var(--red-700)"></span>
+        <span title="Red 800" class="color" style="background-color: var(--red-800)"></span>
+        <span title="Red 900" class="color" style="background-color: var(--red-900)"></span>
+        <span title="Red 950" class="color" style="background-color: var(--red-950)"></span>
+      </div>
+      <div class="filled">
+        <span title="Green 50" class="color" style="background-color: var(--green-50)"></span>
+        <span title="Green 100" class="color" style="background-color: var(--green-100)"></span>
+        <span title="Green 200" class="color" style="background-color: var(--green-200)"></span>
+        <span title="Green 300" class="color" style="background-color: var(--green-300)"></span>
+        <span title="Green 400" class="color" style="background-color: var(--green-400)"></span>
+        <span title="Green 500" class="color" style="background-color: var(--green-500)"></span>
+        <span title="Green 600" class="color" style="background-color: var(--green-600)"></span>
+        <span title="Green 700" class="color" style="background-color: var(--green-700)"></span>
+        <span title="Green 800" class="color" style="background-color: var(--green-800)"></span>
+        <span title="Green 900" class="color" style="background-color: var(--green-900)"></span>
+        <span title="Green 950" class="color" style="background-color: var(--green-950)"></span>
+      </div>
+      <div class="filled">
+        <span title="Yellow 50" class="color" style="background-color: var(--yellow-50)"></span>
+        <span title="Yellow 100" class="color" style="background-color: var(--yellow-100)"></span>
+        <span title="Yellow 200" class="color" style="background-color: var(--yellow-200)"></span>
+        <span title="Yellow 300" class="color" style="background-color: var(--yellow-300)"></span>
+        <span title="Yellow 400" class="color" style="background-color: var(--yellow-400)"></span>
+        <span title="Yellow 500" class="color" style="background-color: var(--yellow-500)"></span>
+        <span title="Yellow 600" class="color" style="background-color: var(--yellow-600)"></span>
+        <span title="Yellow 700" class="color" style="background-color: var(--yellow-700)"></span>
+        <span title="Yellow 800" class="color" style="background-color: var(--yellow-800)"></span>
+        <span title="Yellow 900" class="color" style="background-color: var(--yellow-900)"></span>
+        <span title="Yellow 950" class="color" style="background-color: var(--yellow-950)"></span>
+      </div>
+      <div class="filled">
+        <span title="Gray 50" class="color" style="background-color: var(--gray-50)"></span>
+        <span title="Gray 100" class="color" style="background-color: var(--gray-100)"></span>
+        <span title="Gray 200" class="color" style="background-color: var(--gray-200)"></span>
+        <span title="Gray 300" class="color" style="background-color: var(--gray-300)"></span>
+        <span title="Gray 400" class="color" style="background-color: var(--gray-400)"></span>
+        <span title="Gray 500" class="color" style="background-color: var(--gray-500)"></span>
+        <span title="Gray 600" class="color" style="background-color: var(--gray-600)"></span>
+        <span title="Gray 700" class="color" style="background-color: var(--gray-700)"></span>
+        <span title="Gray 800" class="color" style="background-color: var(--gray-800)"></span>
+        <span title="Gray 900" class="color" style="background-color: var(--gray-900)"></span>
+        <span title="Gray 950" class="color" style="background-color: var(--gray-950)"></span>
+      </div>
+    </section>
+
+    <section>
+      <h2>Typography</h2>
+      <div>
+        <h1>H1 Header</h1>
+        <h2>H2 Subheader</h2>
+        <h3>H3 Title</h3>
+        <h4>H4 Subtitle</h4>
+        <div class="base">Base</div>
+        <div>Body</div>
+        <div class="caption">Caption</div>
+      </div>
+    </section>
+
+    <!-- Components -->
+
+    <section>
+      <h2>Buttons</h2>
+      <div class="wrapped">
+        <button>Default</button>
+        <button class="outlined">Outline</button>
+        <button class="icon-only"><span class="material-icons">menu</span></button>
+        <button class="icon-only outlined"><span class="material-icons">menu</span></button>
+      </div>
+      <div class="wrapped">
+        <button class="hovered">Hovered</button>
+        <button class="outlined hovered">Outline</button>
+        <button class="icon-only hovered"><span class="material-icons">menu</span></button>
+        <button class="icon-only outlined hovered"><span class="material-icons">menu</span></button>
+      </div>
+      <div class="wrapped">
+        <button class="activated">Activated</button>
+        <button class="outlined activated">Outline</button>
+        <button class="icon-only activated"><span class="material-icons">menu</span></button>
+        <button class="icon-only outlined activated"><span class="material-icons">menu</span></button>
+      </div>
+      <div class="wrapped">
+        <button disabled>Disabled</button>
+        <button class="outlined" disabled>Disabled</button>
+        <button class="icon-only" disabled><span class="material-icons">menu</span></button>
+        <button class="icon-only outlined" disabled><span class="material-icons">menu</span></button>
+      </div>
+    </section>
+
+    <section>
+      <h2>Form</h2>
+      <h3>Text Fields</h3>
+      <div class="wrapped">
+        <div>
+          <label for="key1">Caption</label>
+          <input id="key1" name="key1" type="text" placeholder="Placeholder" />
+        </div>
+        <div>
+          <label for="key2">Caption</label>
+          <input id="key2" name="key2" type="text" value="Value" />
+        </div>
+        <div>
+          <input id="key3" name="key3" type="text" value="Focused" class="focused" />
+        </div>
+        <div>
+          <input id="key4" name="key4" type="text" disabled value="Disabled" />
+        </div>
+        <div>
+          <input id="key5" name="key5" type="text" value="Invalid" pattern="[0-9]+" />
+        </div>
+      </div>
+      <h3>Dropdown</h3>
+      <div class="wrapped">
+        <div class="select-wrapper">
+          <select>
+            <optgroup label="Group">
+              <option selected>Value 1</option>
+              <option>Value 2</option>
+              <option>Value 3</option>
+            </optgroup>
+          </select>
+          <span class="focus"></span>
+        </div>
+        <div class="select-wrapper">
+          <select class="focused">
+            <optgroup label="Group">
+              <option selected>Focused 1</option>
+              <option>Focused 2</option>
+              <option>Focused 3</option>
+            </optgroup>
+          </select>
+          <span class="focus"></span>
+        </div>
+        <div class="select-wrapper select-disabled">
+          <select disabled>
+            <optgroup label="Group">
+              <option selected>Disabled 1</option>
+              <option>Disabled 2</option>
+              <option>Disabled 3</option>
+            </optgroup>
+          </select>
+          <span class="focus"></span>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Other</h2>
+      <div>
+        <progress max="100" value="62"></progress>
+      </div>
+    </section>
+
+    <!-- Moduls -->
+
+    <section>
+      <h2>Modules</h2>
+    </section>
+  </body>
+</html>
