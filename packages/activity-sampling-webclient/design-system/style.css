@@ -1,0 +1,28 @@
+html,
+body {
+  width: max-content;
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-flow: column wrap;
+  align-content: flex-start;
+}
+
+section.columns {
+  width: 440px;
+  margin: 0 24px;
+}
+
+section.columns > div {
+  margin-bottom: 12px;
+}
+
+.color {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+
+  border-radius: 4px;
+}

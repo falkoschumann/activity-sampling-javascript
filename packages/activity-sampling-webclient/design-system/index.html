@@ -8,60 +8,12 @@
     <link rel="stylesheet" href="./fragments.css" />
     <link rel="stylesheet" href="./components.css" />
     <link rel="stylesheet" href="./modules.css" />
-    <style>
-      /* TODO extract layout */
-      html,
-      body {
-        width: max-content;
-        height: 100%;
-      }
-
-      body {
-        display: flex;
-        flex-flow: column wrap;
-        align-content: flex-start;
-      }
-
-      body > section {
-        width: 440px;
-        margin: 0 24px;
-      }
-
-      body > section > div {
-        margin-bottom: 16px;
-      }
-
-      body > section > h2 {
-        padding-bottom: 8px;
-
-        color: var(--blue-700);
-        border-bottom: 2px solid var(--blue-700);
-      }
-
-      .color {
-        display: inline-block;
-        width: 32px;
-        height: 32px;
-
-        border-radius: 4px;
-      }
-
-      .filled {
-        display: flex;
-        justify-content: space-between;
-      }
-
-      .wrapped {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 16px;
-      }
-    </style>
+    <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
     <!-- Fragments -->
 
-    <section>
+    <section class="columns">
       <h2>Colors</h2>
       <div class="filled">
         <span title="Blue 50" class="color" style="background-color: var(--blue-50)"></span>
@@ -130,22 +82,20 @@
       </div>
     </section>
 
-    <section>
+    <section class="columns">
       <h2>Typography</h2>
-      <div>
-        <h1>H1 Header</h1>
-        <h2>H2 Subheader</h2>
-        <h3>H3 Title</h3>
-        <h4>H4 Subtitle</h4>
-        <div class="base">Base</div>
-        <div>Body</div>
-        <div class="caption">Caption</div>
-      </div>
+      <h1>H1 Header</h1>
+      <h2>H2 Subheader</h2>
+      <h3>H3 Title</h3>
+      <h4>H4 Subtitle</h4>
+      <p class="base">Base</p>
+      <p>Body</p>
+      <p class="caption">Caption</p>
     </section>
 
     <!-- Components -->
 
-    <section>
+    <section class="columns">
       <h2>Buttons</h2>
       <div class="wrapped">
         <button>Default</button>
@@ -173,7 +123,7 @@
       </div>
     </section>
 
-    <section>
+    <section class="columns">
       <h2>Form</h2>
       <h3>Text Fields</h3>
       <div class="wrapped">
@@ -230,7 +180,7 @@
       </div>
     </section>
 
-    <section>
+    <section class="columns">
       <h2>Other</h2>
       <div>
         <progress max="100" value="62"></progress>
@@ -239,7 +189,7 @@
 
     <!-- Moduls -->
 
-    <section>
+    <section class="columns">
       <h2>Modules</h2>
     </section>
   </body>
