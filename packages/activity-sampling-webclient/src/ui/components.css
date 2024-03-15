@@ -152,6 +152,9 @@ label {
 
   color: var(--white);
   background-color: var(--gray-500);
+  border: 1px solid var(--gray-500);
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
 
   content: '\e5c5'; /* Arrow Drop Down */
   pointer-events: none;
@@ -183,6 +186,7 @@ select.focused + .focus {
   bottom: -1px;
   border: 2px solid var(--blue-500);
   border-radius: inherit;
+  pointer-events: none;
 }
 
 .select-disabled {

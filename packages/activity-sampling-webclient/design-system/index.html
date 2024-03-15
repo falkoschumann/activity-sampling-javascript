@@ -4,16 +4,18 @@
     <meta charset="utf-8" />
     <title>Design System</title>
     <link rel="stylesheet" href="../fonts/all.css" />
-    <link rel="stylesheet" href="./reset.css" />
-    <link rel="stylesheet" href="./fragments.css" />
-    <link rel="stylesheet" href="./components.css" />
-    <link rel="stylesheet" href="./modules.css" />
+    <link rel="stylesheet" href="../src/ui/reset.css" />
+    <link rel="stylesheet" href="../src/ui/fragments.css" />
+    <link rel="stylesheet" href="../src/ui/components.css" />
+    <link rel="stylesheet" href="../src/ui/modules.css" />
     <link rel="stylesheet" href="./style.css" />
   </head>
-  <body>
-    <!-- Fragments -->
+  <body class="columns">
+    <!--
+      -- Fragments
+      -->
 
-    <section class="columns">
+    <section class="mx-150 space-y-100">
       <h2>Colors</h2>
       <div class="filled">
         <span title="Blue 50" class="color" style="background-color: var(--blue-50)"></span>
@@ -80,9 +82,11 @@
         <span title="Gray 900" class="color" style="background-color: var(--gray-900)"></span>
         <span title="Gray 950" class="color" style="background-color: var(--gray-950)"></span>
       </div>
+      <p>Apply the rules of heraldic tinging. There are the metals gold (yellow) and silver (white) as well as the colors blue, red, green and black. Metals must not border on metals. Colors must not border on colors.</p>
+      <p>Proven combinations are red/silver, blue/silver, black/silber, green/silver and black/gold.</p>
     </section>
 
-    <section class="columns">
+    <section class="mx-150">
       <h2>Typography</h2>
       <h1>H1 Header</h1>
       <h2>H2 Subheader</h2>
@@ -93,29 +97,31 @@
       <p class="caption">Caption</p>
     </section>
 
-    <!-- Components -->
+    <!--
+      -- Components
+      -->
 
-    <section class="columns">
+    <section class="mx-150 space-y-100">
       <h2>Buttons</h2>
-      <div class="wrapped">
+      <div class="filled">
         <button>Default</button>
         <button class="outlined">Outline</button>
         <button class="icon-only"><span class="material-icons">menu</span></button>
         <button class="icon-only outlined"><span class="material-icons">menu</span></button>
       </div>
-      <div class="wrapped">
+      <div class="filled">
         <button class="hovered">Hovered</button>
         <button class="outlined hovered">Outline</button>
         <button class="icon-only hovered"><span class="material-icons">menu</span></button>
         <button class="icon-only outlined hovered"><span class="material-icons">menu</span></button>
       </div>
-      <div class="wrapped">
+      <div class="filled">
         <button class="activated">Activated</button>
         <button class="outlined activated">Outline</button>
         <button class="icon-only activated"><span class="material-icons">menu</span></button>
         <button class="icon-only outlined activated"><span class="material-icons">menu</span></button>
       </div>
-      <div class="wrapped">
+      <div class="filled">
         <button disabled>Disabled</button>
         <button class="outlined" disabled>Disabled</button>
         <button class="icon-only" disabled><span class="material-icons">menu</span></button>
@@ -123,7 +129,7 @@
       </div>
     </section>
 
-    <section class="columns">
+    <section class="mx-150 space-y-100">
       <h2>Form</h2>
       <h3>Text Fields</h3>
       <div class="wrapped">
@@ -180,16 +186,18 @@
       </div>
     </section>
 
-    <section class="columns">
+    <section class="mx-150 space-y-100">
       <h2>Other</h2>
       <div>
         <progress max="100" value="62"></progress>
       </div>
     </section>
 
-    <!-- Moduls -->
+    <!--
+      -- Moduls
+      -->
 
-    <section class="columns">
+    <section class="mx-150">
       <h2>Modules</h2>
     </section>
   </body>

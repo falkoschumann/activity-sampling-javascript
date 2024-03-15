@@ -4,19 +4,14 @@ body {
   height: 100%;
 }
 
-body {
+.columns {
   display: flex;
   flex-flow: column wrap;
   align-content: flex-start;
 }
 
-section.columns {
-  width: 440px;
-  margin: 0 24px;
-}
-
-section.columns > div {
-  margin-bottom: 12px;
+.columns > section {
+  width: 420px;
 }
 
 .color {
@@ -24,5 +19,5 @@ section.columns > div {
   width: 32px;
   height: 32px;
 
-  border-radius: 4px;
+  border-radius: 8px;
 }
