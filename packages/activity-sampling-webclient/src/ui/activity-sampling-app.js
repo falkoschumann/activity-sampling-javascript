@@ -4,7 +4,7 @@ import './current-activity.js';
 import './recent-activities.js';
 import { Component } from './component.js';
 
-class ActivitySamplingApp extends Component {
+class ActivitySamplingAppComponent extends Component {
   getView() {
     return html`
       <h1>Activity Sampling</h1>
@@ -14,4 +14,7 @@ class ActivitySamplingApp extends Component {
   }
 }
 
-window.customElements.define('m-activity-sampling-app', ActivitySamplingApp);
+window.customElements.define(
+  'm-activity-sampling-app',
+  ActivitySamplingAppComponent,
+);

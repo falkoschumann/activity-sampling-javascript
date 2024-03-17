@@ -1,9 +1,9 @@
 import { html } from 'lit-html';
 
-import { Component } from './component.js';
 import * as actions from './actions.js';
+import { StateComponent } from './state-component.js';
 
-class RecentActivities extends Component {
+class RecentActivitiesComponent extends StateComponent {
   connectedCallback() {
     super.connectedCallback();
     actions.refreshRequested();
@@ -99,4 +99,4 @@ class RecentActivities extends Component {
   }
 }
 
-window.customElements.define('m-recent-activities', RecentActivities);
+window.customElements.define('m-recent-activities', RecentActivitiesComponent);

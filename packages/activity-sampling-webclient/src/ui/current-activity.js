@@ -1,9 +1,9 @@
 import { html, nothing } from 'lit-html';
 
-import { Component } from './component.js';
 import * as actions from './actions.js';
+import { StateComponent } from './state-component.js';
 
-class CurrentActivity extends Component {
+class CurrentActivityComponent extends StateComponent {
   disconnectedCallback() {
     super.disconnectedCallback();
     actions.stopNotificationsRequested();
@@ -116,4 +116,4 @@ class CurrentActivity extends Component {
   }
 }
 
-window.customElements.define('m-current-activity', CurrentActivity);
+window.customElements.define('m-current-activity', CurrentActivityComponent);
