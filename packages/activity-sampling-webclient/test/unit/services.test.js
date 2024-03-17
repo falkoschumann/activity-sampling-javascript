@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, test } from '@jest/globals';
 
 import { Duration } from 'activity-sampling-shared';
 
-import services from '../../src/application/services.js';
+import * as services from '../../src/application/services.js';
 import { initialState, reducer } from '../../src/domain/reducer.js';
 import { Api } from '../../src/infrastructure/api.js';
 import { Clock } from '../../src/infrastructure/clock.js';

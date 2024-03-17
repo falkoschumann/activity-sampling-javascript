@@ -1,7 +1,7 @@
 import { html, nothing } from 'lit-html';
 
-import actions from './actions.js';
 import { Component } from './component.js';
+import * as actions from './actions.js';
 
 class CurrentActivity extends Component {
   disconnectedCallback() {

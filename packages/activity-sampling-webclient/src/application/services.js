@@ -86,13 +86,3 @@ export async function selectHoursWorked(
   let hoursWorked = await api.loadHoursWorked();
   store.dispatch({ type: 'hours-worked-loaded', hoursWorked });
 }
-
-export default {
-  activityUpdated,
-  logActivity,
-  activitySelected,
-  askPeriodically,
-  selectRecentActivities,
-  selectHoursWorked,
-  stopAskingPeriodically,
-};
