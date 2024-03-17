@@ -3,11 +3,11 @@ import { html } from 'lit-html';
 import './recent-activities.css';
 import { Component } from './component.js';
 
-export class ActivitySelectedEvent extends Event {
-  static type = 'activity-selected';
+const ACTIVITY_SELECTED_EVENT = 'activity-selected';
 
+class ActivitySelectedEvent extends Event {
   constructor({ client, project, task, notes }) {
-    super(ActivitySelectedEvent.type, { bubbles: true, composed: true });
+    super(ACTIVITY_SELECTED_EVENT);
     this.client = client;
     this.project = project;
     this.task = task;

@@ -1,4 +1,4 @@
-import { html, nothing } from 'lit-html';
+import { html } from 'lit-html';
 
 import * as actions from './actions.js';
 import { StateComponent } from './state-component.js';
@@ -32,10 +32,7 @@ class CurrentActivityComponent extends StateComponent {
         ${this.#textInputTemplate('project', 'Project', true)}
         ${this.#textInputTemplate('task', 'Task', true)}
         ${this.#textInputTemplate('notes', 'Notes')}
-        <button
-          type="submit"
-          disabled="${this.state.isFormDisabled ? '' : nothing}"
-        >
+        <button type="submit" ?disabled="${this.state.isFormDisabled}">
           Log
         </button>
       </form>
@@ -48,8 +45,8 @@ class CurrentActivityComponent extends StateComponent {
         <label class="caption" for="${id}">${title}</label>
         <input
           type="text"
-          required="${required ? '' : nothing}"
-          disabled="${this.state.isFormDisabled ? '' : nothing}"
+          ?required="${required}"
+          ?disabled="${this.state.isFormDisabled}"
           id="${id}"
           name="${id}"
           @keyup=${(e) => this.#inputChanged(e)}
