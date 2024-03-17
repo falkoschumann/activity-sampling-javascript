@@ -1,0 +1,17 @@
+m-recent-activities h4 {
+  position: sticky;
+  top: 0;
+
+  background-color: var(--white);
+}
+
+m-recent-activities li {
+  padding: 8px;
+  display: flex;
+
+  border-bottom: 1px solid var(--gray-200);
+}
+
+m-recent-activities li :first-child {
+  min-width: 48px;
+}

@@ -1,33 +1,41 @@
 import { html } from 'lit-html';
 
-import './time-summary.js';
-import * as actions from './actions.js';
-import { StateComponent } from './state-component.js';
+import './recent-activities.css';
+import { Component } from './component.js';
 
-class RecentActivitiesComponent extends StateComponent {
-  connectedCallback() {
-    super.connectedCallback();
-    actions.refreshRequested();
+export class ActivitySelectedEvent extends Event {
+  static type = 'activity-selected';
+
+  constructor({ client, project, task, notes }) {
+    super(ActivitySelectedEvent.type, { bubbles: true, composed: true });
+    this.client = client;
+    this.project = project;
+    this.task = task;
+    this.notes = notes;
+  }
+}
+
+class RecentActivitiesComponent extends Component {
+  #workingDays = [];
+
+  get workingDays() {
+    return this.#workingDays;
   }
 
-  extractState(state) {
-    return state.recentActivities;
+  set workingDays(workingDays) {
+    if (this.#workingDays === workingDays) {
+      return;
+    }
+
+    this.#workingDays = workingDays;
+    this.updateView();
   }
 
   getView() {
     return html`
-      ${this.workingDaysTemplate()}
-      <m-time-summary .hours=${this.state.timeSummary}></m-time-summary>
-    `;
-  }
-
-  workingDaysTemplate() {
-    return html`
-      <div class="working-days">
-        ${this.state.workingDays.map(({ date, activities }) =>
-          this.#workingDayTemplate({ date, activities }),
-        )}
-      </div>
+      ${this.workingDays.map(({ date, activities }) =>
+        this.#workingDayTemplate({ date, activities }),
+      )}
     `;
   }
 
@@ -46,7 +54,9 @@ class RecentActivitiesComponent extends StateComponent {
     return html`
       <li
         @dblclick=${() =>
-          this.#activitySelected({ client, project, task, notes })}
+          this.dispatchEvent(
+            new ActivitySelectedEvent({ client, project, task, notes }),
+          )}
       >
         <div>
           <strong
@@ -61,10 +71,6 @@ class RecentActivitiesComponent extends StateComponent {
         </div>
       </li>
     `;
-  }
-
-  #activitySelected({ client, project, task, notes }) {
-    actions.activitySelected({ client, project, task, notes });
   }
 }
 
