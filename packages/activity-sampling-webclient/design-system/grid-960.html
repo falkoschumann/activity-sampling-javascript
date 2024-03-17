@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grid 960</title>
+    <link rel="stylesheet" href="../fonts/all.css" />
+    <link rel="stylesheet" href="../src/ui/reset.css" />
+    <link rel="stylesheet" href="../src/ui/fragments.css" />
+    <link rel="stylesheet" href="../src/ui/components.css" />
+    <link rel="stylesheet" href="../src/ui/modules.css" />
+    <style>
+      main {
+        background-size: 80px 1px;
+        background-image: linear-gradient(to right, var(--yellow-100) 12px, var(--red-200) 12px 68px, var(--yellow-100) 68px);
+      }
+
+      .box {
+        text-align: center;
+
+        border: 1px solid var(--black);
+      }
+    </style>
+  </head>
+  <body>
+    <header class="row">
+      <div class="grid-12">
+        <h1>Grid 960 with 12 Columns</h1>
+      </div>
+    </header>
+    <main class="row">
+      <div class="box grid-12 my-50 p-50">936 px</div>
+
+      <div class="box grid-1 my-50 p-50">56 px</div>
+      <div class="box grid-11 my-50 p-50">856 px</div>
+
+      <div class="box grid-2 my-50 p-50">136 px</div>
+      <div class="box grid-10 my-50 p-50">776 px</div>
+
+      <div class="box grid-3 my-50 p-50">216 px</div>
+      <div class="box grid-9 my-50 p-50">696 px</div>
+
+      <div class="box grid-4 my-50 p-50">296 px</div>
+      <div class="box grid-8 my-50 p-50">616 px</div>
+
+      <div class="box grid-5 my-50 p-50">376 px</div>
+      <div class="box grid-7 my-50 p-50">536 px</div>
+
+      <div class="box grid-6 my-50 p-50">456 px</div>
+      <div class="box grid-6 my-50 p-50">456 px</div>
+    </main>
+  </body>
+</html>

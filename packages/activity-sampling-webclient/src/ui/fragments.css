@@ -149,6 +149,88 @@ p {
   gap: 16px;
 }
 
+.row {
+  margin-left: auto;
+  margin-right: auto;
+  width: auto;
+  max-width: 960px;
+}
+
+.row::after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+.grid-1 {
+  width: 56px;
+}
+
+.grid-2 {
+  width: 136px;
+}
+
+.grid-3 {
+  width: 216px;
+}
+
+.grid-4 {
+  width: 296px;
+}
+
+.grid-5 {
+  width: 376px;
+}
+
+.grid-6 {
+  width: 456px;
+}
+
+.grid-7 {
+  width: 536px;
+}
+
+.grid-8 {
+  width: 616px;
+}
+
+.grid-9 {
+  width: 696px;
+}
+
+.grid-10 {
+  width: 776px;
+}
+
+.grid-11 {
+  width: 856px;
+}
+
+.grid-12 {
+  width: 936px;
+}
+
+.grid-1,
+.grid-2,
+.grid-3,
+.grid-4,
+.grid-5,
+.grid-6,
+.grid-7,
+.grid-8,
+.grid-9,
+.grid-10,
+.grid-11,
+.grid-12 {
+  float: left;
+  margin-left: 12px;
+  margin-right: 12px;
+}
+
+.clear {
+  clear: both;
+}
+
 /*
  * Utilities
  */

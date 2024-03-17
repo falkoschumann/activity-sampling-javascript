@@ -2,20 +2,41 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Design System</title>
     <link rel="stylesheet" href="../fonts/all.css" />
     <link rel="stylesheet" href="../src/ui/reset.css" />
     <link rel="stylesheet" href="../src/ui/fragments.css" />
     <link rel="stylesheet" href="../src/ui/components.css" />
     <link rel="stylesheet" href="../src/ui/modules.css" />
-    <link rel="stylesheet" href="./style.css" />
+    <style>
+      html,
+      body {
+        width: max-content;
+        height: 100%;
+      }
+
+      .columns {
+        display: flex;
+        flex-flow: column wrap;
+        align-content: flex-start;
+      }
+
+      .color {
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+
+        border-radius: 8px;
+      }
+    </style>
   </head>
   <body class="columns">
     <!--
       -- Fragments
       -->
 
-    <section class="mx-150 space-y-100">
+    <section class="grid-6 space-y-100">
       <h2>Colors</h2>
       <div class="filled">
         <span title="Blue 50" class="color" style="background-color: var(--blue-50)"></span>
@@ -82,11 +103,14 @@
         <span title="Gray 900" class="color" style="background-color: var(--gray-900)"></span>
         <span title="Gray 950" class="color" style="background-color: var(--gray-950)"></span>
       </div>
-      <p>Apply the rules of heraldic tinging. There are the metals gold (yellow) and silver (white) as well as the colors blue, red, green and black. Metals must not border on metals. Colors must not border on colors.</p>
+      <p>
+        Apply the rules of <a href="https://w.wiki/9V5R" target="_blank">heraldic tinging</a>. There are the metals gold (yellow) and silver (white) as well as the colors blue, red, green and black. Metals must not border on metals. Colors must not
+        border on colors.
+      </p>
       <p>Proven combinations are red/silver, blue/silver, black/silber, green/silver and black/gold.</p>
     </section>
 
-    <section class="mx-150">
+    <section class="grid-6">
       <h2>Typography</h2>
       <h1>H1 Header</h1>
       <h2>H2 Subheader</h2>
@@ -97,11 +121,27 @@
       <p class="caption">Caption</p>
     </section>
 
+    <section class="grid-6">
+      <h2>Layouts</h2>
+      <ul>
+        <li><a href="grid-960.html">Grid 960</a></li>
+      </ul>
+    </section>
+
     <!--
       -- Components
       -->
 
-    <section class="mx-150 space-y-100">
+    <section class="grid-6 space-y-100">
+      <h2>Links</h2>
+      <div class="wrapped">
+        <a href="#">Default</a>
+        <a href="#" class="hovered">Hovered</a>
+        <a href="#" class="activated">Activated</a>
+      </div>
+    </section>
+
+    <section class="grid-6 space-y-100">
       <h2>Buttons</h2>
       <div class="filled">
         <button>Default</button>
@@ -129,27 +169,16 @@
       </div>
     </section>
 
-    <section class="mx-150 space-y-100">
+    <section class="grid-6 space-y-100">
       <h2>Form</h2>
-      <h3>Text Fields</h3>
+      <h3>Text Field</h3>
       <div class="wrapped">
-        <div>
-          <label for="key1">Caption</label>
-          <input id="key1" name="key1" type="text" placeholder="Placeholder" />
-        </div>
-        <div>
-          <label for="key2">Caption</label>
-          <input id="key2" name="key2" type="text" value="Value" />
-        </div>
-        <div>
-          <input id="key3" name="key3" type="text" value="Focused" class="focused" />
-        </div>
-        <div>
-          <input id="key4" name="key4" type="text" disabled value="Disabled" />
-        </div>
-        <div>
-          <input id="key5" name="key5" type="text" value="Invalid" pattern="[0-9]+" />
-        </div>
+        <input type="text" />
+        <input type="text" placeholder="Placeholder" />
+        <input type="text" value="Value" />
+        <input type="text" value="Focused" class="focused" />
+        <input type="text" disabled value="Disabled" />
+        <input type="text" value="Invalid" pattern="[0-9]+" />
       </div>
       <h3>Dropdown</h3>
       <div class="wrapped">
@@ -186,7 +215,7 @@
       </div>
     </section>
 
-    <section class="mx-150 space-y-100">
+    <section class="grid-6 space-y-100">
       <h2>Other</h2>
       <div>
         <progress max="100" value="62"></progress>
@@ -197,8 +226,12 @@
       -- Moduls
       -->
 
-    <section class="mx-150">
+    <section class="grid-6">
       <h2>Modules</h2>
+      <div>
+        <label for="key1">Caption</label>
+        <input id="key1" name="key1" type="text" />
+      </div>
     </section>
   </body>
 </html>

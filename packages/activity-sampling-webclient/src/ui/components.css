@@ -1,4 +1,38 @@
 /*
+ * Links
+ */
+
+a {
+  color: var(--blue-600);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+a:hover,
+a.hovered {
+  color: var(--blue-700);
+  text-decoration: underline;
+}
+
+a:active,
+a.activated {
+  color: var(--blue-800);
+  text-decoration: underline;
+}
+
+a[href^='http://']::after,
+a[href^='https://']::after
+{
+  margin-left: 2px;
+
+  font-family: 'Material Icons';
+  vertical-align: text-top;
+
+  content: '\f8ce'; /* Arrow outward */
+  content: '\e89e'; /* Open in new */
+}
+
+/*
  * Buttons
  */
 
@@ -156,7 +190,7 @@ label {
   border-top-right-radius: 2px;
   border-bottom-right-radius: 2px;
 
-  content: '\e5c5'; /* Arrow Drop Down */
+  content: '\e5c5'; /* Arrow drop down */
   pointer-events: none;
 }
 
