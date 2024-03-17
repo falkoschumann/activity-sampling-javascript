@@ -1,5 +1,6 @@
 import { html } from 'lit-html';
 
+import './time-summary.js';
 import * as actions from './actions.js';
 import { StateComponent } from './state-component.js';
 
@@ -14,7 +15,10 @@ class RecentActivitiesComponent extends StateComponent {
   }
 
   getView() {
-    return html`${this.workingDaysTemplate()}${this.#timeSummaryTemplate()}`;
+    return html`
+      ${this.workingDaysTemplate()}
+      <m-time-summary .hours=${this.state.timeSummary}></m-time-summary>
+    `;
   }
 
   workingDaysTemplate() {
@@ -56,41 +60,6 @@ class RecentActivitiesComponent extends StateComponent {
           <div class="caption">${notes}</div>
         </div>
       </li>
-    `;
-  }
-
-  #timeSummaryTemplate() {
-    return html`
-      <div class="time-summary">
-        <div>
-          <div class="caption">Hours Today</div>
-          <div>
-            ${this.state.timeSummary.hoursToday.toString({ style: 'short' })}
-          </div>
-        </div>
-        <div>
-          <div class="caption">Hours Yesterday</div>
-          <div>
-            ${this.state.timeSummary.hoursYesterday.toString({
-              style: 'short',
-            })}
-          </div>
-        </div>
-        <div>
-          <div class="caption">Hours this Week</div>
-          <div>
-            ${this.state.timeSummary.hoursThisWeek.toString({ style: 'short' })}
-          </div>
-        </div>
-        <div>
-          <div class="caption">Hours this Month</div>
-          <div>
-            ${this.state.timeSummary.hoursThisMonth.toString({
-              style: 'short',
-            })}
-          </div>
-        </div>
-      </div>
     `;
   }
 

@@ -1,5 +1,9 @@
 import { html } from 'lit-html';
 
+import './reset.css';
+import './fragments.css';
+import './components.css';
+import './modules.css';
 import './current-activity.js';
 import './recent-activities.js';
 import { Component } from './component.js';
