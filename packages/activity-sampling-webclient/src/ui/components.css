@@ -111,6 +111,42 @@ button.icon-only span {
   vertical-align: middle;
 }
 
+button.switch {
+  color: var(--gray-500);
+  background-color: var(--white);
+  border-color: var(--gray-500);
+  border-width: 1px;
+}
+
+button.switch:hover,
+button.switch.hovered {
+  color: var(--gray-600);
+  border-color: var(--gray-600);
+}
+
+button.switch:active,
+button.switch.activated {
+  color: var(--gray-700);
+  border-color: var(--gray-700);
+}
+
+button.switch.on {
+  color: var(--red-500);
+  border-color: var(--red-500);
+}
+
+button.switch.on:hover,
+button.switch.on.hovered {
+  color: var(--red-600);
+  border-color: var(--red-600);
+}
+
+button.switch.on:active,
+button.switch.on.activated {
+  color: var(--red-700);
+  border-color: var(--red-700);
+}
+
 /*
  * Form
  */
@@ -164,7 +200,7 @@ label {
 }
 
 .select-wrapper {
-  display: grid;
+  display: inline-grid;
   position: relative;
   min-width: 200px;
   grid-template-areas: 'select';
@@ -192,6 +228,23 @@ label {
 
   content: '\e5c5'; /* Arrow drop down */
   pointer-events: none;
+}
+
+.select-wrapper.icon-only {
+  width: 36px;
+  height: 36px;
+  min-width: unset;
+
+  border-radius: 8px;
+}
+
+.select-wrapper.icon-only::after {
+  font-size: 32px;
+  line-height: 32px;
+
+  border-radius: 6px;
+
+  content: '\e5d4'; /* More vertical */
 }
 
 select {

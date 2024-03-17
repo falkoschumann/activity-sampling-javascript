@@ -140,11 +140,13 @@ p {
 
 .filled {
   display: flex;
+  align-items: center;
   justify-content: space-between;
 }
 
 .wrapped {
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
   gap: 16px;
 }
