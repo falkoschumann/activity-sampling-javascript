@@ -1,11 +1,11 @@
+import { Duration } from 'activity-sampling-shared';
+
 /**
  * @typedef {import('../util/store.js').Store} Store
  * @typedef {import('../infrastructure/api.js').Api} Api
  * @typedef {import('../infrastructure/clock.js').Clock} Clock
- * * @typedef {import('../infrastructure/timer.js').Timer} Timer
+ * @typedef {import('../infrastructure/timer.js').Timer} Timer
  */
-
-import { Duration } from 'activity-sampling-shared';
 
 export async function activityUpdated(
   { name, value },

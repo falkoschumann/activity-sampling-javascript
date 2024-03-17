@@ -11,10 +11,10 @@ class CurrentActivityComponent extends StateComponent {
 
   updateView() {
     super.updateView();
-    this.querySelector('#client').value = this.state.client;
-    this.querySelector('#project').value = this.state.project;
-    this.querySelector('#task').value = this.state.task;
-    this.querySelector('#notes').value = this.state.notes;
+    this.querySelector('#client').value = this.state.activity.client;
+    this.querySelector('#project').value = this.state.activity.project;
+    this.querySelector('#task').value = this.state.activity.task;
+    this.querySelector('#notes').value = this.state.activity.notes;
   }
 
   extractState(state) {
@@ -78,8 +78,8 @@ class CurrentActivityComponent extends StateComponent {
     // TODO parametrize the period on start
     return html`
       <div class="current-task">
-        <span class="caption">${this.state.remainingTime}</span>
-        <progress max="1" value="${this.state.progress}"></progress>
+        <span class="caption">${this.state.countdown.remainingTime}</span>
+        <progress max="1" value="${this.state.countdown.progress}"></progress>
         <button
           id="toggle-timer"
           aria-label="Start timer"

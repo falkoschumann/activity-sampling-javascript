@@ -384,7 +384,7 @@ describe('Services', () => {
       });
       expect(store.getState().currentActivity).toEqual({
         ...initialState.currentActivity,
-        ...lastActivity,
+        activity: lastActivity,
       });
     });
 
@@ -443,11 +443,13 @@ describe('Services', () => {
         ...currentState,
         currentActivity: {
           ...currentState.currentActivity,
-          timestamp: undefined,
-          client: '',
-          project: '',
-          task: '',
-          notes: '',
+          activity: {
+            timestamp: undefined,
+            client: '',
+            project: '',
+            task: '',
+            notes: '',
+          },
         },
         recentActivities: {
           workingDays: [],

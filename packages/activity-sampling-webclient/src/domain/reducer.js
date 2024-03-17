@@ -185,7 +185,7 @@ function recentActivitiesLoaded(state, { recentActivities }) {
     ...state,
     currentActivity: {
       ...state.currentActivity,
-      ...lastActivity,
+      activity: lastActivity,
     },
     recentActivities,
   };
