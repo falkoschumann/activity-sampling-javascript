@@ -15,7 +15,6 @@ export const initialState = {
       isRunning: false,
       period: new Duration('PT30M'),
       remainingTime: new Duration('PT30M'),
-      progress: 0.0,
     },
   },
   recentActivities: {
@@ -110,7 +109,6 @@ function countdownStarted(state, { period }) {
         isRunning: true,
         period,
         remainingTime: new Duration(period),
-        progress: 0.0,
       },
     },
   };
@@ -127,7 +125,6 @@ function countdownProgressed(state, { timestamp, duration }) {
       remainingTime.absolutized(),
     );
   }
-  const progress = 1 - remainingTime / state.currentActivity.countdown.period;
   let isFormDisabled = state.currentActivity.isFormDisabled;
   if (elapsed) {
     isFormDisabled = false;
@@ -148,7 +145,6 @@ function countdownProgressed(state, { timestamp, duration }) {
       countdown: {
         ...state.currentActivity.countdown,
         remainingTime,
-        progress,
       },
     },
   };
@@ -164,7 +160,6 @@ function countdownStopped(state) {
         ...state.currentActivity.countdown,
         isRunning: false,
         remainingTime: Duration.zero(),
-        progress: 0.0,
       },
     },
   };

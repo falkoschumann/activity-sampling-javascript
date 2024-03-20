@@ -18,14 +18,15 @@ class CurrentActivityComponent extends StateComponent {
   }
 
   extractState(state) {
-    return state.currentActivity;
+    return {
+      activity: state.currentActivity.activity,
+      isFormDisabled: state.currentActivity.isFormDisabled,
+    };
   }
 
   getView() {
-    return html`${this.#activityFormTemplate()}${this.#currentTaskTemplate()}`;
-  }
-
-  #activityFormTemplate() {
+    // TODO activity
+    // TODO isFormDisabled
     return html`
       <form class="activity-form" @submit=${(e) => this.#formSubmitted(e)}>
         ${this.#textInputTemplate('client', 'Client', true)}
@@ -69,47 +70,6 @@ class CurrentActivityComponent extends StateComponent {
 
   #inputChanged({ target: { name, value } }) {
     actions.activityUpdated({ name, value });
-  }
-
-  #currentTaskTemplate() {
-    // TODO parametrize the period on start
-    return html`
-      <div class="current-task">
-        <span class="caption">${this.state.countdown.remainingTime}</span>
-        <progress max="1" value="${this.state.countdown.progress}"></progress>
-        <button
-          id="toggle-timer"
-          aria-label="Start timer"
-          @click=${() => this.#timerToggled()}
-        >
-          <span class="material-icons">punch_clock</span>
-        </button>
-      </div>
-      <select name="period" value="30">
-        <optgroup label="Period">
-          <option value="5">5 minutes</option>
-          <option value="10">10 minutes</option>
-          <option value="15">15 minutes</option>
-          <option value="20">20 minutes</option>
-          <option value="30" selected>30 minutes</option>
-          <option value="60">60 minutes</option>
-          <option value="1">1 minute</option>
-        </optgroup>
-      </select>
-    `;
-  }
-
-  #timerToggled() {
-    let button = this.querySelector('#toggle-timer');
-    if (this.state.isTimerRunning) {
-      actions.stopNotificationsRequested();
-      button.setAttribute('aria-label', 'Start timer');
-      button.setAttribute('aria-pressed', 'false');
-    } else {
-      actions.notificationsRequested();
-      button.setAttribute('aria-label', 'Stop timer');
-      button.setAttribute('aria-pressed', 'true');
-    }
   }
 }
 

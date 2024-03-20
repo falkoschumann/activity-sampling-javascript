@@ -6,6 +6,7 @@ import './components.css';
 import './modules.css';
 import './activity-sampling-app.css';
 import './current-activity.js';
+import './countdown.js';
 import './recent-activities.js';
 import './time-summary.js';
 import * as actions from './actions.js';
@@ -20,7 +21,11 @@ class ActivitySamplingAppComponent extends StateComponent {
   }
 
   extractState(state) {
-    return state.recentActivities;
+    return {
+      countdown: state.currentActivity.countdown,
+      workingDays: state.recentActivities.workingDays,
+      timeSummary: state.recentActivities.timeSummary,
+    };
   }
 
   getView() {
@@ -30,6 +35,7 @@ class ActivitySamplingAppComponent extends StateComponent {
       </header>
       <aside>
         <m-current-activity></m-current-activity>
+        <m-countdown .value=${this.state.countdown}></m-countdown>
       </aside>
       <main>
         <m-recent-activities

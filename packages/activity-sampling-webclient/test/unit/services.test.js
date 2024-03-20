@@ -118,7 +118,6 @@ describe('Services', () => {
             isRunning: true,
             period: new Duration('PT20M'),
             remainingTime: new Duration('PT20M'),
-            progress: 0.0,
           },
         });
         expect(scheduledTasks.data).toEqual([
@@ -146,7 +145,6 @@ describe('Services', () => {
             isRunning: true,
             period: new Duration('PT1M'),
             remainingTime: new Duration('PT59S'),
-            progress: expect.closeTo(0.02),
           },
         });
       });
@@ -171,7 +169,6 @@ describe('Services', () => {
             isRunning: true,
             period: new Duration('PT1M'),
             remainingTime: new Duration('PT1S'),
-            progress: expect.closeTo(0.98),
           },
         });
       });
@@ -201,7 +198,6 @@ describe('Services', () => {
             isRunning: true,
             period: new Duration('PT1M'),
             remainingTime: new Duration('PT0S'),
-            progress: 1.0,
           },
         });
       });
@@ -231,7 +227,6 @@ describe('Services', () => {
             isRunning: true,
             period: new Duration('PT1M'),
             remainingTime: new Duration('PT59S'),
-            progress: expect.closeTo(0.02),
           },
         });
       });
@@ -281,7 +276,6 @@ describe('Services', () => {
             isRunning: true,
             period: new Duration('PT1M'),
             remainingTime: new Duration('PT59S'),
-            progress: expect.closeTo(0.02),
           },
         });
       });
@@ -309,7 +303,6 @@ describe('Services', () => {
             isRunning: false,
             period: new Duration('PT1M'),
             remainingTime: Duration.zero(),
-            progress: 0.0,
           },
         });
       });
@@ -400,7 +393,6 @@ describe('Services', () => {
           notes: 'n1',
           isFormDisabled: true,
           remainingTime: new Duration('PT3M'),
-          progress: 0.9,
           isTimerRunning: true,
         },
         recentActivities: {
