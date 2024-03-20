@@ -11,7 +11,7 @@ export async function activityUpdated(
   { name, value },
   /** @type {Store} */ store,
 ) {
-  console.log('activityUpdated', { name, value });
+  console.log('activityUpdated:', { name, value });
   store.dispatch({ type: 'activity-updated', name, value });
 }
 
@@ -33,7 +33,7 @@ export async function activitySelected(
   { client, project, task, notes },
   /** @type {Store} */ store,
 ) {
-  console.log('activitySelected', { client, project, task, notes });
+  console.log('activitySelected:', { client, project, task, notes });
   store.dispatch({
     type: 'activity-selected',
     client,
@@ -49,11 +49,11 @@ export async function askPeriodically(
   /** @type {Timer} */ timer,
   /** @type {Clock} */ clock,
 ) {
-  console.log('askPeriodically', { period });
+  console.log('askPeriodically:', { period });
   timer.schedule(() => {
     const timestamp = clock.date();
     const duration = new Duration('PT1S');
-    console.log('countdown-progressed', timestamp, duration);
+    console.log('countdown-progressed:', { timestamp, duration });
     store.dispatch({
       type: 'countdown-progressed',
       timestamp,

@@ -34,11 +34,7 @@ class TimeSummaryComponent extends Component {
       </div>
       <div>
         <div class="caption">Hours Yesterday</div>
-        <div>
-          ${this.#hours.hoursYesterday.toString({
-            style: 'short',
-          })}
-        </div>
+        <div>${this.#hours.hoursYesterday.toString({ style: 'short' })}</div>
       </div>
       <div>
         <div class="caption">Hours this Week</div>
@@ -46,11 +42,7 @@ class TimeSummaryComponent extends Component {
       </div>
       <div>
         <div class="caption">Hours this Month</div>
-        <div>
-          ${this.#hours.hoursThisMonth.toString({
-            style: 'short',
-          })}
-        </div>
+        <div>${this.#hours.hoursThisMonth.toString({ style: 'short' })}</div>
       </div>
     `;
   }
