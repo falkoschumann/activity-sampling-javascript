@@ -138,6 +138,92 @@ p {
  * Layout
  */
 
+.full-width {
+  width: 100%;
+}
+
+.h-stack {
+  display: flex;
+  flex-direction: row;
+}
+
+.v-stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.gap-x-25 {
+  column-gap: 4px;
+}
+
+.gap-x-50 {
+  column-gap: 8px;
+}
+
+.gap-x-75 {
+  column-gap: 12px;
+}
+
+.gap-x-100 {
+  column-gap: 16px;
+}
+
+.gap-x-150 {
+  column-gap: 24px;
+}
+
+.gap-x-200 {
+  column-gap: 32px;
+}
+
+.gap-x-250 {
+  column-gap: 40px;
+}
+
+.gap-x-400 {
+  column-gap: 64px;
+}
+
+.gap-x-500 {
+  column-gap: 80px;
+}
+
+.gap-y-25 {
+  row-gap: 4px;
+}
+
+.gap-y-50 {
+  row-gap: 8px;
+}
+
+.gap-y-75 {
+  row-gap: 12px;
+}
+
+.gap-y-100 {
+  row-gap: 16px;
+}
+
+.gap-y-150 {
+  row-gap: 24px;
+}
+
+.gap-y-200 {
+  row-gap: 32px;
+}
+
+.gap-y-250 {
+  row-gap: 40px;
+}
+
+.gap-y-400 {
+  row-gap: 64px;
+}
+
+.gap-y-500 {
+  row-gap: 80px;
+}
+
 .filled {
   display: flex;
   align-items: center;
@@ -151,14 +237,14 @@ p {
   gap: 16px;
 }
 
-.row {
+.grid-container {
   margin-left: auto;
   margin-right: auto;
   width: auto;
   max-width: 960px;
 }
 
-.row::after {
+.grid-container::after {
   content: '';
   display: block;
   clear: both;
@@ -224,9 +310,12 @@ p {
 .grid-10,
 .grid-11,
 .grid-12 {
-  float: left;
   margin-left: 12px;
   margin-right: 12px;
+}
+
+.grid-container > [class*='grid-'] {
+  float: left;
 }
 
 .clear {
