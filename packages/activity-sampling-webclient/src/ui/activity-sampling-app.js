@@ -13,6 +13,7 @@ import * as actions from './actions.js';
 import { StateComponent } from './state-component.js';
 
 // TODO integrate main.js with this file
+// TODO create demo with local storage
 
 class ActivitySamplingAppComponent extends StateComponent {
   connectedCallback() {
@@ -22,6 +23,8 @@ class ActivitySamplingAppComponent extends StateComponent {
 
   extractState(state) {
     return {
+      activity: state.currentActivity.activity,
+      isFormDisabled: state.currentActivity.isFormDisabled,
       countdown: state.currentActivity.countdown,
       workingDays: state.recentActivities.workingDays,
       timeSummary: state.recentActivities.timeSummary,
@@ -30,11 +33,12 @@ class ActivitySamplingAppComponent extends StateComponent {
 
   getView() {
     return html`
-      <header>
-        <h1>Activity Sampling</h1>
-      </header>
-      <aside>
-        <m-current-activity></m-current-activity>
+      <aside class="space-y-100">
+        <m-current-activity
+          .activity=${this.state.activity}
+          .isDisabled=${this.state.isFormDisabled}
+          @activity-logged=${actions.activityLogged}
+        ></m-current-activity>
         <m-countdown .value=${this.state.countdown}></m-countdown>
       </aside>
       <main>

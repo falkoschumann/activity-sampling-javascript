@@ -1,20 +1,63 @@
 import { html } from 'lit-html';
+import { createRef, ref } from 'lit-html/directives/ref.js';
 
-import * as actions from './actions.js';
-import { StateComponent } from './state-component.js';
+import { Component } from './component.js';
 
-class CurrentActivityComponent extends StateComponent {
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    actions.stopNotificationsRequested();
+const ACTIVITY_LOGGED_EVENT = 'activity-logged';
+
+class ActivityLoggedEvent extends Event {
+  constructor(activity) {
+    super(ACTIVITY_LOGGED_EVENT);
+    this.activity = activity;
+  }
+}
+
+class CurrentActivityComponent extends Component {
+  #clientRef = createRef();
+  #projectRef = createRef();
+  #taskRef = createRef();
+  #notesRef = createRef();
+
+  #activity = {
+    client: '',
+    project: '',
+    task: '',
+    notes: '',
+  };
+
+  #isDisabled = false;
+
+  get activity() {
+    return this.#activity;
+  }
+
+  set activity(activity) {
+    if (this.#activity === activity) {
+      return;
+    }
+
+    this.#activity = activity;
+    this.updateView();
+  }
+
+  get isDisabled() {
+    return this.#isDisabled;
+  }
+
+  set isDisabled(isDisabled) {
+    if (this.#isDisabled === isDisabled) {
+      return;
+    }
+    this.#isDisabled = isDisabled;
+    this.updateView();
   }
 
   updateView() {
     super.updateView();
-    this.querySelector('#client').value = this.state.activity.client;
-    this.querySelector('#project').value = this.state.activity.project;
-    this.querySelector('#task').value = this.state.activity.task;
-    this.querySelector('#notes').value = this.state.activity.notes;
+    this.#clientRef.value.value = this.#activity.client;
+    this.#projectRef.value.value = this.#activity.project;
+    this.#taskRef.value.value = this.#activity.task;
+    this.#notesRef.value.value = this.#activity.notes;
   }
 
   extractState(state) {
@@ -25,31 +68,30 @@ class CurrentActivityComponent extends StateComponent {
   }
 
   getView() {
-    // TODO activity
-    // TODO isFormDisabled
     return html`
-      <form class="activity-form" @submit=${(e) => this.#formSubmitted(e)}>
-        ${this.#textInputTemplate('client', 'Client', true)}
-        ${this.#textInputTemplate('project', 'Project', true)}
-        ${this.#textInputTemplate('task', 'Task', true)}
-        ${this.#textInputTemplate('notes', 'Notes')}
-        <button type="submit" ?disabled="${this.state.isFormDisabled}">
+      <form class="v-stack gap-y-50" @submit=${(e) => this.#formSubmitted(e)}>
+        ${this.#textInputTemplate(this.#clientRef, 'client', 'Client', true)}
+        ${this.#textInputTemplate(this.#projectRef, 'project', 'Project', true)}
+        ${this.#textInputTemplate(this.#taskRef, 'task', 'Task', true)}
+        ${this.#textInputTemplate(this.#notesRef, 'notes', 'Notes')}
+        <button type="submit" class="mt-75" ?disabled="${this.#isDisabled}">
           Log
         </button>
       </form>
     `;
   }
 
-  #textInputTemplate(id, title, required = false) {
+  #textInputTemplate(inputRef, name, title, required = false) {
     return html`
-      <div>
-        <label class="caption" for="${id}">${title}</label>
+      <div class="v-stack">
+        <label for="${name}">${title}</label>
         <input
+          ${ref(inputRef)}
           type="text"
           ?required="${required}"
-          ?disabled="${this.state.isFormDisabled}"
-          id="${id}"
-          name="${id}"
+          ?disabled="${this.#isDisabled}"
+          id="${name}"
+          name="${name}"
           @keyup=${(e) => this.#inputChanged(e)}
         />
       </div>
@@ -59,7 +101,7 @@ class CurrentActivityComponent extends StateComponent {
   #formSubmitted(event) {
     event.preventDefault();
     if (this.#validateForm(event.target)) {
-      actions.activityLogged();
+      this.dispatchEvent(new ActivityLoggedEvent(this.#activity));
     }
   }
 
@@ -69,7 +111,7 @@ class CurrentActivityComponent extends StateComponent {
   }
 
   #inputChanged({ target: { name, value } }) {
-    actions.activityUpdated({ name, value });
+    this[`#${name}`] = value;
   }
 }
 

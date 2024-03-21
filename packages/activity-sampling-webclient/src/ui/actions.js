@@ -16,10 +16,10 @@ const notifer = new Notifier();
 // TODO create missing service functions for notifier
 // TODO on startup refresh and request notifications
 
-export async function activityLogged() {
+export async function activityLogged({ client, project, task, notes }) {
   // TODO use form data instead of store?
   const api = serviceLocator.resolve('api');
-  await services.logActivity(undefined, store, api);
+  await services.logActivity({ client, project, task, notes }, store, api);
   await services.selectRecentActivities(store, api);
   activityChanged();
 }
@@ -39,6 +39,7 @@ export async function refreshRequested() {
   activityChanged();
 }
 
+/** @deprecated */
 export async function activityUpdated({ name, value }) {
   // TODO use UI event instead of store?
   await services.activityUpdated({ name, value }, store);
