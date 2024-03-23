@@ -12,7 +12,6 @@ import './time-summary.js';
 import * as actions from './actions.js';
 import { StateComponent } from './state-component.js';
 
-// TODO integrate main.js with this file
 // TODO create demo with local storage
 
 class ActivitySamplingAppComponent extends StateComponent {
