@@ -1,0 +1,211 @@
+openapi: 3.1.0
+
+info:
+  title: Activity Sampling
+  version: 1.0.0
+  description: |
+    This API allows you to log and analysis your activities.
+
+paths:
+  /api/log-activity:
+    post:
+      summary: Log a new activity.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Activity'
+      responses:
+        204:
+          description: The activity was logged successfully.
+
+  /api/recent-activities:
+    get:
+      summary: Get recent activities.
+      responses:
+        200:
+          description: A list of recent activities.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecentActivity'
+  /api/time-report:
+    get:
+      summary: Get hours worked for each client, project or task.
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: scope
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [client, project, task]
+      responses:
+        200:
+          description: The list of hours worked.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimeReport'
+  /api/timesheet:
+    get:
+      summary: Get a timesheet for a specific period.
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        200:
+          description: The timesheet for the specified period.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Timesheet'
+
+components:
+  schemas:
+    Activity:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        duration:
+          type: string
+          format: duration
+        client:
+          type: string
+        project:
+          type: string
+        task:
+          type: string
+        notes:
+          type: string
+      required:
+        - timestamp
+        - duration
+        - client
+        - project
+        - task
+    RecentActivity:
+      type: object
+      properties:
+        workingDays:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              activities:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Activity'
+            required:
+              - date
+              - activities
+        timeSummary:
+          type: object
+          properties:
+            hoursToday:
+              type: string
+              format: duration
+            hoursYesterday:
+              type: string
+              format: duration
+            hoursThisWeek:
+              type: string
+              format: duration
+            hoursThisMonth:
+              type: string
+              format: duration
+          required:
+            - hoursToday
+            - hoursYesterday
+            - hoursThisWeek
+            - hoursThisMonth
+      required:
+        - workingDays
+        - timeSummary
+    TimeReport:
+      type: object
+      properties:
+        totalHours:
+          type: string
+          format: duration
+        entries:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              client:
+                type: string
+                description: Required if scope is project.
+              hours:
+                type: string
+                format: duration
+            required:
+              - name
+              - hours
+      required:
+        - totalHours
+        - entries
+    Timesheet:
+      type: object
+      properties:
+        totalHours:
+          type: string
+          format: duration
+        entries:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              client:
+                type: string
+              project:
+                type: string
+              task:
+                type: string
+              hours:
+                type: string
+                format: duration
+            required:
+              - date
+              - client
+              - project
+              - task
+              - hours
+      required:
+        - from
+        - to
+        - entries
