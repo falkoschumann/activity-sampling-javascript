@@ -2,7 +2,7 @@ import { Duration } from 'activity-sampling-shared';
 
 /**
  * @typedef {import('../util/store.js').Store} Store
- * @typedef {import('../infrastructure/api.js').Api} Api
+ * @typedef {import('../infrastructure/activities-gateway.js').ActivitiesGateway} ActivitiesGateway
  * @typedef {import('../infrastructure/clock.js').Clock} Clock
  * @typedef {import('../infrastructure/timer.js').Timer} Timer
  */
@@ -11,29 +11,27 @@ export async function activityUpdated(
   { name, value },
   /** @type {Store} */ store,
 ) {
-  console.log('activityUpdated:', { name, value });
   store.dispatch({ type: 'activity-updated', name, value });
 }
 
 export async function logActivity(
   /** @type {Store} */ store,
-  /** @type {Api} */ api,
+  /** @type {ActivitiesGateway} */ activitiesGateway,
   /** @type {Clock} */ clock,
 ) {
-  console.log('logActivity');
   let activity = { ...store.getState().currentActivity.activity };
   if (!activity.timestamp) {
     activity.timestamp = clock.date();
   }
-  await api.logActivity(activity);
+  await activitiesGateway.logActivity(activity);
   store.dispatch({ type: 'activity-logged', activity });
 }
 
+/** @deprecated */
 export async function activitySelected(
   { client, project, task, notes },
   /** @type {Store} */ store,
 ) {
-  console.log('activitySelected:', { client, project, task, notes });
   store.dispatch({
     type: 'activity-selected',
     client,
@@ -49,7 +47,6 @@ export async function askPeriodically(
   /** @type {Timer} */ timer,
   /** @type {Clock} */ clock,
 ) {
-  console.log('askPeriodically:', { period });
   timer.schedule(() => {
     const timestamp = clock.date();
     const duration = new Duration('PT1S');
@@ -64,25 +61,22 @@ export async function askPeriodically(
 }
 
 export function stopAskingPeriodically(store, timer) {
-  console.log('stopAskingPeriodically');
   timer.cancel();
   store.dispatch({ type: 'countdown-stopped' });
 }
 
 export async function selectRecentActivities(
   /** @type {Store} */ store,
-  /** @type {Api} */ api,
+  /** @type {ActivitiesGateway} */ activitiesGateway,
 ) {
-  console.log('selectRecentActivities');
-  let recentActivities = await api.loadRecentActivities();
+  let recentActivities = await activitiesGateway.loadRecentActivities();
   store.dispatch({ type: 'recent-activities-loaded', recentActivities });
 }
 
 export async function selectHoursWorked(
   /** @type {Store} */ store,
-  /** @type {Api} */ api,
+  /** @type {ActivitiesGateway} */ activitiesGateway,
 ) {
-  console.log('selectHoursWorked');
-  let hoursWorked = await api.loadHoursWorked();
+  let hoursWorked = await activitiesGateway.loadHoursWorked();
   store.dispatch({ type: 'hours-worked-loaded', hoursWorked });
 }

@@ -1,91 +1,224 @@
-import { existsSync, mkdirSync } from 'node:fs';
-import { readFile, writeFile } from 'node:fs/promises';
-import { dirname } from 'node:path';
-import { parse, stringify } from 'csv';
+import fsPromises from 'node:fs/promises';
+import path from 'node:path';
+import * as csv from 'csv';
 
-import { Duration } from 'activity-sampling-shared';
+import { Duration, OutputTracker } from 'activity-sampling-shared';
 
-// TODO make repository nullable
+import { ActivityLogged } from '../domain/activities.js';
 
-export class Repository {
+const RFC4180 = {
+  delimiter: ',',
+  eof: true,
+  quote: '"',
+  record_delimiter: '\r\n',
+};
+
+export class Repository extends EventTarget {
+  static create({ fileName = './data/activity-log.csv' } = {}) {
+    return new Repository(fileName, fsPromises);
+  }
+
+  static createNull({
+    /** @type {ActivityLogged[]} */ events = [],
+    /** @type {ActivityLoggedDto[]} */ dtos = [],
+  } = {}) {
+    dtos = dtos.concat(events.map(ActivityLoggedDto.fromDomain));
+    return new Repository('null-file.csv', createFsStub(dtos));
+  }
+
   #fileName;
+  #fs;
 
-  constructor({ fileName = './data/activity-log.csv' } = {}) {
+  constructor(
+    /** @type {string} */ fileName,
+    /** @type {typeof fsPromises} */ fs,
+  ) {
+    super();
     this.#fileName = fileName;
+    this.#fs = fs;
   }
 
-  async findAll() {
-    let csv = await this.#readFile();
-    return this.#parseCsv(csv);
+  async replay() {
+    let string = await this.#readFile();
+    return this.#parseCsv(string);
   }
 
-  async add({ timestamp, duration, client, project, task, notes }) {
-    let csv = this.#writeCsv({
+  async record(/** @type {ActivityLogged} */ event) {
+    const dto = ActivityLoggedDto.fromDomain(event);
+    let csv = await this.#stringifyCsv(dto);
+    await this.#writeFile(csv);
+    this.dispatchEvent(new CustomEvent('recorded', { detail: event }));
+  }
+
+  trackRecorded() {
+    return new OutputTracker(this, 'recorded');
+  }
+
+  async #readFile() {
+    try {
+      return await this.#fs.readFile(this.#fileName, { encoding: 'utf-8' });
+    } catch (error) {
+      if (error.code !== 'ENOENT') {
+        throw error;
+      }
+
+      // file does not exist
+      return '';
+    }
+  }
+
+  async #parseCsv(string) {
+    const parser = csv.parse(string, { ...RFC4180, columns: true });
+    const events = [];
+    for await (const record of parser) {
+      var dto = ActivityLoggedDto.create(record);
+      var event = dto.validate();
+      events.push(event);
+    }
+    return events;
+  }
+
+  async #stringifyCsv(dto) {
+    const isFileExist = await this.#isFileExist();
+    return csv.stringify([dto], {
+      ...RFC4180,
+      header: !isFileExist,
+      columns: ['Timestamp', 'Duration', 'Client', 'Project', 'Task', 'Notes'],
+    });
+  }
+
+  async #isFileExist() {
+    return this.#fs
+      .access(this.#fileName, this.#fs.constants.F_OK)
+      .then(() => true)
+      .catch(() => false);
+  }
+
+  async #writeFile(string) {
+    const pathName = path.dirname(this.#fileName);
+    await this.#fs.mkdir(pathName, { recursive: true });
+    await this.#fs.writeFile(this.#fileName, string, {
+      encoding: 'utf-8',
+      flag: 'a',
+    });
+  }
+}
+
+class ActivityLoggedDto {
+  static create({ Timestamp, Duration, Client, Project, Task, Notes }) {
+    return new ActivityLoggedDto(
+      Timestamp,
+      Duration,
+      Client,
+      Project,
+      Task,
+      Notes,
+    );
+  }
+
+  static fromDomain(
+    /** @type {ActivityLogged} */ {
       timestamp,
       duration,
       client,
       project,
       task,
       notes,
+    },
+  ) {
+    return ActivityLoggedDto.create({
+      Timestamp: timestamp.toISOString(),
+      Duration: duration.toISOString(),
+      Client: client,
+      Project: project,
+      Task: task,
+      Notes: notes,
     });
-    await this.#writeFile(csv);
   }
 
-  async #readFile() {
-    try {
-      return await readFile(this.#fileName, { encoding: 'utf-8' });
-    } catch (error) {
-      if (error.code === 'ENOENT') {
-        return '';
+  constructor(
+    /** @type {string} */ Timestamp,
+    /** @type {string} */ Duration,
+    /** @type {string} */ Client,
+    /** @type {string} */ Project,
+    /** @type {string} */ Task,
+    /** @type {string?} */ Notes,
+  ) {
+    this.Timestamp = Timestamp;
+    this.Duration = Duration;
+    this.Client = Client;
+    this.Project = Project;
+    this.Task = Task;
+    this.Notes = Notes;
+  }
+
+  validate() {
+    const event = {
+      timestamp: new Date(this.Timestamp),
+      duration: new Duration(this.Duration),
+      client: this.Client,
+      project: this.Project,
+      task: this.Task,
+      notes: this.Notes,
+    };
+
+    if (event.timestamp.toString() === 'Invalid Date') {
+      throw new Error(`Invalid timestamp: "${this.Timestamp}".`);
+    }
+    if (event.duration.toString() === 'Invalid Duration') {
+      throw new Error(`Invalid duration: "${this.Duration}".`);
+    }
+    if (!event.client) {
+      throw new Error('Client is required.');
+    }
+    if (!event.project) {
+      throw new Error('Project is required.');
+    }
+    if (!event.task) {
+      throw new Error('Task is required.');
+    }
+    if (!event.notes) {
+      event.notes = undefined;
+    }
+
+    return ActivityLogged.create(event);
+  }
+}
+
+function createFsStub(dtos) {
+  return {
+    constants: { F_OK: 0 },
+
+    access() {
+      return Promise.resolve();
+    },
+
+    mkdir() {
+      return Promise.resolve();
+    },
+
+    async readFile() {
+      const stream = csv.stringify(dtos, {
+        ...RFC4180,
+        header: true,
+        columns: [
+          'Timestamp',
+          'Duration',
+          'Client',
+          'Project',
+          'Task',
+          'Notes',
+        ],
+      });
+      let data = '';
+      for await (const chunk of stream) {
+        data += chunk;
       }
-      throw error;
-    }
-  }
+      return data;
+    },
 
-  async #parseCsv(csv) {
-    let records = parse(csv, { columns: true });
-    let activities = [];
-    for await (let record of records) {
-      activities.push(this.#parseRecord(record));
-    }
-    return activities;
-  }
-
-  #parseRecord(record) {
-    return {
-      timestamp: new Date(record['timestamp']),
-      duration: new Duration(record['duration']),
-      client: record['client'],
-      project: record['project'],
-      task: record['task'],
-      notes: record['notes'],
-    };
-  }
-
-  #writeCsv(activity) {
-    let existsFile = existsSync(this.#fileName);
-    if (!existsFile) {
-      const pathName = dirname(this.#fileName);
-      mkdirSync(pathName, { recursive: true });
-    }
-    return stringify([this.#createRecord(activity)], {
-      header: !existsFile,
-      columns: ['timestamp', 'duration', 'client', 'project', 'task', 'notes'],
-    });
-  }
-
-  #createRecord({ timestamp, duration, client, project, task, notes }) {
-    return {
-      timestamp: timestamp.toISOString(),
-      duration: duration.toISOString(),
-      client,
-      project,
-      task,
-      notes,
-    };
-  }
-
-  async #writeFile(csv) {
-    await writeFile(this.#fileName, csv, { flag: 'a' });
-  }
+    writeFile() {
+      return Promise.resolve();
+    },
+  };
 }

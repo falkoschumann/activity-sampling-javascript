@@ -4,15 +4,18 @@ import {
   OutputTracker,
 } from 'activity-sampling-shared';
 
-export class Api extends EventTarget {
+export class ActivitiesGateway extends EventTarget {
   static create({ baseUrl = '/api' } = {}) {
-    return new Api(baseUrl, globalThis.fetch.bind(globalThis));
+    return new ActivitiesGateway(baseUrl, globalThis.fetch.bind(globalThis));
   }
 
   static createNull({
     responses = { status: 200, headers: {}, body: null },
   } = {}) {
-    return new Api('/null-api', createFetchStub(responses));
+    return new ActivitiesGateway(
+      '/null-activities-gateway',
+      createFetchStub(responses),
+    );
   }
 
   #baseUrl;
@@ -27,13 +30,7 @@ export class Api extends EventTarget {
   async loadRecentActivities() {
     let response = await this.#fetch(`${this.#baseUrl}/recent-activities`);
     let dto = await response.json();
-    return convertRecentActivities(dto);
-  }
-
-  async loadHoursWorked() {
-    let response = await this.#fetch(`${this.#baseUrl}/hours-worked`);
-    let dto = await response.json();
-    return convertHoursWorked(dto);
+    return mapRecentActivities(dto);
   }
 
   async logActivity({ timestamp, duration, client, project, task, notes }) {
@@ -54,7 +51,7 @@ export class Api extends EventTarget {
   }
 }
 
-function convertRecentActivities(dto) {
+function mapRecentActivities(dto) {
   return {
     workingDays: dto.workingDays.map((dtoDay) => ({
       date: new Date(dtoDay.date),
@@ -73,15 +70,6 @@ function convertRecentActivities(dto) {
       hoursThisWeek: new Duration(dto.timeSummary.hoursThisWeek),
       hoursThisMonth: new Duration(dto.timeSummary.hoursThisMonth),
     },
-  };
-}
-
-function convertHoursWorked(dto) {
-  return {
-    clients: dto.clients.map((dtoClient) => ({
-      name: dtoClient.name,
-      hours: new Duration(dtoClient.hours),
-    })),
   };
 }
 

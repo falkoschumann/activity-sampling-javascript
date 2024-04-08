@@ -15,7 +15,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Activity'
+              $ref: '#/components/schemas/LogActivity'
       responses:
         204:
           description: The activity was logged successfully.
@@ -23,6 +23,12 @@ paths:
   /api/recent-activities:
     get:
       summary: Get recent activities.
+      parameters:
+        - name: today
+          in: query
+          schema:
+            type: string
+            format: date
       responses:
         200:
           description: A list of recent activities.
@@ -87,7 +93,7 @@ paths:
 
 components:
   schemas:
-    Activity:
+    LogActivity:
       type: object
       properties:
         timestamp:
@@ -209,3 +215,26 @@ components:
         - from
         - to
         - entries
+    Activity:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        duration:
+          type: string
+          format: duration
+        client:
+          type: string
+        project:
+          type: string
+        task:
+          type: string
+        notes:
+          type: string
+      required:
+        - timestamp
+        - duration
+        - client
+        - project
+        - task

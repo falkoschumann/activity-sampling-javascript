@@ -9,7 +9,7 @@ export class Clock {
 
   #date;
 
-  constructor(/** @type {Date|number|null} */ date) {
+  constructor(/** @type {string|number|Date|null} */ date) {
     this.#date = date;
   }
 

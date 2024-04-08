@@ -84,7 +84,7 @@ class CurrentActivityComponent extends Component {
   #textInputTemplate(inputRef, name, title, required = false) {
     return html`
       <div class="v-stack">
-        <label for="${name}">${title}</label>
+        <label for="${name}">${title}${required ? '*' : ''}</label>
         <input
           ${ref(inputRef)}
           type="text"

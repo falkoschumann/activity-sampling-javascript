@@ -1,4 +1,4 @@
-import { store } from './actions.js';
+import store from './store.js';
 import { Component } from './component.js';
 
 export class StateComponent extends Component {

@@ -1,15 +1,9 @@
-import { ServiceLocator } from 'activity-sampling-shared';
-
 import * as services from '../application/services.js';
-import { reducer } from '../domain/reducer.js';
 import { Api } from '../infrastructure/api.js';
-import { createStore } from '../util/store.js';
+import store from './store.js';
 import { Notifier } from './notifier.js';
 
-export const store = createStore(reducer);
-
-export const serviceLocator = new ServiceLocator();
-serviceLocator.register('api', Api.create());
+const api = Api.create();
 
 const notifer = new Notifier();
 
@@ -18,7 +12,6 @@ const notifer = new Notifier();
 
 export async function activityLogged({ client, project, task, notes }) {
   // TODO use form data instead of store?
-  const api = serviceLocator.resolve('api');
   await services.logActivity({ client, project, task, notes }, store, api);
   await services.selectRecentActivities(store, api);
   activityChanged();
@@ -34,7 +27,6 @@ export async function stopNotificationsRequested() {
 }
 
 export async function refreshRequested() {
-  const api = serviceLocator.resolve('api');
   await services.selectRecentActivities(store, api);
   activityChanged();
 }
