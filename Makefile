@@ -3,6 +3,9 @@
 export NODE_OPTIONS=--experimental-global-customevent --experimental-vm-modules --no-warnings=ExperimentalWarning
 export NPM_CONFIG_YES=true
 
+# TODO update ESLint configuration
+export ESLINT_USE_FLAT_CONFIG=false
+
 all: dist check
 
 clean:
