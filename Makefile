@@ -60,7 +60,6 @@ build:
 		echo "CI detected, run npm ci"; \
 		npm ci; \
 	elif [ ! -d "node_modules" ] ; then \
-		echo "No node_modules detected, run npm install"; \
 		npm install; \
 	fi
 	npm run build --workspaces --if-present
