@@ -329,6 +329,5 @@ function randomNotes() {
 }
 
 function randomId() {
-  // FIXME crypto is not available in Node.js as global object
   return crypto.randomUUID().substring(0, 8);
 }

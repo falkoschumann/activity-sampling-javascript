@@ -17,7 +17,7 @@ export class ActivitySamplingApp {
     this.#createRoutes();
   }
 
-  // TODO replace with run() returning app
+  // TODO replace with run() returning app or server
   get app() {
     return this.#app;
   }
