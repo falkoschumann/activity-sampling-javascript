@@ -1,8 +1,3 @@
-// WORKAROUND: `crypto` is not available in Node.js as global object
-if (typeof globalThis.crypto === 'undefined') {
-  globalThis.crypto = await import('crypto');
-}
-
 import { Duration } from 'activity-sampling-shared';
 
 export class LogActivity {
