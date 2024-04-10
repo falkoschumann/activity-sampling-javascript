@@ -4,45 +4,22 @@ import { Duration } from 'activity-sampling-shared';
 import * as services from '../application/services.js';
 import { Repository } from '../infrastructure/repository.js';
 
-// TODO Extract controller
-// TODO Extract DTOs
-
 export class ActivitySamplingApp {
   #app;
   #repository;
 
-  constructor({ publicPath = './public', repository = new Repository() } = {}) {
-    this.#app = this.#createApp(publicPath);
+  constructor({
+    publicPath = './public',
+    repository = new Repository(),
+    app = express(),
+  } = {}) {
     this.#repository = repository;
-    this.#createRoutes();
-  }
 
-  // TODO replace with run() returning app or server
-  get app() {
-    return this.#app;
-  }
-
-  run({ port = 3000 } = {}) {
-    this.#app.listen(port, () => {
-      console.log(`Activity Sampling app listening on port ${port}`);
-    });
-  }
-
-  #createApp(publicPath) {
-    const app = express();
-    app.set('x-powered-by', false);
-    app.use(express.json());
-    app.use('/', express.static(publicPath));
-    app.use('/api/', express.static('../../spec/api'));
-    return app;
-  }
-
-  #createRoutes() {
-    this.#createRouteLogActivity();
-    this.#createRouteRecentActivities();
-  }
-
-  #createRouteLogActivity() {
+    this.#app = app;
+    this.#app.set('x-powered-by', false);
+    this.#app.use(express.json());
+    this.#app.use('/', express.static(publicPath));
+    this.#app.use('/api/', express.static('../../spec/api'));
     this.#app.post('/api/log-activity', async (request, response) => {
       let logActivity = parseLogActivity(request);
       if (logActivity == null) {
@@ -52,11 +29,10 @@ export class ActivitySamplingApp {
         response.status(204).end();
       }
     });
-  }
-
-  #createRouteRecentActivities() {
     this.#app.get('/api/recent-activities', async (request, response) => {
-      // FIXME today is optional
+      // TODO create DTO {today}
+      // TODO today is optional
+      // TODO handle today is invalid date
       const today = new Date(request.query.today);
       const body = await services.selectRecentActivities(
         { today },
@@ -68,9 +44,16 @@ export class ActivitySamplingApp {
         .send(body);
     });
   }
+
+  run({ port = 3000 } = {}) {
+    this.#app.listen(port, () => {
+      console.log(`Activity Sampling app listening on port ${port}`);
+    });
+  }
 }
 
 function parseLogActivity(request) {
+  // TODO create DTO {timestamp, duration, client, project, task, notes}
   let logActivity = request.body;
   if (
     typeof logActivity.timestamp == 'string' &&

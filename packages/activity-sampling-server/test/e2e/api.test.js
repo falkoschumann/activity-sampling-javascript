@@ -1,5 +1,5 @@
 import { rmSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import express from 'express';
 import { beforeEach, describe, expect, test } from '@jest/globals';
 import request from 'supertest';
 
@@ -9,21 +9,18 @@ import { Activity, LogActivity } from '../../src/domain/activities.js';
 import { Repository } from '../../src/infrastructure/repository.js';
 import { ActivitySamplingApp } from '../../src/ui/activity-sampling-app.js';
 
-describe('API', () => {
-  const fileName = fileURLToPath(
-    new URL('../../data/activity-log.test.csv', import.meta.url),
-  );
-  /** @type {Repository} */ let repository;
-  let app;
+const fileName = new URL('../../data/activity-log.test.csv', import.meta.url)
+  .pathname;
 
+describe('API', () => {
   beforeEach(() => {
     rmSync(fileName, { force: true });
-    repository = Repository.create({ fileName });
-    app = new ActivitySamplingApp({ repository }).app;
   });
 
   describe('Log activity', () => {
     test('Runs happy path', async () => {
+      const { app, repository } = configure();
+
       const logActivity = LogActivity.createNull();
       const response = await request(app)
         .post('/api/log-activity')
@@ -36,6 +33,8 @@ describe('API', () => {
     });
 
     test('Handles unhappy path', async () => {
+      const { app } = configure();
+
       let response = await request(app)
         .post('/api/log-activity')
         .set('Content-Type', 'application/json')
@@ -52,9 +51,8 @@ describe('API', () => {
   });
 
   describe('Recent activities', () => {
-    // TODO create RecentActivitiesDto
-
     test('Runs happy path', async () => {
+      const { app, repository } = configure();
       const activity = Activity.createNull({
         timestamp: new Date('2024-04-05T06:30Z'),
         duration: new Duration('PT30M'),
@@ -91,3 +89,10 @@ describe('API', () => {
     });
   });
 });
+
+function configure() {
+  const repository = Repository.create({ fileName });
+  const app = express();
+  new ActivitySamplingApp({ repository, app });
+  return { app, repository };
+}

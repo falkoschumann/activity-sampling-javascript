@@ -10,6 +10,8 @@ import { Store } from '../../src/util/store.js';
 import { createActivity, createActivityDto } from '../testdata.js';
 import { Timer } from '../../src/infrastructure/timer.js';
 
+// TODO do not write to console while testing
+
 describe('Services', () => {
   describe('Log activity', () => {
     describe('Logs the activity with client, project, task and optional notes', () => {
