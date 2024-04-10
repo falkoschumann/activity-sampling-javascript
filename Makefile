@@ -1,5 +1,6 @@
+# TODO remove --experimental-global-customevent when Node.js 18 must not be supported anymore
 # TODO remove --experimental-vm-modules when Jest supports ESM
-export NODE_OPTIONS=--experimental-vm-modules --no-warnings=ExperimentalWarning
+export NODE_OPTIONS=--experimental-global-customevent --experimental-vm-modules --no-warnings=ExperimentalWarning
 export NPM_CONFIG_YES=true
 
 all: dist check
@@ -56,6 +57,8 @@ coverage: build
 	npx jest --coverage
 
 build:
+	@node --version
+	@npm --version
 	@if [ -n "$(CI)" ] ; then \
 		echo "CI detected, run npm ci"; \
 		npm ci; \
