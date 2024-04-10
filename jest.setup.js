@@ -1,5 +1,6 @@
-import process from 'node:process';
+import crypto from 'node:crypto';
 
-export default async () => {
-  process.env.TZ = 'Europe/Berlin';
-};
+if (typeof globalThis.crypto === 'undefined') {
+  // Needed for Node.js 18 LTS
+  globalThis.crypto = crypto;
+}
