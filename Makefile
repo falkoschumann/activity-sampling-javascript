@@ -62,7 +62,7 @@ build:
 	@if [ -n "$(CI)" ] ; then \
 		echo "CI detected, run npm ci"; \
 		npm ci; \
-	elif [ ! -d "node_modules" ] ; then \
+	else \
 		npm install; \
 	fi
 	npm run build --workspaces --if-present
@@ -70,3 +70,4 @@ build:
 .PHONY: all clean distclean dist check start dev \
 	test unit-tests integration-tests e2e-tests e2e watch coverage \
 	build
+›
