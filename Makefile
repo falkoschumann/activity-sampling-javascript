@@ -70,4 +70,3 @@ build:
 .PHONY: all clean distclean dist check start dev \
 	test unit-tests integration-tests e2e-tests e2e watch coverage \
 	build
-›
