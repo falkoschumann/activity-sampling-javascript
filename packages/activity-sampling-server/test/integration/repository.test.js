@@ -5,6 +5,7 @@ import { Duration } from 'activity-sampling-shared';
 
 import { ActivityLogged } from '../../src/domain/activities.js';
 import { Repository } from '../../src/infrastructure/repository.js';
+import { ValidationError } from 'activity-sampling-shared/src/validation.js';
 
 describe('Repository', () => {
   describe('Replay', () => {
@@ -64,9 +65,7 @@ describe('Repository', () => {
 
         const events = repository.replay();
 
-        await expect(events).rejects.toThrow(
-          'Invalid timestamp: "2024-13-02T11:35Z".',
-        );
+        await expect(events).rejects.toThrow(ValidationError);
       });
 
       test('Reports an error, if duration is invalid', async () => {
@@ -85,7 +84,7 @@ describe('Repository', () => {
 
         const events = repository.replay();
 
-        await expect(events).rejects.toThrow('Invalid duration: "30m".');
+        await expect(events).rejects.toThrow(ValidationError);
       });
 
       test('Reports an error, if client is missing', async () => {
@@ -104,7 +103,7 @@ describe('Repository', () => {
 
         const events = repository.replay();
 
-        await expect(events).rejects.toThrow('Client is required.');
+        await expect(events).rejects.toThrow(ValidationError);
       });
 
       test('Reports an error, if project is missing', async () => {
@@ -123,7 +122,7 @@ describe('Repository', () => {
 
         const events = repository.replay();
 
-        await expect(events).rejects.toThrow('Project is required.');
+        await expect(events).rejects.toThrow(ValidationError);
       });
 
       test('Reports an error, if task is missing', async () => {
@@ -142,7 +141,7 @@ describe('Repository', () => {
 
         const events = repository.replay();
 
-        await expect(events).rejects.toThrow('Task is required.');
+        await expect(events).rejects.toThrow(ValidationError);
       });
 
       test('Reports no error, if notes is missing', async () => {
@@ -154,7 +153,6 @@ describe('Repository', () => {
               Client: 'Muspellheim',
               Project: 'Activity Sampling',
               Task: 'Recent Activities',
-              Notes: '',
             },
           ],
         });

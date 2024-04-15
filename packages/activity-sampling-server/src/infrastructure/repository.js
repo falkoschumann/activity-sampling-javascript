@@ -5,12 +5,17 @@ import * as csv from 'csv';
 import { Duration, OutputTracker } from 'activity-sampling-shared';
 
 import { ActivityLogged } from '../domain/activities.js';
+import {
+  validateOptionalProperty,
+  validateRequiredProperty,
+} from 'activity-sampling-shared/src/validation.js';
 
 const RFC4180 = {
   delimiter: ',',
   eof: true,
   quote: '"',
   record_delimiter: '\r\n',
+  cast: (value, { quoting }) => (value === '' && !quoting ? undefined : value),
 };
 
 export class Repository extends EventTarget {
@@ -153,35 +158,50 @@ class ActivityLoggedDto {
   }
 
   validate() {
-    const event = {
-      timestamp: new Date(this.Timestamp),
-      duration: new Duration(this.Duration),
-      client: this.Client,
-      project: this.Project,
-      task: this.Task,
-      notes: this.Notes,
-    };
-
-    if (event.timestamp.toString() === 'Invalid Date') {
-      throw new Error(`Invalid timestamp: "${this.Timestamp}".`);
-    }
-    if (event.duration.toString() === 'Invalid Duration') {
-      throw new Error(`Invalid duration: "${this.Duration}".`);
-    }
-    if (!event.client) {
-      throw new Error('Client is required.');
-    }
-    if (!event.project) {
-      throw new Error('Project is required.');
-    }
-    if (!event.task) {
-      throw new Error('Task is required.');
-    }
-    if (!event.notes) {
-      event.notes = undefined;
-    }
-
-    return ActivityLogged.create(event);
+    const timestamp = validateRequiredProperty(
+      this,
+      'activity logged',
+      'Timestamp',
+      Date,
+    );
+    const duration = validateRequiredProperty(
+      this,
+      'activity logged',
+      'Duration',
+      Duration,
+    );
+    const client = validateRequiredProperty(
+      this,
+      'activity logged',
+      'Client',
+      'string',
+    );
+    const project = validateRequiredProperty(
+      this,
+      'activity logged',
+      'Project',
+      'string',
+    );
+    const task = validateRequiredProperty(
+      this,
+      'activity logged',
+      'Task',
+      'string',
+    );
+    const notes = validateOptionalProperty(
+      this,
+      'activity logged',
+      'Notes',
+      'string',
+    );
+    return ActivityLogged.create({
+      timestamp,
+      duration,
+      client,
+      project,
+      task,
+      notes,
+    });
   }
 }
 

@@ -42,6 +42,11 @@ export function validateOptionalProperty(
     throw new ValidationError(`The ${objectName} is required.`);
   }
 
+  const value = object[propertyName];
+  if (!isPresent(value)) {
+    return value;
+  }
+
   return validateTypedProperty(
     object,
     objectName,

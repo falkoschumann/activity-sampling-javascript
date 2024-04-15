@@ -54,26 +54,27 @@ describe('API', () => {
     test('Runs happy path', async () => {
       const { app, repository } = configure();
       const activity = Activity.createNull({
-        timestamp: new Date('2024-04-05T06:30Z'),
+        timestamp: new Date(),
         duration: new Duration('PT30M'),
       });
       await repository.record(activity);
 
       const response = await request(app)
         .get('/api/recent-activities')
-        .query({ today: '2024-04-05T09:57' })
         .set('Accept', 'application/json');
 
       expect(response.status).toBe(200);
       expect(response.get('Content-Type')).toMatch(/application\/json/);
+      const startOfTheDay = new Date();
+      startOfTheDay.setHours(0, 0, 0, 0);
       expect(response.body).toEqual({
         workingDays: [
           {
-            date: '2024-04-04T22:00:00.000Z',
+            date: startOfTheDay.toISOString(),
             activities: [
               {
                 ...activity,
-                timestamp: '2024-04-05T06:30:00.000Z',
+                timestamp: activity.timestamp.toISOString(),
                 duration: 'PT30M',
               },
             ],
@@ -86,6 +87,17 @@ describe('API', () => {
           hoursThisMonth: 'PT30M',
         },
       });
+    });
+
+    test('Handles unhappy path', async () => {
+      const { app } = configure();
+
+      const response = await request(app)
+        .get('/api/recent-activities')
+        .query({ today: '2024-13-05T09:57' })
+        .set('Accept', 'application/json');
+
+      expect(response.status).toBe(400);
     });
   });
 });

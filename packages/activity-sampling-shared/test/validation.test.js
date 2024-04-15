@@ -56,7 +56,7 @@ describe('Validation', () => {
     test('Returns undefined when property is missing', () => {
       const user = {};
 
-      const name = validateOptionalProperty(user, 'user', 'name');
+      const name = validateOptionalProperty(user, 'user', 'name', 'string');
 
       expect(name).toBeUndefined();
     });
@@ -64,7 +64,7 @@ describe('Validation', () => {
     test('Returns null when property is null', () => {
       const user = { name: null };
 
-      const name = validateOptionalProperty(user, 'user', 'name');
+      const name = validateOptionalProperty(user, 'user', 'name', 'string');
 
       expect(name).toBeNull();
     });

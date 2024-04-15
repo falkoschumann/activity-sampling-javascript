@@ -3,6 +3,11 @@ import express from 'express';
 import { Duration } from 'activity-sampling-shared';
 import * as services from '../application/services.js';
 import { Repository } from '../infrastructure/repository.js';
+import { Activity } from '../domain/activities.js';
+import {
+  validateOptionalProperty,
+  validateRequiredProperty,
+} from 'activity-sampling-shared/src/validation.js';
 
 export class ActivitySamplingApp {
   #app;
@@ -21,27 +26,30 @@ export class ActivitySamplingApp {
     this.#app.use('/', express.static(publicPath));
     this.#app.use('/api/', express.static('../../spec/api'));
     this.#app.post('/api/log-activity', async (request, response) => {
-      let logActivity = parseLogActivity(request);
-      if (logActivity == null) {
-        response.status(400).end();
-      } else {
+      try {
+        const logActivity = LogActivityDto.create(request.body).validate();
         await services.logActivity(logActivity, this.#repository);
         response.status(204).end();
+      } catch {
+        response.status(400).end();
       }
     });
     this.#app.get('/api/recent-activities', async (request, response) => {
-      // TODO create DTO {today}
-      // TODO today is optional
-      // TODO handle today is invalid date
-      const today = new Date(request.query.today);
-      const body = await services.selectRecentActivities(
-        { today },
-        this.#repository,
-      );
-      response
-        .status(200)
-        .header({ 'Content-Type': 'application/json' })
-        .send(body);
+      try {
+        const { today } = RecentActivitiesQuery.create(
+          request.query,
+        ).validate();
+        const body = await services.selectRecentActivities(
+          { today },
+          this.#repository,
+        );
+        response
+          .status(200)
+          .header({ 'Content-Type': 'application/json' })
+          .send(body);
+      } catch {
+        response.status(400).end();
+      }
     });
   }
 
@@ -52,27 +60,98 @@ export class ActivitySamplingApp {
   }
 }
 
-function parseLogActivity(request) {
-  // TODO create DTO {timestamp, duration, client, project, task, notes}
-  let logActivity = request.body;
-  if (
-    typeof logActivity.timestamp == 'string' &&
-    (typeof logActivity.duration == 'number' ||
-      typeof logActivity.duration == 'string') &&
-    typeof logActivity.client == 'string' &&
-    typeof logActivity.project == 'string' &&
-    typeof logActivity.task == 'string' &&
-    (logActivity.notes == null || typeof logActivity.notes == 'string')
-  ) {
-    return {
-      timestamp: new Date(logActivity.timestamp),
-      duration: new Duration(logActivity.duration),
-      client: logActivity.client,
-      project: logActivity.project,
-      task: logActivity.task,
-      notes: logActivity.notes,
-    };
+class LogActivityDto {
+  static create({ timestamp, duration, client, project, task, notes }) {
+    return new LogActivityDto(
+      timestamp,
+      duration,
+      client,
+      project,
+      task,
+      notes,
+    );
   }
 
-  return null;
+  constructor(
+    /** @type {string} */ timestamp,
+    /** @type {string} */ duration,
+    /** @type {string} */ client,
+    /** @type {string} */ project,
+    /** @type {string} */ task,
+    /** @type {string} */ notes,
+  ) {
+    this.timestamp = timestamp;
+    this.duration = duration;
+    this.client = client;
+    this.project = project;
+    this.task = task;
+    this.notes = notes;
+  }
+
+  validate() {
+    const timestamp = validateRequiredProperty(
+      this,
+      'log activity',
+      'timestamp',
+      Date,
+    );
+    const duration = validateRequiredProperty(
+      this,
+      'log activity',
+      'duration',
+      Duration,
+    );
+    const client = validateRequiredProperty(
+      this,
+      'log activity',
+      'client',
+      'string',
+    );
+    const project = validateRequiredProperty(
+      this,
+      'log activity',
+      'project',
+      'string',
+    );
+    const task = validateRequiredProperty(
+      this,
+      'log activity',
+      'task',
+      'string',
+    );
+    const notes = validateOptionalProperty(
+      this,
+      'log activity',
+      'notes',
+      'string',
+    );
+    return Activity.create({
+      timestamp,
+      duration,
+      client,
+      project,
+      task,
+      notes,
+    });
+  }
+}
+
+class RecentActivitiesQuery {
+  static create({ today }) {
+    return new RecentActivitiesQuery(today);
+  }
+
+  constructor(/** @type {string} */ today) {
+    this.today = today;
+  }
+
+  validate() {
+    const today = validateOptionalProperty(
+      this,
+      'recent activities query',
+      'today',
+      Date,
+    );
+    return { today };
+  }
 }
