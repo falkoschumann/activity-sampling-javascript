@@ -50,7 +50,6 @@ export async function askPeriodically(
   timer.schedule(() => {
     const timestamp = clock.date();
     const duration = new Duration('PT1S');
-    console.log('countdown-progressed:', { timestamp, duration });
     store.dispatch({
       type: 'countdown-progressed',
       timestamp,

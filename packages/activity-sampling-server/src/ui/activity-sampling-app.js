@@ -15,7 +15,7 @@ export class ActivitySamplingApp {
 
   constructor({
     publicPath = './public',
-    repository = new Repository(),
+    repository = Repository.create(),
     app = express(),
   } = {}) {
     this.#repository = repository;
@@ -30,7 +30,8 @@ export class ActivitySamplingApp {
         const logActivity = LogActivityDto.create(request.body).validate();
         await services.logActivity(logActivity, this.#repository);
         response.status(204).end();
-      } catch {
+      } catch (error) {
+        console.error(error);
         response.status(400).end();
       }
     });
@@ -47,7 +48,8 @@ export class ActivitySamplingApp {
           .status(200)
           .header({ 'Content-Type': 'application/json' })
           .send(body);
-      } catch {
+      } catch (error) {
+        console.error(error);
         response.status(400).end();
       }
     });
