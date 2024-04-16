@@ -1,5 +1,5 @@
 {
-  "name": "@activity-sampling/server",
+  "name": "@activity-sampling/webserver",
   "version": "0.1.0",
   "author": "Falko Schumann",
   "license": "MIT",

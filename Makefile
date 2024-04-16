@@ -27,7 +27,7 @@ start: build
 	npm start
 
 dev: build
-	npx concurrently "npm run dev --workspace activity-sampling-server" "npm run dev --workspace activity-sampling-webclient"
+	npx concurrently "npm run dev --workspace @activity-sampling/webserver" "npm run dev --workspace @activity-sampling/webclient"
 
 dev-e2e: build
 	npx cypress open

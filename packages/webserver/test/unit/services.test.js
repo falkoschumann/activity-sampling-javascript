@@ -6,6 +6,8 @@ import * as services from '../../src/application/services.js';
 import { ActivityLogged } from '../../src/domain/activities.js';
 import { Repository } from '../../src/infrastructure/repository.js';
 
+// TODO do not write to console while testing
+
 describe('Services', () => {
   describe('Log activity', () => {
     test('Logs the activity with client, project, task and optional notes', async () => {

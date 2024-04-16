@@ -67,7 +67,7 @@ export class RecentActivities {
 
   #startDate;
   /** @type {WorkingDay[]} */ workingDays = [];
-  /** @type {TimeSummary} */ timeSummary;
+  timeSummary;
 
   constructor(/** @type {Date} */ today) {
     this.#startDate = toDate(new Date(today - 30 * 24 * 60 * 60 * 1000));

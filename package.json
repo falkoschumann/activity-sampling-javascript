@@ -9,8 +9,8 @@
     "packages/*"
   ],
   "scripts": {
-    "start": "npm start --workspace activity-sampling-server",
-    "test": "npx jest",
+    "start": "npm start --workspace --if-present",
+    "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx jest",
     "build": "npm run build --workspaces --if-present"
   },
   "devDependencies": {
