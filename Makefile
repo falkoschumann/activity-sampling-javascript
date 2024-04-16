@@ -24,7 +24,7 @@ format:
 	npx eslint --fix packages/*/src packages/*/test
 
 start: build
-	npm start --workspace activity-sampling-server
+	npm start
 
 dev: build
 	npx concurrently "npm run dev --workspace activity-sampling-server" "npm run dev --workspace activity-sampling-webclient"
@@ -33,7 +33,7 @@ dev-e2e: build
 	npx cypress open
 
 test: build e2e
-	npx jest
+	npm test
 
 unit-tests: build
 	npx jest --testPathPattern=".*\/unit\/.*"
@@ -56,17 +56,19 @@ watch: build
 coverage: build
 	npx jest --coverage
 
-build:
-	@node --version
-	@npm --version
+build: version
 	@if [ -n "$(CI)" ] ; then \
 		echo "CI detected, run npm ci"; \
 		npm ci; \
 	else \
 		npm install; \
 	fi
-	npm run build --workspaces --if-present
+	npm run build
+
+version:
+	@echo "Use Node.js $(shell node --version)"
+	@echo "Use NPM $(shell npm --version)"
 
 .PHONY: all clean distclean dist check start dev \
 	test unit-tests integration-tests e2e-tests e2e watch coverage \
-	build
+	build version

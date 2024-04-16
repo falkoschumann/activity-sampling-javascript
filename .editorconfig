@@ -3,11 +3,13 @@
 # Based on following Google Style Guides:
 # - C++: https://google.github.io/styleguide/cppguide.html
 # - C#: https://google.github.io/styleguide/csharp-style.html
+# - Go: https://google.github.io/styleguide/goguide.html
 # - HTML/CSS: https://google.github.io/styleguide/htmlcssguide.html
 # - JavaScript: https://google.github.io/styleguide/jsguide.html
 # - Java: https://google.github.io/styleguide/javaguide.html
 # - Python: https://google.github.io/styleguide/pyguide.html
 # - Shell: https://google.github.io/styleguide/shellguide.html
+# - TypeScript: https://google.github.io/styleguide/tsguide.html
 
 root = true
 
@@ -36,6 +38,6 @@ end_of_line = crlf
 [*.{html,xml,jsx,tsx}]
 max_line_length = 250
 
-[{Makefile,*.mk}]
+[{Makefile,*.mk,*.go}]
 indent_style = tab
 indent_size = 4
