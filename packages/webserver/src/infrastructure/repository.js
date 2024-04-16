@@ -68,6 +68,8 @@ export class Repository extends EventTarget {
         throw error;
       }
 
+      console.error(`File ${this.#fileName} does not exist.`);
+
       // file does not exist
       return '';
     }
