@@ -40,6 +40,22 @@ export class LogActivity {
   }
 }
 
+export class RecentActivitiesQuery {
+  static create({ today = new Date() } = {}) {
+    return new RecentActivitiesQuery(today);
+  }
+
+  static createNull({ today = new randomDate() }) {
+    return RecentActivitiesQuery.create({
+      today,
+    });
+  }
+
+  constructor(/** @type {Date} */ today) {
+    this.today = today;
+  }
+}
+
 export class RecentActivities {
   static create({ activities = [], today = new Date() } = {}) {
     const result = new RecentActivities(today);
@@ -304,6 +320,13 @@ export class Activity {
 function randomTimestamp() {
   return new Date(Math.random() * Date.now());
 }
+
+function randomDate() {
+  const date = new Date(Math.random() * Date.now());
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
+
 function randomDuration() {
   return new Duration(Math.random() * 60 * 60 * 1000);
 }

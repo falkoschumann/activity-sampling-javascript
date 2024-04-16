@@ -1,23 +1,36 @@
 import express from 'express';
 
-import { Duration } from 'activity-sampling-shared';
-import * as services from '../application/services.js';
-import { Repository } from '../infrastructure/repository.js';
-import { Activity } from '../domain/activities.js';
 import {
   validateOptionalProperty,
   validateRequiredProperty,
 } from 'activity-sampling-shared/src/validation.js';
+import { Duration } from 'activity-sampling-shared';
+
+import * as services from '../application/services.js';
+import { LogActivity, RecentActivitiesQuery } from '../domain/activities.js';
+import { Repository } from '../infrastructure/repository.js';
 
 export class ActivitySamplingApp {
-  #app;
-  #repository;
-
-  constructor({
+  static create({
     publicPath = './public',
     repository = Repository.create(),
     app = express(),
   } = {}) {
+    return new ActivitySamplingApp(publicPath, repository, app);
+  }
+
+  static createNull({ repository = Repository.createNull() } = {}) {
+    return ActivitySamplingApp.create('null-public-path', repository, null);
+  }
+
+  #app;
+  #repository;
+
+  constructor(
+    /** @type {string} */ publicPath,
+    /** @type {Repository} */ repository,
+    /** @type {express.Express} */ app,
+  ) {
     this.#repository = repository;
 
     this.#app = app;
@@ -37,7 +50,7 @@ export class ActivitySamplingApp {
     });
     this.#app.get('/api/recent-activities', async (request, response) => {
       try {
-        const { today } = RecentActivitiesQuery.create(
+        const { today } = RecentActivitiesQueryDto.create(
           request.query,
         ).validate();
         const body = await services.selectRecentActivities(
@@ -127,7 +140,7 @@ class LogActivityDto {
       'notes',
       'string',
     );
-    return Activity.create({
+    return LogActivity.create({
       timestamp,
       duration,
       client,
@@ -138,9 +151,9 @@ class LogActivityDto {
   }
 }
 
-class RecentActivitiesQuery {
+class RecentActivitiesQueryDto {
   static create({ today }) {
-    return new RecentActivitiesQuery(today);
+    return new RecentActivitiesQueryDto(today);
   }
 
   constructor(/** @type {string} */ today) {
@@ -154,6 +167,6 @@ class RecentActivitiesQuery {
       'today',
       Date,
     );
-    return { today };
+    return RecentActivitiesQuery.create({ today });
   }
 }

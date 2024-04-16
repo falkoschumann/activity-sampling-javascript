@@ -105,6 +105,6 @@ describe('API', () => {
 function configure() {
   const repository = Repository.create({ fileName });
   const app = express();
-  new ActivitySamplingApp({ repository, app });
+  ActivitySamplingApp.create({ repository, app });
   return { app, repository };
 }

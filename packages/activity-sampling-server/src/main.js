@@ -1,4 +1,4 @@
 import { ActivitySamplingApp } from './ui/activity-sampling-app.js';
 
-let app = new ActivitySamplingApp();
+let app = ActivitySamplingApp.create();
 app.run();

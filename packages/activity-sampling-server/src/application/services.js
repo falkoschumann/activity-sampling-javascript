@@ -1,20 +1,14 @@
-import { RecentActivities, ActivityLogged } from '../domain/activities.js';
-
-/**
- * @typedef {import('../domain/activities.js').LogActivity} LogActivity
- * @typedef {import('../infrastructure/repository.js').Repository} Repository
- */
+import {
+  RecentActivities,
+  ActivityLogged,
+  RecentActivitiesQuery,
+  LogActivity,
+} from '../domain/activities.js';
+import { Repository } from '../infrastructure/repository.js';
 
 export async function logActivity(
-  /** @type {LogActivity} */ {
-    timestamp,
-    duration,
-    client,
-    project,
-    task,
-    notes,
-  },
-  /** @type {Repository} */ repository,
+  { timestamp, duration, client, project, task, notes } = LogActivity.create(),
+  repository = Repository.create(),
 ) {
   const activityLogged = ActivityLogged.create({
     timestamp,
@@ -28,8 +22,8 @@ export async function logActivity(
 }
 
 export async function selectRecentActivities(
-  { today = new Date() } = {},
-  /** @type {Repository} */ repository,
+  { today } = RecentActivitiesQuery.create(),
+  repository = Repository.create(),
 ) {
   let activities = await repository.replay();
   return RecentActivities.create({ activities, today });
