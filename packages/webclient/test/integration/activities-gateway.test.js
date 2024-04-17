@@ -6,6 +6,15 @@ import { ActivitiesGateway } from '../../src/infrastructure/activities-gateway.j
 import { createActivity, createActivityDto } from '../testdata.js';
 
 describe('Activities gateway', () => {
+  test('Logs activity', async () => {
+    const gateway = ActivitiesGateway.createNull();
+    const activitiesLogged = gateway.trackActivitiesLogged();
+
+    await gateway.logActivity(createActivity());
+
+    expect(activitiesLogged.data).toEqual([createActivity()]);
+  });
+
   test('Loads recent activities', async () => {
     const gateway = ActivitiesGateway.createNull({
       responses: {
@@ -48,14 +57,5 @@ describe('Activities gateway', () => {
         hoursThisMonth: new Duration('PT1H'),
       },
     });
-  });
-
-  test('Logs activity', async () => {
-    const gateway = ActivitiesGateway.createNull();
-    const activitiesLogged = gateway.trackActivitiesLogged();
-
-    await gateway.logActivity(createActivity());
-
-    expect(activitiesLogged.data).toEqual([createActivity()]);
   });
 });

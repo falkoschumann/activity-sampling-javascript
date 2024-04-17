@@ -3,7 +3,7 @@ import { describe, expect, test } from '@jest/globals';
 import { Clock } from '../../src/infrastructure/clock.js';
 
 describe('Clock', () => {
-  test('Gets a date', () => {
+  test('Gets current date', () => {
     const clock = Clock.create();
 
     const date = clock.date();
