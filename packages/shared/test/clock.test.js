@@ -1,6 +1,6 @@
 import { describe, expect, test } from '@jest/globals';
 
-import { Clock } from '../../src/infrastructure/clock.js';
+import { Clock } from '../src/clock.js';
 
 describe('Clock', () => {
   test('Gets current date', () => {

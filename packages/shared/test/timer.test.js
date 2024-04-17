@@ -1,6 +1,6 @@
 import { describe, expect, test } from '@jest/globals';
 
-import { Timer } from '../../src/infrastructure/timer.js';
+import { Timer } from '../src/timer.js';
 
 describe('Timer', () => {
   test('Schedules a task', () => {

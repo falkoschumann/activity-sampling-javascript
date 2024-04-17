@@ -66,7 +66,7 @@ class IntervalStub {
 
   setInterval(callback) {
     this.task = callback;
-    return ++this.#lastIntervalId;
+    return this.#lastIntervalId++;
   }
 
   clearInterval() {}

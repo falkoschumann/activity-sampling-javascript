@@ -1,15 +1,15 @@
 export class OutputTracker {
-  /** @type {EventTarget} */ #eventTarget;
-  /** @type {string} */ #event;
-  /** @type {Function} */ #tracker;
-  #data = [];
-
   static create(
     /** @type {EventTarget} */ eventTarget,
     /** @type {string} */ event,
   ) {
     return new OutputTracker(eventTarget, event);
   }
+
+  #eventTarget;
+  #event;
+  #tracker;
+  #data = [];
 
   constructor(
     /** @type {EventTarget} */ eventTarget,

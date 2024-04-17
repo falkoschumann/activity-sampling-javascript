@@ -17,12 +17,6 @@ describe('Configurable responses', () => {
 
       expect(() => responses.next()).toThrow('No more responses configured.');
     });
-
-    test('Throws given error', () => {
-      const responses = ConfigurableResponses.create(new Error('my fault'));
-
-      expect(() => responses.next()).toThrow('my fault');
-    });
   });
 
   describe('Multiple values', () => {
@@ -50,18 +44,6 @@ describe('Configurable responses', () => {
       const responses = ConfigurableResponses.create([]);
 
       expect(() => responses.next()).toThrow('No more responses configured.');
-    });
-
-    test('Throws given error', () => {
-      const responses = ConfigurableResponses.create([
-        1,
-        new Error('my fault'),
-        3,
-      ]);
-
-      expect(responses.next()).toBe(1);
-      expect(() => responses.next()).toThrow('my fault');
-      expect(responses.next()).toBe(3);
     });
   });
 });

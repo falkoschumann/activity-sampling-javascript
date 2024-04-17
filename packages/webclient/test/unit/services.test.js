@@ -1,14 +1,11 @@
 import { beforeEach, describe, expect, test } from '@jest/globals';
 
-import { Duration } from '@activity-sampling/shared';
+import { Clock, Duration, Store, Timer } from '@activity-sampling/shared';
 
 import * as services from '../../src/application/services.js';
 import { initialState, reducer } from '../../src/domain/reducer.js';
 import { ActivitiesGateway } from '../../src/infrastructure/activities-gateway.js';
-import { Clock } from '../../src/infrastructure/clock.js';
-import { Store } from '../../src/util/store.js';
 import { createActivity, createActivityDto } from '../testdata.js';
-import { Timer } from '../../src/infrastructure/timer.js';
 
 // TODO do not write to console while testing
 

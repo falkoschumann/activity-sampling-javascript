@@ -1,18 +1,12 @@
 export class ConfigurableResponses {
-  /** @type {string} */ #description;
-  /** @type {any|any[]|Error} */ #responses;
-
-  static create(
-    /** @type {any|any[]|Error} */ responses,
-    /** @type {string} */ name,
-  ) {
+  static create(responses, /** @type {string} */ name) {
     return new ConfigurableResponses(responses, name);
   }
 
-  constructor(
-    /** @type {any|any[]|Error} */ responses,
-    /** @type {string} */ name,
-  ) {
+  #description;
+  #responses;
+
+  constructor(responses, /** @type {string} */ name) {
     this.#description = name == null ? '' : ` in ${name}`;
     this.#responses = Array.isArray(responses) ? [...responses] : responses;
   }
@@ -23,10 +17,6 @@ export class ConfigurableResponses {
       : this.#responses;
     if (response === undefined) {
       throw new Error(`No more responses configured${this.#description}.`);
-    }
-
-    if (response instanceof Error) {
-      throw response;
     }
 
     return response;

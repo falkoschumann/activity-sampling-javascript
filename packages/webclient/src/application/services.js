@@ -1,10 +1,9 @@
-import { Duration } from '@activity-sampling/shared';
+import { Clock, Duration } from '@activity-sampling/shared';
 
 /**
- * @typedef {import('../util/store.js').Store} Store
+ * @typedef {import('@activity-sampling/shared').Timer} Timer
+ * @typedef {import('@activity-sampling/shared/src/store.js').Store} Store
  * @typedef {import('../infrastructure/activities-gateway.js').ActivitiesGateway} ActivitiesGateway
- * @typedef {import('../infrastructure/clock.js').Clock} Clock
- * @typedef {import('../infrastructure/timer.js').Timer} Timer
  */
 
 export async function activityUpdated(
@@ -17,7 +16,7 @@ export async function activityUpdated(
 export async function logActivity(
   /** @type {Store} */ store,
   /** @type {ActivitiesGateway} */ activitiesGateway,
-  /** @type {Clock} */ clock,
+  clock = Clock.create(),
 ) {
   let activity = { ...store.getState().currentActivity.activity };
   if (!activity.timestamp) {
@@ -45,7 +44,7 @@ export async function askPeriodically(
   { period },
   /** @type {Store} */ store,
   /** @type {Timer} */ timer,
-  /** @type {Clock} */ clock,
+  clock = Clock.create(),
 ) {
   timer.schedule(() => {
     const timestamp = clock.date();
