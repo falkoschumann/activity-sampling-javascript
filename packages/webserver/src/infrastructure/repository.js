@@ -64,14 +64,12 @@ export class Repository extends EventTarget {
     try {
       return await this.#fs.readFile(this.#fileName, { encoding: 'utf-8' });
     } catch (error) {
-      if (error.code !== 'ENOENT') {
-        throw error;
+      if (error.code === 'ENOENT') {
+        // file does not exist
+        return '';
       }
 
-      console.error(`File ${this.#fileName} does not exist.`);
-
-      // file does not exist
-      return '';
+      throw error;
     }
   }
 

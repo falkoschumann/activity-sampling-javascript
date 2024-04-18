@@ -3,19 +3,51 @@ import express from 'express';
 import { beforeEach, describe, expect, test } from '@jest/globals';
 import request from 'supertest';
 
-import { Duration } from '@activity-sampling/shared';
+import {
+  Duration,
+  Level,
+  Logger,
+  ValidationError,
+} from '@activity-sampling/shared';
 
 import { Activity, LogActivity } from '../../src/domain/activities.js';
 import { Repository } from '../../src/infrastructure/repository.js';
-import { ActivitySamplingApp } from '../../src/ui/activity-sampling-app.js';
+import { Application } from '../../src/ui/application.js';
 
 const fileName = new URL('../../data/activity-log.test.csv', import.meta.url)
   .pathname;
 
-describe('API', () => {
+describe('Activity Sampling App', () => {
   beforeEach(() => {
     rmSync(fileName, { force: true });
   });
+
+  test('Starts and stops the app', async () => {
+    const { application, log } = configure();
+    const loggedMessages = log.trackLoggedMessages();
+
+    try {
+      await application.start({ port: 3333 });
+      await application.stop();
+    } catch (error) {
+      console.error(error);
+    }
+
+    expect(loggedMessages.data).toEqual([
+      {
+        loggerName: 'null-logger',
+        level: Level.INFO,
+        message: ['Server is listening on port 3333.'],
+        timestamp: new Date('2024-02-21T19:16:00Z'),
+      },
+      {
+        loggerName: 'null-logger',
+        level: Level.INFO,
+        message: ['Server stopped.'],
+        timestamp: new Date('2024-02-21T19:16:00Z'),
+      },
+    ]);
+  }, 30000);
 
   describe('Log activity', () => {
     test('Runs happy path', async () => {
@@ -33,7 +65,8 @@ describe('API', () => {
     });
 
     test('Handles unhappy path', async () => {
-      const { app } = configure();
+      const { app, log } = configure();
+      const loggedMessages = log.trackLoggedMessages();
 
       let response = await request(app)
         .post('/api/log-activity')
@@ -47,6 +80,14 @@ describe('API', () => {
         });
 
       expect(response.status).toBe(400);
+      expect(loggedMessages.data).toEqual([
+        {
+          loggerName: 'null-logger',
+          level: Level.ERROR,
+          message: [expect.any(ValidationError)],
+          timestamp: new Date('2024-02-21T19:16:00Z'),
+        },
+      ]);
     });
   });
 
@@ -90,7 +131,8 @@ describe('API', () => {
     });
 
     test('Handles unhappy path', async () => {
-      const { app } = configure();
+      const { app, log } = configure();
+      const loggedMessages = log.trackLoggedMessages();
 
       const response = await request(app)
         .get('/api/recent-activities')
@@ -98,13 +140,22 @@ describe('API', () => {
         .set('Accept', 'application/json');
 
       expect(response.status).toBe(400);
+      expect(loggedMessages.data).toEqual([
+        {
+          loggerName: 'null-logger',
+          level: Level.ERROR,
+          message: [expect.any(ValidationError)],
+          timestamp: new Date('2024-02-21T19:16:00Z'),
+        },
+      ]);
     });
   });
 });
 
 function configure() {
   const repository = Repository.create({ fileName });
+  const log = Logger.createNull();
   const app = express();
-  ActivitySamplingApp.create({ repository, app });
-  return { app, repository };
+  const application = Application.create({ repository, log, app });
+  return { application, repository, log, app };
 }

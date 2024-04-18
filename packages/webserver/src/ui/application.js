@@ -1,6 +1,7 @@
 import express from 'express';
 
 import {
+  Logger,
   validateOptionalProperty,
   validateRequiredProperty,
 } from '@activity-sampling/shared';
@@ -10,67 +11,86 @@ import * as services from '../application/services.js';
 import { LogActivity, RecentActivitiesQuery } from '../domain/activities.js';
 import { Repository } from '../infrastructure/repository.js';
 
-export class ActivitySamplingApp {
+export class Application {
   static create({
     publicPath = './public',
     repository = Repository.create(),
+    log = Logger.create({ name: 'ActivitySamplingApp' }),
     app = express(),
   } = {}) {
-    return new ActivitySamplingApp(publicPath, repository, app);
+    return new Application(publicPath, repository, log, app);
   }
 
-  static createNull({ repository = Repository.createNull() } = {}) {
-    return ActivitySamplingApp.create('null-public-path', repository, null);
+  static createNull({
+    repository = Repository.createNull(),
+    log = Logger.createNull(),
+  } = {}) {
+    return Application.create('null-public-path', repository, log, null);
   }
 
+  #log;
   #app;
-  #repository;
+  /** @type {import ("node:http").Server} */ #server;
 
   constructor(
     /** @type {string} */ publicPath,
     /** @type {Repository} */ repository,
+    /** @type {Logger} */ log,
     /** @type {express.Express} */ app,
   ) {
-    this.#repository = repository;
-
+    this.#log = log;
     this.#app = app;
-    this.#app.set('x-powered-by', false);
-    this.#app.use(express.json());
-    this.#app.use('/', express.static(publicPath));
-    this.#app.use('/api/', express.static('../../spec/api'));
-    this.#app.post('/api/log-activity', async (request, response) => {
+
+    app.set('x-powered-by', false);
+    app.use(express.json());
+    app.use('/', express.static(publicPath));
+    app.use('/api/', express.static('../../spec/api'));
+    app.post('/api/log-activity', async (request, response) => {
       try {
         const logActivity = LogActivityDto.create(request.body).validate();
-        await services.logActivity(logActivity, this.#repository);
+        await services.logActivity(logActivity, repository);
         response.status(204).end();
       } catch (error) {
-        console.error(error);
+        log.error(error);
         response.status(400).end();
       }
     });
-    this.#app.get('/api/recent-activities', async (request, response) => {
+    app.get('/api/recent-activities', async (request, response) => {
       try {
         const { today } = RecentActivitiesQueryDto.create(
           request.query,
         ).validate();
         const body = await services.selectRecentActivities(
           { today },
-          this.#repository,
+          repository,
         );
         response
           .status(200)
           .header({ 'Content-Type': 'application/json' })
           .send(body);
       } catch (error) {
-        console.error(error);
+        log.error(error);
         response.status(400).end();
       }
     });
   }
 
-  run({ port = 3000 } = {}) {
-    this.#app.listen(port, () => {
-      console.log(`Activity Sampling app listening on port ${port}`);
+  start({ port = 3000 } = {}) {
+    return new Promise((resolve) => {
+      this.#server = this.#app.listen(port, () => {
+        this.#log.info(`Server is listening on port ${port}.`);
+        resolve();
+      });
+    });
+  }
+
+  stop() {
+    return new Promise((resolve) => {
+      this.#server.on('close', () => {
+        this.#log.info('Server stopped.');
+        resolve();
+      });
+      this.#server.close();
     });
   }
 }
