@@ -2,7 +2,7 @@ import { describe, expect, test } from '@jest/globals';
 
 import { Duration } from '@activity-sampling/shared';
 
-import { Activity, RecentActivities } from '../../src/domain/activities.js';
+import { Activity, RecentActivities } from '../src/activities.js';
 
 describe('Activities', () => {
   describe('Recent activities', () => {

@@ -1,5 +1,5 @@
 {
-  "name": "@activity-sampling/shared",
+  "name": "@activity-sampling/core",
   "version": "0.1.0",
   "author": "Falko Schumann",
   "license": "MIT",
@@ -10,6 +10,9 @@
   "main": "./src/index.js",
   "scripts": {
     "test": "npx jest"
+  },
+  "dependencies": {
+    "@activity-sampling/shared": "0.1.0"
   },
   "devDependencies": {
     "@jest/globals": "29.7.0",

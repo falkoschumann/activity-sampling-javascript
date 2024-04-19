@@ -2,14 +2,13 @@ import fsPromises from 'node:fs/promises';
 import path from 'node:path';
 import * as csv from 'csv';
 
+import { ActivityLogged } from '@activity-sampling/core';
 import {
   Duration,
   OutputTracker,
   validateOptionalProperty,
   validateRequiredProperty,
 } from '@activity-sampling/shared';
-
-import { ActivityLogged } from '../domain/activities.js';
 
 const RFC4180 = {
   delimiter: ',',

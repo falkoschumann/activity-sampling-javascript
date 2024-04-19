@@ -3,7 +3,8 @@ import {
   ActivityLogged,
   RecentActivitiesQuery,
   LogActivity,
-} from '../domain/activities.js';
+} from '@activity-sampling/core';
+
 import { Repository } from '../infrastructure/repository.js';
 
 export async function logActivity(

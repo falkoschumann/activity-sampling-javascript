@@ -3,6 +3,7 @@ import express from 'express';
 import { beforeEach, describe, expect, test } from '@jest/globals';
 import request from 'supertest';
 
+import { Activity, LogActivity } from '@activity-sampling/core';
 import {
   Duration,
   Level,
@@ -10,7 +11,6 @@ import {
   ValidationError,
 } from '@activity-sampling/shared';
 
-import { Activity, LogActivity } from '../../src/domain/activities.js';
 import { Repository } from '../../src/infrastructure/repository.js';
 import { Application } from '../../src/ui/application.js';
 

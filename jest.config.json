@@ -1,9 +1,8 @@
 {
   "globalSetup": "./jest.global-setup.js",
   "setupFilesAfterEnv": ["./jest.setup.js"],
+  "projects": ["<rootDir>/packages/*"],
   "transform": {},
   "verbose": true,
-  "watchPathIgnorePatterns": [
-    "<rootDir>/packages/activity-sampling-server/data/"
-  ]
+  "watchPathIgnorePatterns": ["<rootDir>/packages/*/data/"]
 }

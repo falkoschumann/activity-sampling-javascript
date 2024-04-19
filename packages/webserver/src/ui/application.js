@@ -1,5 +1,6 @@
 import express from 'express';
 
+import { LogActivity, RecentActivitiesQuery } from '@activity-sampling/core';
 import {
   Logger,
   validateOptionalProperty,
@@ -8,7 +9,6 @@ import {
 import { Duration } from '@activity-sampling/shared';
 
 import * as services from '../application/services.js';
-import { LogActivity, RecentActivitiesQuery } from '../domain/activities.js';
 import { Repository } from '../infrastructure/repository.js';
 
 export class Application {

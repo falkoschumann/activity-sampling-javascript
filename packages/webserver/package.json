@@ -9,11 +9,11 @@
   "type": "module",
   "scripts": {
     "start": "node src/main.js",
-    "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx jest",
+    "test": "npx jest",
     "dev": "npx nodemon src/main.js"
   },
   "dependencies": {
-    "@activity-sampling/shared": "0.1.0",
+    "@activity-sampling/core": "0.1.0",
     "csv": "6.3.8",
     "express": "4.19.2"
   },

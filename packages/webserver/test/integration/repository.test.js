@@ -1,9 +1,9 @@
 import fs from 'node:fs/promises';
 import { beforeEach, describe, expect, test } from '@jest/globals';
 
+import { ActivityLogged } from '@activity-sampling/core';
 import { Duration, ValidationError } from '@activity-sampling/shared';
 
-import { ActivityLogged } from '../../src/domain/activities.js';
 import { Repository } from '../../src/infrastructure/repository.js';
 
 describe('Repository', () => {
