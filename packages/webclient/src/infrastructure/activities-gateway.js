@@ -27,12 +27,6 @@ export class ActivitiesGateway extends EventTarget {
     this.#fetch = fetch;
   }
 
-  async loadRecentActivities() {
-    let response = await this.#fetch(`${this.#baseUrl}/recent-activities`);
-    let dto = await response.json();
-    return mapRecentActivities(dto);
-  }
-
   async logActivity({ timestamp, duration, client, project, task, notes }) {
     const activity = { timestamp, duration, client, project, task, notes };
     let body = JSON.stringify(activity);
@@ -48,6 +42,12 @@ export class ActivitiesGateway extends EventTarget {
 
   trackActivitiesLogged() {
     return new OutputTracker(this, 'activity-logged');
+  }
+
+  async loadRecentActivities() {
+    let response = await this.#fetch(`${this.#baseUrl}/recent-activities`);
+    let dto = await response.json();
+    return mapRecentActivities(dto);
   }
 }
 

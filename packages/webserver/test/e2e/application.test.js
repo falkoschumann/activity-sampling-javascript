@@ -26,12 +26,8 @@ describe('Activity Sampling App', () => {
     const { application, log } = configure();
     const loggedMessages = log.trackLoggedMessages();
 
-    try {
-      await application.start({ port: 3333 });
-      await application.stop();
-    } catch (error) {
-      console.error(error);
-    }
+    await application.start({ port: 3333 });
+    await application.stop();
 
     expect(loggedMessages.data).toEqual([
       {
@@ -47,7 +43,7 @@ describe('Activity Sampling App', () => {
         timestamp: new Date('2024-02-21T19:16:00Z'),
       },
     ]);
-  }, 30000);
+  });
 
   describe('Log activity', () => {
     test('Runs happy path', async () => {
