@@ -37,22 +37,13 @@ export class Level {
 
 export class Logger extends EventTarget {
   // TODO implement logger hierarchy
-  // TODO simplify object construction
 
-  static create({
-    name = 'global',
-    level = Level.INFO,
-    clock = Clock.create(),
-  } = {}) {
-    return new Logger(name, level, clock, new ConsoleHandler());
+  static getLogger(/** @type {string} */ name = '') {
+    return new Logger(name, Level.INFO, Clock.create(), new ConsoleHandler());
   }
 
-  static createNull({
-    name = 'null-logger',
-    level = Level.INFO,
-    clock = Clock.createNull(),
-  } = {}) {
-    return new Logger(name, level, clock, new NullHandler());
+  static createNull({ level = Level.INFO, clock = Clock.createNull() } = {}) {
+    return new Logger('null-logger', level, clock, new NullHandler());
   }
 
   #clock;
@@ -131,12 +122,14 @@ class LogRecord {
 
 class ConsoleHandler {
   publish(/** @type {LogRecord} */ record) {
-    const message = [
-      record.timestamp,
-      record.loggerName,
-      record.level.toString(),
-      ...record.message,
-    ];
+    const message = record.loggerName
+      ? [
+          record.timestamp,
+          record.loggerName,
+          record.level.toString(),
+          ...record.message,
+        ]
+      : [record.timestamp, record.level.toString(), ...record.message];
 
     switch (record.level) {
       case Level.ERROR:

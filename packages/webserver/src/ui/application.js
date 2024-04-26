@@ -15,7 +15,7 @@ export class Application {
   static create({
     publicPath = './public',
     repository = Repository.create(),
-    log = Logger.create({ name: 'ActivitySamplingApp' }),
+    log = Logger.getLogger('Application'),
     app = express(),
   } = {}) {
     return new Application(publicPath, repository, log, app);

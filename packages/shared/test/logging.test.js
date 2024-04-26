@@ -4,13 +4,25 @@ import { Level, Logger } from '../src/logging.js';
 
 describe('Logging', () => {
   describe('Level', () => {
-    test('Parses level WARNING by name', () => {
+    test('Converts to string', () => {
+      const result = Level.INFO.toString();
+
+      expect(result).toBe('INFO');
+    });
+
+    test('Converts to value', () => {
+      const result = Level.INFO.valueOf();
+
+      expect(result).toBe(800);
+    });
+
+    test('Parses level by name', () => {
       const level = Level.parse('WARNING');
 
       expect(level).toBe(Level.WARNING);
     });
 
-    test('Parses level WARNING by value', () => {
+    test('Parses level by value', () => {
       const level = Level.parse('1000');
 
       expect(level).toBe(Level.ERROR);
@@ -18,8 +30,20 @@ describe('Logging', () => {
   });
 
   describe('Logger', () => {
+    test('Creates anonymous logger', () => {
+      const log = Logger.getLogger();
+
+      expect(log.name).toBe('');
+    });
+
+    test('Creates named logger', () => {
+      const log = Logger.getLogger('test-logger');
+
+      expect(log.name).toBe('test-logger');
+    });
+
     test('Logs at level error', () => {
-      const log = Logger.create();
+      const log = Logger.createNull();
       const loggedMessages = log.trackLoggedMessages();
 
       log.error('error message');
@@ -27,7 +51,7 @@ describe('Logging', () => {
       expect(loggedMessages.data).toEqual([
         {
           timestamp: expect.any(Date),
-          loggerName: 'global',
+          loggerName: 'null-logger',
           level: Level.ERROR,
           message: ['error message'],
         },
@@ -35,7 +59,7 @@ describe('Logging', () => {
     });
 
     test('Logs at level warning', () => {
-      const log = Logger.create();
+      const log = Logger.createNull();
       const loggedMessages = log.trackLoggedMessages();
 
       log.warning('warning message');
@@ -43,7 +67,7 @@ describe('Logging', () => {
       expect(loggedMessages.data).toEqual([
         {
           timestamp: expect.any(Date),
-          loggerName: 'global',
+          loggerName: 'null-logger',
           level: Level.WARNING,
           message: ['warning message'],
         },
@@ -51,7 +75,7 @@ describe('Logging', () => {
     });
 
     test('Logs at level info', () => {
-      const log = Logger.create();
+      const log = Logger.createNull();
       const loggedMessages = log.trackLoggedMessages();
 
       log.info('info message');
@@ -59,7 +83,7 @@ describe('Logging', () => {
       expect(loggedMessages.data).toEqual([
         {
           timestamp: expect.any(Date),
-          loggerName: 'global',
+          loggerName: 'null-logger',
           level: Level.INFO,
           message: ['info message'],
         },
@@ -67,7 +91,7 @@ describe('Logging', () => {
     });
 
     test('Logs at level debug', () => {
-      const log = Logger.create({ level: Level.ALL });
+      const log = Logger.createNull({ level: Level.ALL });
       const loggedMessages = log.trackLoggedMessages();
 
       log.debug('debug message');
@@ -75,7 +99,7 @@ describe('Logging', () => {
       expect(loggedMessages.data).toEqual([
         {
           timestamp: expect.any(Date),
-          loggerName: 'global',
+          loggerName: 'null-logger',
           level: Level.DEBUG,
           message: ['debug message'],
         },
@@ -83,7 +107,7 @@ describe('Logging', () => {
     });
 
     test('Logs at level trace', () => {
-      const log = Logger.create({ level: Level.ALL });
+      const log = Logger.createNull({ level: Level.ALL });
       const loggedMessages = log.trackLoggedMessages();
 
       log.trace('trace message');
@@ -91,7 +115,7 @@ describe('Logging', () => {
       expect(loggedMessages.data).toEqual([
         {
           timestamp: expect.any(Date),
-          loggerName: 'global',
+          loggerName: 'null-logger',
           level: Level.TRACE,
           message: ['trace message'],
         },
@@ -99,7 +123,7 @@ describe('Logging', () => {
     });
 
     test('Logs at info level by default', () => {
-      const log = Logger.create();
+      const log = Logger.createNull();
       const loggedMessages = log.trackLoggedMessages();
 
       log.error('error message');
@@ -111,19 +135,19 @@ describe('Logging', () => {
       expect(loggedMessages.data).toEqual([
         {
           timestamp: expect.any(Date),
-          loggerName: 'global',
+          loggerName: 'null-logger',
           level: Level.ERROR,
           message: expect.anything(),
         },
         {
           timestamp: expect.any(Date),
-          loggerName: 'global',
+          loggerName: 'null-logger',
           level: Level.WARNING,
           message: expect.anything(),
         },
         {
           timestamp: expect.any(Date),
-          loggerName: 'global',
+          loggerName: 'null-logger',
           level: Level.INFO,
           message: expect.anything(),
         },
@@ -131,9 +155,7 @@ describe('Logging', () => {
     });
 
     test('Does not log below level', () => {
-      const log = Logger.create({
-        level: Level.WARNING,
-      });
+      const log = Logger.createNull({ level: Level.WARNING });
       const loggedMessages = log.trackLoggedMessages();
 
       log.info('info message');
