@@ -44,7 +44,7 @@ describe('Logging', () => {
 
     test('Logs at level error', () => {
       const log = Logger.createNull();
-      const loggedMessages = log.trackLoggedMessages();
+      const loggedMessages = log.trackMessages();
 
       log.error('error message');
 
@@ -60,7 +60,7 @@ describe('Logging', () => {
 
     test('Logs at level warning', () => {
       const log = Logger.createNull();
-      const loggedMessages = log.trackLoggedMessages();
+      const loggedMessages = log.trackMessages();
 
       log.warning('warning message');
 
@@ -76,7 +76,7 @@ describe('Logging', () => {
 
     test('Logs at level info', () => {
       const log = Logger.createNull();
-      const loggedMessages = log.trackLoggedMessages();
+      const loggedMessages = log.trackMessages();
 
       log.info('info message');
 
@@ -92,7 +92,7 @@ describe('Logging', () => {
 
     test('Logs at level debug', () => {
       const log = Logger.createNull({ level: Level.ALL });
-      const loggedMessages = log.trackLoggedMessages();
+      const loggedMessages = log.trackMessages();
 
       log.debug('debug message');
 
@@ -108,7 +108,7 @@ describe('Logging', () => {
 
     test('Logs at level trace', () => {
       const log = Logger.createNull({ level: Level.ALL });
-      const loggedMessages = log.trackLoggedMessages();
+      const loggedMessages = log.trackMessages();
 
       log.trace('trace message');
 
@@ -124,7 +124,7 @@ describe('Logging', () => {
 
     test('Logs at info level by default', () => {
       const log = Logger.createNull();
-      const loggedMessages = log.trackLoggedMessages();
+      const loggedMessages = log.trackMessages();
 
       log.error('error message');
       log.warning('warning message');
@@ -156,7 +156,7 @@ describe('Logging', () => {
 
     test('Does not log below level', () => {
       const log = Logger.createNull({ level: Level.WARNING });
-      const loggedMessages = log.trackLoggedMessages();
+      const loggedMessages = log.trackMessages();
 
       log.info('info message');
 

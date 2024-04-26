@@ -24,7 +24,7 @@ describe('Activity Sampling App', () => {
 
   test('Starts and stops the app', async () => {
     const { application, log } = configure();
-    const loggedMessages = log.trackLoggedMessages();
+    const loggedMessages = log.trackMessages();
 
     await application.start({ port: 3333 });
     await application.stop();
@@ -62,7 +62,7 @@ describe('Activity Sampling App', () => {
 
     test('Handles unhappy path', async () => {
       const { app, log } = configure();
-      const loggedMessages = log.trackLoggedMessages();
+      const loggedMessages = log.trackMessages();
 
       let response = await request(app)
         .post('/api/log-activity')
@@ -128,7 +128,7 @@ describe('Activity Sampling App', () => {
 
     test('Handles unhappy path', async () => {
       const { app, log } = configure();
-      const loggedMessages = log.trackLoggedMessages();
+      const loggedMessages = log.trackMessages();
 
       const response = await request(app)
         .get('/api/recent-activities')
