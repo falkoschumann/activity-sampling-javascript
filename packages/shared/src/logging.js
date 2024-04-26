@@ -63,26 +63,26 @@ export class Logger extends EventTarget {
   }
 
   error(...message) {
-    this.#log(Level.ERROR, ...message);
+    this.log(Level.ERROR, ...message);
   }
 
   warning(...message) {
-    this.#log(Level.WARNING, ...message);
+    this.log(Level.WARNING, ...message);
   }
 
   info(...message) {
-    this.#log(Level.INFO, ...message);
+    this.log(Level.INFO, ...message);
   }
 
   debug(...message) {
-    this.#log(Level.DEBUG, ...message);
+    this.log(Level.DEBUG, ...message);
   }
 
   trace(...message) {
-    this.#log(Level.TRACE, ...message);
+    this.log(Level.TRACE, ...message);
   }
 
-  #log(level, ...message) {
+  log(level, ...message) {
     if (level < this.level) {
       return;
     }
