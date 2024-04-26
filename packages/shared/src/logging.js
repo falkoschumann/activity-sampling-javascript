@@ -4,7 +4,9 @@ import { OutputTracker } from './output-tracker.js';
 const LOGGED_MESSAGES_EVENT = 'logged-messages';
 
 export class Level {
-  static NONE = new Level('NONE', Number.MAX_SAFE_INTEGER);
+  static #levels = [];
+
+  static OFF = new Level('OFF', Number.MAX_SAFE_INTEGER);
   static ERROR = new Level('ERROR', 1000);
   static WARNING = new Level('WARNING', 900);
   static INFO = new Level('INFO', 800);
@@ -12,9 +14,16 @@ export class Level {
   static TRACE = new Level('TRACE', 600);
   static ALL = new Level('ALL', Number.MIN_SAFE_INTEGER);
 
+  static parse(/** @type {string|number} */ name) {
+    return Level.#levels.find(
+      (level) => level.name === String(name) || level.value === Number(name),
+    );
+  }
+
   constructor(name, value) {
     this.name = name;
     this.value = value;
+    Level.#levels.push(this);
   }
 
   toString() {
@@ -27,6 +36,9 @@ export class Level {
 }
 
 export class Logger extends EventTarget {
+  // TODO implement logger hierarchy
+  // TODO simplify object construction
+
   static create({
     name = 'global',
     level = Level.INFO,
