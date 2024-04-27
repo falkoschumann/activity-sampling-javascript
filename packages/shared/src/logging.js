@@ -36,30 +36,61 @@ export class Level {
 }
 
 export class Logger extends EventTarget {
-  // TODO implement logger hierarchy
-
-  static getLogger(/** @type {string} */ name = '') {
-    return new Logger(name, Level.INFO, Clock.create(), new ConsoleHandler());
+  static getLogger(/** @type {?string} */ name) {
+    const manager = LogManager.getLogManager();
+    let logger = manager.getLogger(name);
+    if (logger == null) {
+      logger = new Logger(manager.getLogger(''), name);
+      manager.addLogger(logger);
+    }
+    return logger;
   }
 
   static createNull({ level = Level.INFO, clock = Clock.createNull() } = {}) {
-    return new Logger('null-logger', level, clock, new NullHandler());
+    return new Logger(
+      undefined,
+      'null-logger',
+      level,
+      new NullHandler(),
+      clock,
+    );
   }
 
+  #parent;
+  #name;
+  #level;
   #clock;
   #handler;
 
   constructor(
+    /** @type {Logger} */ parent,
     /** @type {string} */ name,
     /** @type {Level} */ level,
-    /** @type {Clock} */ clock,
     /** @type {Handler} */ handler,
+    /** @type {Clock} */ clock,
   ) {
     super();
-    this.name = name;
-    this.level = level;
-    this.#clock = clock;
+    this.#parent = parent;
+    this.#name = name;
+    this.#level = level;
     this.#handler = handler;
+    this.#clock = clock;
+  }
+
+  get parent() {
+    return this.#parent;
+  }
+
+  get name() {
+    return this.#name;
+  }
+
+  get level() {
+    return this.#level ?? this.#parent.level;
+  }
+
+  set level(/** @type {Level} */ level) {
+    this.#level = level;
   }
 
   error(...message) {
@@ -82,18 +113,35 @@ export class Logger extends EventTarget {
     this.log(Level.TRACE, ...message);
   }
 
-  log(level, ...message) {
-    if (level < this.level) {
+  isLoggable(/** @type {Level} */ level) {
+    return level >= this.level;
+  }
+
+  log(/** @type {Level} */ level, ...message) {
+    if (!this.isLoggable(level)) {
       return;
     }
 
-    const record = new LogRecord(this.#clock.date(), this.name, level, message);
-    this.#handler.publish(record);
+    const record = new LogRecord(
+      this.#getClock().date(),
+      this.name,
+      level,
+      message,
+    );
+    this.#getHandler().publish(record);
     this.dispatchEvent(
       new CustomEvent(MESSAGES_EVENT, {
         detail: { ...record },
       }),
     );
+  }
+
+  #getClock() {
+    return this.#clock ?? this.#parent.#getClock();
+  }
+
+  #getHandler() {
+    return this.#handler ?? this.#parent.#getHandler();
   }
 
   trackMessages() {
@@ -153,4 +201,37 @@ class ConsoleHandler {
 
 class NullHandler {
   publish() {}
+}
+
+class LogManager {
+  static #loggers = new Map();
+
+  static #logManager;
+
+  static getLogManager() {
+    if (!LogManager.#logManager) {
+      LogManager.#logManager = new LogManager();
+      const rootLogger = new Logger(
+        undefined,
+        '',
+        Level.INFO,
+        new ConsoleHandler(),
+        Clock.create(),
+      );
+      LogManager.#logManager.addLogger(rootLogger);
+    }
+    return LogManager.#logManager;
+  }
+
+  addLogger(/** @type {Logger} */ logger) {
+    if (logger.name == null) {
+      return;
+    }
+
+    LogManager.#loggers.set(logger.name, logger);
+  }
+
+  getLogger(/** @type {string} */ name) {
+    return LogManager.#loggers.get(name);
+  }
 }
