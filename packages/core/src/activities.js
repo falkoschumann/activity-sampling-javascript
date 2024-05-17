@@ -1,5 +1,7 @@
 import { Duration } from '@activity-sampling/shared';
 
+// TODo Integrate core into webserver
+
 export class LogActivity {
   static create({ timestamp, duration, client, project, task, notes }) {
     return new LogActivity(timestamp, duration, client, project, task, notes);

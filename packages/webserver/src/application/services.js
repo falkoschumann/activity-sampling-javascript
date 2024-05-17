@@ -7,6 +7,8 @@ import {
 
 import { Repository } from '../infrastructure/repository.js';
 
+// TODO Make services a class
+
 export async function logActivity(
   { timestamp, duration, client, project, task, notes } = LogActivity.create(),
   repository = Repository.create(),

@@ -4,6 +4,9 @@ import {
   OutputTracker,
 } from '@activity-sampling/shared';
 
+// TODO rename to Api
+// TODO remove baseUrl from constructor
+
 export class ActivitiesGateway extends EventTarget {
   static create({ baseUrl = '/api' } = {}) {
     return new ActivitiesGateway(baseUrl, globalThis.fetch.bind(globalThis));

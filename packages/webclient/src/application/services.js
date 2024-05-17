@@ -6,6 +6,8 @@ import { Clock, Duration } from '@activity-sampling/shared';
  * @typedef {import('../infrastructure/activities-gateway.js').ActivitiesGateway} ActivitiesGateway
  */
 
+// TODO Make services a class
+
 export async function activityUpdated(
   { name, value },
   /** @type {Store} */ store,
