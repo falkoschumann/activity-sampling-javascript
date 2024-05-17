@@ -18,7 +18,10 @@ describe('Activities', () => {
           timestamp: new Date('2024-04-04T10:00Z'),
         });
 
-        const result = RecentActivities.create({ activities: [activity] });
+        const result = RecentActivities.create({
+          activities: [activity],
+          today: new Date('2024-04-07T14:00Z'),
+        });
 
         expect(result.workingDays).toEqual([
           { date: new Date('2024-04-04T00:00'), activities: [activity] },
