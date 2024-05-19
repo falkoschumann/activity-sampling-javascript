@@ -13,13 +13,14 @@ import {
 
 import { Repository } from '../../src/infrastructure/repository.js';
 import { Application } from '../../src/ui/application.js';
+import { Services } from '../../src/application/services.js';
 
-const fileName = new URL('../../data/activity-log.test.csv', import.meta.url)
+const filename = new URL('../../data/activity-log.test.csv', import.meta.url)
   .pathname;
 
 describe('Activity Sampling App', () => {
   beforeEach(() => {
-    rmSync(fileName, { force: true });
+    rmSync(filename, { force: true });
   });
 
   test('Starts and stops the app', async () => {
@@ -149,9 +150,10 @@ describe('Activity Sampling App', () => {
 });
 
 function configure() {
-  const repository = Repository.create({ fileName });
+  const repository = Repository.create({ filename });
+  const services = new Services(repository);
   const log = Logger.createNull();
   const app = express();
-  const application = Application.create({ repository, log, app });
+  const application = new Application(services, log, app);
   return { application, repository, log, app };
 }

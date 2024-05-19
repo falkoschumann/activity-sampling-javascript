@@ -1,4 +1,5 @@
 import { Application } from './ui/application.js';
 
-let app = Application.create();
-app.start();
+const port = process.env.PORT;
+const app = Application.create();
+app.start({ port });

@@ -18,20 +18,18 @@ const RFC4180 = {
   cast: (value, { quoting }) => (value === '' && !quoting ? undefined : value),
 };
 
+const EVENT_RECORDED = 'event-recorded';
+
 export class Repository extends EventTarget {
-  static create({ fileName = './data/activity-log.csv' } = {}) {
-    return new Repository(fileName, fsPromises);
+  static create({ filename = './data/activity-log.csv' } = {}) {
+    return new Repository(filename, fsPromises);
   }
 
-  static createNull({
-    /** @type {ActivityLogged[]} */ events = [],
-    /** @type {ActivityLoggedDto[]} */ dtos = [],
-  } = {}) {
-    dtos = dtos.concat(events.map(ActivityLoggedDto.fromDomain));
-    return new Repository('null-file.csv', createFsStub(dtos));
+  static createNull({ events = [] } = {}) {
+    return new Repository('null-file.csv', createFsStub(events));
   }
 
-  #fileName;
+  #filename;
   #fs;
 
   constructor(
@@ -39,7 +37,7 @@ export class Repository extends EventTarget {
     /** @type {typeof fsPromises} */ fs,
   ) {
     super();
-    this.#fileName = fileName;
+    this.#filename = fileName;
     this.#fs = fs;
   }
 
@@ -49,19 +47,26 @@ export class Repository extends EventTarget {
   }
 
   async record(/** @type {ActivityLogged} */ event) {
-    const dto = ActivityLoggedDto.fromDomain(event);
+    const dto = {
+      Timestamp: event.timestamp.toISOString(),
+      Duration: event.duration.toISOString(),
+      Client: event.client,
+      Project: event.project,
+      Task: event.task,
+      Notes: event.notes,
+    };
     let csv = await this.#stringifyCsv(dto);
     await this.#writeFile(csv);
-    this.dispatchEvent(new CustomEvent('recorded', { detail: event }));
+    this.dispatchEvent(new CustomEvent(EVENT_RECORDED, { detail: event }));
   }
 
-  trackRecorded() {
-    return new OutputTracker(this, 'recorded');
+  trackEvents() {
+    return new OutputTracker(this, EVENT_RECORDED);
   }
 
   async #readFile() {
     try {
-      return await this.#fs.readFile(this.#fileName, { encoding: 'utf-8' });
+      return await this.#fs.readFile(this.#filename, { encoding: 'utf-8' });
     } catch (error) {
       if (error.code === 'ENOENT') {
         // file does not exist
@@ -94,22 +99,22 @@ export class Repository extends EventTarget {
 
   async #isFileExist() {
     return this.#fs
-      .access(this.#fileName, this.#fs.constants.F_OK)
+      .access(this.#filename, this.#fs.constants.F_OK)
       .then(() => true)
       .catch(() => false);
   }
 
   async #writeFile(string) {
-    const pathName = path.dirname(this.#fileName);
+    const pathName = path.dirname(this.#filename);
     await this.#fs.mkdir(pathName, { recursive: true });
-    await this.#fs.writeFile(this.#fileName, string, {
+    await this.#fs.writeFile(this.#filename, string, {
       encoding: 'utf-8',
       flag: 'a',
     });
   }
 }
 
-class ActivityLoggedDto {
+export class ActivityLoggedDto {
   static create({ Timestamp, Duration, Client, Project, Task, Notes }) {
     return new ActivityLoggedDto(
       Timestamp,
@@ -119,26 +124,6 @@ class ActivityLoggedDto {
       Task,
       Notes,
     );
-  }
-
-  static fromDomain(
-    /** @type {ActivityLogged} */ {
-      timestamp,
-      duration,
-      client,
-      project,
-      task,
-      notes,
-    },
-  ) {
-    return ActivityLoggedDto.create({
-      Timestamp: timestamp.toISOString(),
-      Duration: duration.toISOString(),
-      Client: client,
-      Project: project,
-      Task: task,
-      Notes: notes,
-    });
   }
 
   constructor(
@@ -158,6 +143,7 @@ class ActivityLoggedDto {
   }
 
   validate() {
+    // TODO throw ValidationError with DTO details
     const timestamp = validateRequiredProperty(
       this,
       'activity logged',
@@ -205,7 +191,16 @@ class ActivityLoggedDto {
   }
 }
 
-function createFsStub(dtos) {
+function createFsStub(events) {
+  const dtos = events.map((event) => ({
+    Timestamp: event.timestamp.toISOString(),
+    Duration: event.duration.toISOString(),
+    Client: event.client,
+    Project: event.project,
+    Task: event.task,
+    Notes: event.notes,
+  }));
+
   return {
     constants: { F_OK: 0 },
 

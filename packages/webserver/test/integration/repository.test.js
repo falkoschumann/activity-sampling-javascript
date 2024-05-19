@@ -4,13 +4,16 @@ import { beforeEach, describe, expect, test } from '@jest/globals';
 import { ActivityLogged } from '@activity-sampling/core';
 import { Duration, ValidationError } from '@activity-sampling/shared';
 
-import { Repository } from '../../src/infrastructure/repository.js';
+import {
+  ActivityLoggedDto,
+  Repository,
+} from '../../src/infrastructure/repository.js';
 
 describe('Repository', () => {
   describe('Replay', () => {
     test('Returns list of events', async () => {
       const repository = Repository.create({
-        fileName: new URL('../data/example.csv', import.meta.url),
+        filename: new URL('../data/example.csv', import.meta.url),
       });
 
       const events = await repository.replay();
@@ -29,7 +32,7 @@ describe('Repository', () => {
 
     test('Returns empty list, if file does not exist', async () => {
       const repository = Repository.create({
-        fileName: new URL('../data/non-existent.csv', import.meta.url),
+        filename: new URL('../data/non-existent.csv', import.meta.url),
       });
 
       const events = await repository.replay();
@@ -39,7 +42,7 @@ describe('Repository', () => {
 
     test('Reports an error, if file is corrupt', async () => {
       const repository = Repository.create({
-        fileName: new URL('../data/corrupt.csv', import.meta.url),
+        filename: new URL('../data/corrupt.csv', import.meta.url),
       });
 
       const events = repository.replay();
@@ -48,133 +51,94 @@ describe('Repository', () => {
     });
 
     describe('Validate', () => {
-      test('Reports an error, if timestamp is invalid', async () => {
-        const repository = Repository.createNull({
-          dtos: [
-            {
-              Timestamp: '2024-13-02T11:35Z',
-              Duration: 'PT30M',
-              Client: 'Muspellheim',
-              Project: 'Activity Sampling',
-              Task: 'Recent Activities',
-              Notes: 'Show my recent activities',
-            },
-          ],
+      test('Reports an error, if timestamp is invalid', () => {
+        const dto = ActivityLoggedDto.create({
+          Timestamp: '2024-13-02T11:35Z',
+          Duration: 'PT30M',
+          Client: 'Muspellheim',
+          Project: 'Activity Sampling',
+          Task: 'Recent Activities',
+          Notes: 'Show my recent activities',
         });
 
-        const events = repository.replay();
-
-        await expect(events).rejects.toThrow(ValidationError);
+        expect(() => dto.validate()).toThrow(ValidationError);
       });
 
       test('Reports an error, if duration is invalid', async () => {
-        const repository = Repository.createNull({
-          dtos: [
-            {
-              Timestamp: '2024-04-02T11:35Z',
-              Duration: '30m',
-              Client: 'Muspellheim',
-              Project: 'Activity Sampling',
-              Task: 'Recent Activities',
-              Notes: 'Show my recent activities',
-            },
-          ],
+        const dto = ActivityLoggedDto.create({
+          Timestamp: '2024-04-02T11:35Z',
+          Duration: '30m',
+          Client: 'Muspellheim',
+          Project: 'Activity Sampling',
+          Task: 'Recent Activities',
+          Notes: 'Show my recent activities',
         });
 
-        const events = repository.replay();
-
-        await expect(events).rejects.toThrow(ValidationError);
+        expect(() => dto.validate()).toThrow(ValidationError);
       });
 
       test('Reports an error, if client is missing', async () => {
-        const repository = Repository.createNull({
-          dtos: [
-            {
-              Timestamp: '2024-04-02T11:35Z',
-              Duration: 'PT30M',
-              Client: '',
-              Project: 'Activity Sampling',
-              Task: 'Recent Activities',
-              Notes: 'Show my recent activities',
-            },
-          ],
+        const dto = ActivityLoggedDto.create({
+          Timestamp: '2024-04-02T11:35Z',
+          Duration: 'PT30M',
+          Project: 'Activity Sampling',
+          Task: 'Recent Activities',
+          Notes: 'Show my recent activities',
         });
 
-        const events = repository.replay();
-
-        await expect(events).rejects.toThrow(ValidationError);
+        expect(() => dto.validate()).toThrow(ValidationError);
       });
 
       test('Reports an error, if project is missing', async () => {
-        const repository = Repository.createNull({
-          dtos: [
-            {
-              Timestamp: '2024-04-02T11:35Z',
-              Duration: 'PT30M',
-              Client: 'Muspellheim',
-              Project: '',
-              Task: 'Recent Activities',
-              Notes: 'Show my recent activities',
-            },
-          ],
+        const dto = ActivityLoggedDto.create({
+          Timestamp: '2024-04-02T11:35Z',
+          Duration: 'PT30M',
+          Client: 'Muspellheim',
+          Task: 'Recent Activities',
+          Notes: 'Show my recent activities',
         });
 
-        const events = repository.replay();
-
-        await expect(events).rejects.toThrow(ValidationError);
+        expect(() => dto.validate()).toThrow(ValidationError);
       });
 
       test('Reports an error, if task is missing', async () => {
-        const repository = Repository.createNull({
-          dtos: [
-            {
-              Timestamp: '2024-04-02T11:35Z',
-              Duration: 'PT30M',
-              Client: 'Muspellheim',
-              Project: 'Activity Sampling',
-              Task: '',
-              Notes: 'Show my recent activities',
-            },
-          ],
+        const dto = ActivityLoggedDto.create({
+          Timestamp: '2024-04-02T11:35Z',
+          Duration: 'PT30M',
+          Client: 'Muspellheim',
+          Project: 'Activity Sampling',
+          Notes: 'Show my recent activities',
         });
 
-        const events = repository.replay();
-
-        await expect(events).rejects.toThrow(ValidationError);
+        expect(() => dto.validate()).toThrow(ValidationError);
       });
 
       test('Reports no error, if notes is missing', async () => {
-        const repository = Repository.createNull({
-          dtos: [
-            {
-              Timestamp: '2024-04-02T11:35Z',
-              Duration: 'PT30M',
-              Client: 'Muspellheim',
-              Project: 'Activity Sampling',
-              Task: 'Recent Activities',
-            },
-          ],
+        const dto = ActivityLoggedDto.create({
+          Timestamp: '2024-04-02T11:35Z',
+          Duration: 'PT30M',
+          Client: 'Muspellheim',
+          Project: 'Activity Sampling',
+          Task: 'Recent Activities',
         });
 
-        const events = repository.replay();
-
-        await expect(events).resolves.not.toThrow();
+        expect(() => dto.validate()).not.toThrow(ValidationError);
       });
     });
   });
 
   describe('Add', () => {
-    const fileName = new URL(
+    const filename = new URL(
       '../../data/activity-log.test.csv',
       import.meta.url,
     ).pathname;
 
     beforeEach(async () => {
-      await fs.rm(fileName, { force: true });
+      await fs.rm(filename, { force: true });
     });
 
     test('Creates file, if it does not exist', async () => {
-      const repository = Repository.create({ fileName });
+      const repository = Repository.create({ filename });
       const event = ActivityLogged.createNull();
 
       await repository.record(event);
@@ -184,7 +148,7 @@ describe('Repository', () => {
     });
 
     test('Adds activtiy to existing file', async () => {
-      const repository = Repository.create({ fileName });
+      const repository = Repository.create({ filename });
       const event1 = ActivityLogged.createNull();
       await repository.record(event1);
 

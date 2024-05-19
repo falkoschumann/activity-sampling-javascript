@@ -1,33 +1,34 @@
-import {
-  RecentActivities,
-  ActivityLogged,
-  RecentActivitiesQuery,
-  LogActivity,
-} from '@activity-sampling/core';
+import { RecentActivities, ActivityLogged } from '@activity-sampling/core';
 
 import { Repository } from '../infrastructure/repository.js';
 
-// TODO Make services a class
+export class Services {
+  static create() {
+    return new Services(Repository.create());
+  }
 
-export async function logActivity(
-  { timestamp, duration, client, project, task, notes } = LogActivity.create(),
-  repository = Repository.create(),
-) {
-  const activityLogged = ActivityLogged.create({
-    timestamp,
-    duration,
-    client,
-    project,
-    task,
-    notes,
-  });
-  await repository.record(activityLogged);
-}
+  static createNull() {
+    return new Services(Repository.createNull());
+  }
 
-export async function selectRecentActivities(
-  { today } = RecentActivitiesQuery.create(),
-  repository = Repository.create(),
-) {
-  let activities = await repository.replay();
-  return RecentActivities.create({ activities, today });
+  constructor(/** @type {Repository} */ repository) {
+    this.repository = repository;
+  }
+
+  async logActivity({ timestamp, duration, client, project, task, notes }) {
+    const activityLogged = ActivityLogged.create({
+      timestamp,
+      duration,
+      client,
+      project,
+      task,
+      notes,
+    });
+    await this.repository.record(activityLogged);
+  }
+
+  async selectRecentActivities({ today }) {
+    let activities = await this.repository.replay();
+    return RecentActivities.create({ activities, today });
+  }
 }

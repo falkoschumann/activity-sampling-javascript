@@ -3,14 +3,14 @@ import { describe, expect, test } from '@jest/globals';
 import { ActivityLogged } from '@activity-sampling/core';
 import { Duration } from '@activity-sampling/shared';
 
-import * as services from '../../src/application/services.js';
+import { Services } from '../../src/application/services.js';
 import { Repository } from '../../src/infrastructure/repository.js';
 
 describe('Services', () => {
   describe('Log activity', () => {
     test('Logs the activity with client, project, task and optional notes', async () => {
-      const repository = Repository.createNull();
-      const trackAdded = repository.trackRecorded();
+      const { services, repository } = createServices();
+      const trackAdded = repository.trackEvents();
 
       const event = ActivityLogged.createNull();
       await services.logActivity(event, repository);
@@ -39,11 +39,11 @@ describe('Services', () => {
       const event6 = ActivityLogged.createNull({
         timestamp: new Date('2024-04-04T12:00'),
       });
-      const repository = Repository.createNull({
+      const { services, repository } = createServices({
         events: [event1, event2, event3, event4, event5, event6],
       });
 
-      let result = await services.selectRecentActivities(
+      const result = await services.selectRecentActivities(
         { today: new Date('2024-04-04T00:00') },
         repository,
       );
@@ -105,11 +105,11 @@ describe('Services', () => {
         timestamp: new Date('2024-03-28T12:00'),
         duration: new Duration('PT20M'),
       });
-      let repository = Repository.createNull({
+      const { services, repository } = createServices({
         events: [event1, event2, event3, event4, event5, event6, event7],
       });
 
-      let result = await services.selectRecentActivities(
+      const result = await services.selectRecentActivities(
         { today: new Date('2024-03-28T00:00') },
         repository,
       );
@@ -123,3 +123,9 @@ describe('Services', () => {
     });
   });
 });
+
+function createServices({ events = [] } = {}) {
+  const repository = Repository.createNull({ events });
+  const services = new Services(repository);
+  return { services, repository };
+}

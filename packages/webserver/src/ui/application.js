@@ -2,30 +2,21 @@ import express from 'express';
 
 import { LogActivity, RecentActivitiesQuery } from '@activity-sampling/core';
 import {
+  Duration,
   Logger,
   validateOptionalProperty,
   validateRequiredProperty,
 } from '@activity-sampling/shared';
-import { Duration } from '@activity-sampling/shared';
 
-import * as services from '../application/services.js';
-import { Repository } from '../infrastructure/repository.js';
+import { Services } from '../application/services.js';
 
 export class Application {
-  static create({
-    publicPath = './public',
-    repository = Repository.create(),
-    log = Logger.getLogger('Application'),
-    app = express(),
-  } = {}) {
-    return new Application(publicPath, repository, log, app);
-  }
-
-  static createNull({
-    repository = Repository.createNull(),
-    log = Logger.createNull(),
-  } = {}) {
-    return Application.create('null-public-path', repository, log, null);
+  static create() {
+    return new Application(
+      Services.create(),
+      Logger.getLogger('Application'),
+      express(),
+    );
   }
 
   #log;
@@ -33,8 +24,7 @@ export class Application {
   /** @type {import ("node:http").Server} */ #server;
 
   constructor(
-    /** @type {string} */ publicPath,
-    /** @type {Repository} */ repository,
+    /** @type {Services} */ services,
     /** @type {Logger} */ log,
     /** @type {express.Express} */ app,
   ) {
@@ -43,12 +33,12 @@ export class Application {
 
     app.set('x-powered-by', false);
     app.use(express.json());
-    app.use('/', express.static(publicPath));
+    app.use('/', express.static('./public'));
     app.use('/api/', express.static('../../spec/api'));
     app.post('/api/log-activity', async (request, response) => {
       try {
         const logActivity = LogActivityDto.create(request.body).validate();
-        await services.logActivity(logActivity, repository);
+        await services.logActivity(logActivity);
         response.status(204).end();
       } catch (error) {
         log.error(error);
@@ -60,10 +50,7 @@ export class Application {
         const { today } = RecentActivitiesQueryDto.create(
           request.query,
         ).validate();
-        const body = await services.selectRecentActivities(
-          { today },
-          repository,
-        );
+        const body = await services.selectRecentActivities({ today });
         response
           .status(200)
           .header({ 'Content-Type': 'application/json' })
