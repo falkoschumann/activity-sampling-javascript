@@ -4,36 +4,26 @@ import {
   OutputTracker,
 } from '@activity-sampling/shared';
 
-// TODO rename to Api
-// TODO remove baseUrl from constructor
-
-export class ActivitiesGateway extends EventTarget {
-  static create({ baseUrl = '/api' } = {}) {
-    return new ActivitiesGateway(baseUrl, globalThis.fetch.bind(globalThis));
+export class Api extends EventTarget {
+  static create() {
+    return new Api(globalThis.fetch.bind(globalThis));
   }
 
-  static createNull({
-    responses = { status: 200, headers: {}, body: null },
-  } = {}) {
-    return new ActivitiesGateway(
-      '/null-activities-gateway',
-      createFetchStub(responses),
-    );
+  static createNull({ response = { body: null } } = {}) {
+    return new Api(createFetchStub(response));
   }
 
-  #baseUrl;
   /** @type {typeof globalThis.fetch} */ #fetch;
 
-  constructor(baseUrl, fetch) {
+  constructor(fetch) {
     super();
-    this.#baseUrl = baseUrl;
     this.#fetch = fetch;
   }
 
   async logActivity({ timestamp, duration, client, project, task, notes }) {
     const activity = { timestamp, duration, client, project, task, notes };
     let body = JSON.stringify(activity);
-    await this.#fetch(`${this.#baseUrl}/log-activity`, {
+    await this.#fetch('/api/log-activity', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body,
@@ -48,7 +38,7 @@ export class ActivitiesGateway extends EventTarget {
   }
 
   async loadRecentActivities() {
-    let response = await this.#fetch(`${this.#baseUrl}/recent-activities`);
+    let response = await this.#fetch('/api/recent-activities');
     let dto = await response.json();
     return mapRecentActivities(dto);
   }
@@ -85,26 +75,10 @@ function createFetchStub(responses) {
 }
 
 class ResponseStub {
-  #status;
-  #headers;
   #body;
 
-  constructor({ status, headers, body } = {}) {
-    this.#status = status;
-    this.#headers = new Headers(headers);
+  constructor({ body }) {
     this.#body = body != null ? JSON.stringify(body) : body;
-  }
-
-  get ok() {
-    return this.#status >= 200 && this.#status < 300;
-  }
-
-  get status() {
-    return this.#status;
-  }
-
-  get headers() {
-    return this.#headers;
   }
 
   json() {

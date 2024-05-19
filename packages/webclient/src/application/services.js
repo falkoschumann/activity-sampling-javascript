@@ -3,10 +3,20 @@ import { Clock, Duration } from '@activity-sampling/shared';
 /**
  * @typedef {import('@activity-sampling/shared').Timer} Timer
  * @typedef {import('@activity-sampling/shared/src/store.js').Store} Store
- * @typedef {import('../infrastructure/activities-gateway.js').ActivitiesGateway} ActivitiesGateway
+ * @typedef {import('../infrastructure/api.js').Api} Api
  */
 
-// TODO Make services a class
+export class Services {
+  constructor(
+    /** @type {Store} */ store,
+    /** @type {Api} */ api,
+    /** @type {Timer} */ timer,
+  ) {
+    this.store = store;
+    this.api = api;
+    this.timer = timer;
+  }
+}
 
 export async function activityUpdated(
   { name, value },
@@ -17,14 +27,14 @@ export async function activityUpdated(
 
 export async function logActivity(
   /** @type {Store} */ store,
-  /** @type {ActivitiesGateway} */ activitiesGateway,
+  /** @type {Api} */ api,
   clock = Clock.create(),
 ) {
   let activity = { ...store.getState().currentActivity.activity };
   if (!activity.timestamp) {
     activity.timestamp = clock.date();
   }
-  await activitiesGateway.logActivity(activity);
+  await api.logActivity(activity);
   store.dispatch({ type: 'activity-logged', activity });
 }
 
@@ -67,16 +77,16 @@ export function stopAskingPeriodically(store, timer) {
 
 export async function selectRecentActivities(
   /** @type {Store} */ store,
-  /** @type {ActivitiesGateway} */ activitiesGateway,
+  /** @type {Api} */ api,
 ) {
-  let recentActivities = await activitiesGateway.loadRecentActivities();
+  let recentActivities = await api.loadRecentActivities();
   store.dispatch({ type: 'recent-activities-loaded', recentActivities });
 }
 
 export async function selectHoursWorked(
   /** @type {Store} */ store,
-  /** @type {ActivitiesGateway} */ activitiesGateway,
+  /** @type {Api} */ api,
 ) {
-  let hoursWorked = await activitiesGateway.loadHoursWorked();
+  let hoursWorked = await api.loadHoursWorked();
   store.dispatch({ type: 'hours-worked-loaded', hoursWorked });
 }

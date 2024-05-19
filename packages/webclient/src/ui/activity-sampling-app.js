@@ -14,8 +14,8 @@ import './time-summary.js';
 import store from './store.js';
 import { StateComponent } from './state-component.js';
 
-// FIXME replace stub with real gateway
-const activitiesGateway = {};
+// FIXME replace stub with real API
+const api = {};
 
 class ActivitySamplingAppComponent extends StateComponent {
   #currentActivityRef = createRef();
@@ -59,11 +59,11 @@ class ActivitySamplingAppComponent extends StateComponent {
   }
 
   #refreshRequested() {
-    services.selectRecentActivities(store, activitiesGateway);
+    services.selectRecentActivities(store, api);
   }
 
   #activityLogged(activity) {
-    services.activityLogged(activity, store, activitiesGateway);
+    services.activityLogged(activity, store, api);
   }
 
   #activitySelected(activity) {

@@ -2,22 +2,22 @@ import { describe, expect, test } from '@jest/globals';
 
 import { Duration } from '@activity-sampling/shared';
 
-import { ActivitiesGateway } from '../../src/infrastructure/activities-gateway.js';
+import { Api } from '../../src/infrastructure/api.js';
 import { createActivity, createActivityDto } from '../testdata.js';
 
-describe('Activities gateway', () => {
+describe('API', () => {
   test('Logs activity', async () => {
-    const gateway = ActivitiesGateway.createNull();
-    const activitiesLogged = gateway.trackActivitiesLogged();
+    const api = Api.createNull();
+    const activitiesLogged = api.trackActivitiesLogged();
 
-    await gateway.logActivity(createActivity());
+    await api.logActivity(createActivity());
 
     expect(activitiesLogged.data).toEqual([createActivity()]);
   });
 
   test('Loads recent activities', async () => {
-    const gateway = ActivitiesGateway.createNull({
-      responses: {
+    const api = Api.createNull({
+      response: {
         body: {
           workingDays: [
             {
@@ -38,7 +38,7 @@ describe('Activities gateway', () => {
       },
     });
 
-    const activities = await gateway.loadRecentActivities();
+    const activities = await api.loadRecentActivities();
 
     expect(activities).toEqual({
       workingDays: [

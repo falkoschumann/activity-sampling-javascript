@@ -4,7 +4,7 @@ import { Clock, Duration, Store, Timer } from '@activity-sampling/shared';
 
 import * as services from '../../src/application/services.js';
 import { initialState, reducer } from '../../src/domain/reducer.js';
-import { ActivitiesGateway } from '../../src/infrastructure/activities-gateway.js';
+import { Api } from '../../src/infrastructure/api.js';
 import { createActivity, createActivityDto } from '../testdata.js';
 
 // TODO do not write to console while testing
@@ -14,14 +14,14 @@ describe('Services', () => {
     describe('Logs the activity with client, project, task and optional notes', () => {
       test('Logs the activity without notes', async () => {
         const store = createStore();
-        const gateway = ActivitiesGateway.createNull();
+        const api = Api.createNull();
         const clock = Clock.createNull({ fixed: '2023-10-07T13:30Z' });
-        const activitiesLogged = gateway.trackActivitiesLogged();
+        const activitiesLogged = api.trackActivitiesLogged();
 
         await services.activityUpdated({ name: 'client', value: 'c1' }, store);
         await services.activityUpdated({ name: 'project', value: 'p1' }, store);
         await services.activityUpdated({ name: 'task', value: 't1' }, store);
-        await services.logActivity(store, gateway, clock);
+        await services.logActivity(store, api, clock);
 
         expect(store.getState().currentActivity.activity).toEqual({
           timestamp: new Date('2023-10-07T13:30Z'),
@@ -45,15 +45,15 @@ describe('Services', () => {
 
       test('Logs the activity with notes', async () => {
         const store = createStore();
-        const gateway = ActivitiesGateway.createNull();
+        const api = Api.createNull();
         const clock = Clock.createNull({ fixed: '2023-10-07T13:30Z' });
-        const activitiesLogged = gateway.trackActivitiesLogged();
+        const activitiesLogged = api.trackActivitiesLogged();
 
         await services.activityUpdated({ name: 'client', value: 'c1' }, store);
         await services.activityUpdated({ name: 'project', value: 'p1' }, store);
         await services.activityUpdated({ name: 'task', value: 't1' }, store);
         await services.activityUpdated({ name: 'notes', value: 'n1' }, store);
-        await services.logActivity(store, gateway, clock);
+        await services.logActivity(store, api, clock);
 
         expect(store.getState().currentActivity.activity).toEqual({
           timestamp: new Date('2023-10-07T13:30Z'),
@@ -235,8 +235,8 @@ describe('Services', () => {
         const timer = Timer.createNull();
         const clock1 = Clock.createNull({ fixed: '2024-03-03T16:53Z' });
         const clock2 = Clock.createNull({ fixed: '2024-03-03T16:56Z' });
-        const gateway = ActivitiesGateway.createNull();
-        const activitiesLogged = gateway.trackActivitiesLogged();
+        const api = Api.createNull();
+        const activitiesLogged = api.trackActivitiesLogged();
         services.askPeriodically(
           { period: new Duration('PT1M') },
           store,
@@ -248,7 +248,7 @@ describe('Services', () => {
         await services.activityUpdated({ name: 'client', value: 'c1' }, store);
         await services.activityUpdated({ name: 'project', value: 'p1' }, store);
         await services.activityUpdated({ name: 'task', value: 't1' }, store);
-        await services.logActivity(store, gateway, clock2);
+        await services.logActivity(store, api, clock2);
 
         expect(activitiesLogged.data).toEqual([
           {
@@ -314,12 +314,12 @@ describe('Services', () => {
 
   describe('Recent activities', () => {
     /** @type {Store} */ let store;
-    /** @type {ActivitiesGateway} */ let gateway;
+    /** @type {Api} */ let api;
 
     beforeEach(() => {
       store = createStore();
-      gateway = ActivitiesGateway.createNull({
-        responses: {
+      api = Api.createNull({
+        response: {
           body: {
             workingDays: [
               {
@@ -343,7 +343,7 @@ describe('Services', () => {
     });
 
     test('Groups activities by working days', async () => {
-      await services.selectRecentActivities(store, gateway);
+      await services.selectRecentActivities(store, api);
 
       expect(store.getState().recentActivities.workingDays).toEqual([
         {
@@ -358,7 +358,7 @@ describe('Services', () => {
     });
 
     test('Summarizes houres worked today, yesterday, this week and this month', async () => {
-      await services.selectRecentActivities(store, gateway);
+      await services.selectRecentActivities(store, api);
 
       expect(store.getState().recentActivities.timeSummary).toEqual({
         hoursToday: new Duration('PT1H30M'),
@@ -369,7 +369,7 @@ describe('Services', () => {
     });
 
     test('Asumes last activity as current activity', async () => {
-      await services.selectRecentActivities(store, gateway);
+      await services.selectRecentActivities(store, api);
 
       const lastActivity = createActivity({
         timestamp: new Date('2023-10-07T13:00Z'),
@@ -414,8 +414,8 @@ describe('Services', () => {
         },
       };
       const store = createStore(currentState);
-      const gateway = ActivitiesGateway.createNull({
-        responses: {
+      const api = Api.createNull({
+        response: {
           body: {
             workingDays: [],
             timeSummary: {
@@ -428,7 +428,7 @@ describe('Services', () => {
         },
       });
 
-      await services.selectRecentActivities(store, gateway);
+      await services.selectRecentActivities(store, api);
 
       expect(store.getState()).toEqual({
         ...currentState,
