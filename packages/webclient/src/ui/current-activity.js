@@ -54,10 +54,12 @@ class CurrentActivityComponent extends Component {
 
   updateView() {
     super.updateView();
-    this.#clientRef.value.value = this.#activity.client;
-    this.#projectRef.value.value = this.#activity.project;
-    this.#taskRef.value.value = this.#activity.task;
-    this.#notesRef.value.value = this.#activity.notes;
+    if (this.isConnected) {
+      this.#clientRef.value = this.#activity.client;
+      this.#projectRef.value = this.#activity.project;
+      this.#taskRef.value = this.#activity.task;
+      this.#notesRef.value = this.#activity.notes;
+    }
   }
 
   extractState(state) {
