@@ -1,5 +1,28 @@
+import { html, render } from 'lit-html';
+
 import store from './store.js';
-import { Component } from './component.js';
+
+export class Component extends HTMLElement {
+  connectedCallback() {
+    this.updateView();
+  }
+
+  updateView() {
+    if (!this.isConnected) {
+      return;
+    }
+
+    render(this.getView(), this.getRenderTarget());
+  }
+
+  getView() {
+    return html``;
+  }
+
+  getRenderTarget() {
+    return this;
+  }
+}
 
 export class StateComponent extends Component {
   #unsubscribeStore;

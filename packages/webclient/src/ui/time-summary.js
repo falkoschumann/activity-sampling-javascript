@@ -3,7 +3,7 @@ import { html } from 'lit-html';
 import { Duration } from '@activity-sampling/shared';
 
 import './time-summary.css';
-import { Component } from './component.js';
+import { Component } from './components.js';
 
 class TimeSummaryComponent extends Component {
   #hours = {

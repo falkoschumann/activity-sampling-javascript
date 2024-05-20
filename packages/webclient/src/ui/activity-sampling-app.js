@@ -12,7 +12,7 @@ import './countdown.js';
 import './recent-activities.js';
 import './time-summary.js';
 import store from './store.js';
-import { StateComponent } from './state-component.js';
+import { StateComponent } from './components.js';
 
 // FIXME replace stub with real API
 const api = {};

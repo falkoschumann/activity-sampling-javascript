@@ -1,7 +1,7 @@
 import { html } from 'lit-html';
 
 import './recent-activities.css';
-import { Component } from './component.js';
+import { Component } from './components.js';
 
 const ACTIVITY_SELECTED_EVENT = 'activity-selected';
 

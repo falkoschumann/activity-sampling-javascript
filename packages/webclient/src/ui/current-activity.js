@@ -1,7 +1,7 @@
 import { html } from 'lit-html';
 import { createRef, ref } from 'lit-html/directives/ref.js';
 
-import { Component } from './component.js';
+import { Component } from './components.js';
 
 const ACTIVITY_LOGGED_EVENT = 'activity-logged';
 
