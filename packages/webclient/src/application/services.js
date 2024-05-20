@@ -1,4 +1,6 @@
-import { Clock, Duration } from '@activity-sampling/shared';
+import { Clock, Duration, Timer, createStore } from '@activity-sampling/shared';
+import { Api } from '../infrastructure/api.js';
+import { reducer } from '../domain/reducer.js';
 
 /**
  * @typedef {import('@activity-sampling/shared').Timer} Timer
@@ -7,6 +9,18 @@ import { Clock, Duration } from '@activity-sampling/shared';
  */
 
 export class Services {
+  static create() {
+    return new Services(createStore(reducer), Api.create(), Timer.create());
+  }
+
+  static createNull() {
+    return new Services(
+      createStore(reducer),
+      Api.createNull(),
+      Timer.createNull(),
+    );
+  }
+
   constructor(
     /** @type {Store} */ store,
     /** @type {Api} */ api,

@@ -1,5 +1,5 @@
 export function createStore(reducer, preloadedState) {
-  let initialState = preloadedState || reducer(undefined, { type: '@@INIT' });
+  const initialState = preloadedState || reducer(undefined, { type: '@@INIT' });
   return new Store(reducer, initialState);
 }
 
@@ -18,7 +18,7 @@ export class Store {
   }
 
   dispatch(action) {
-    let oldState = this.#state;
+    const oldState = this.#state;
     this.#state = this.#reducer(this.#state, action);
     if (oldState !== this.#state) {
       this.#emitChange();
