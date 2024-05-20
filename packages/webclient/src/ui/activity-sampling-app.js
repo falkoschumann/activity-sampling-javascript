@@ -1,7 +1,6 @@
 import { html } from 'lit-html';
 import { createRef, ref } from 'lit-html/directives/ref.js';
 
-import * as services from '../application/services.js';
 import './reset.css';
 import './fragments.css';
 import './components.css';
@@ -11,13 +10,11 @@ import './current-activity.js';
 import './countdown.js';
 import './recent-activities.js';
 import './time-summary.js';
-import store from './store.js';
-import { StateComponent } from './components.js';
+import { Container } from './components.js';
 
-// FIXME replace stub with real API
-const api = {};
+// TODO name without suffix app
 
-class ActivitySamplingAppComponent extends StateComponent {
+class ActivitySamplingAppComponent extends Container {
   #currentActivityRef = createRef();
 
   connectedCallback() {
@@ -26,6 +23,7 @@ class ActivitySamplingAppComponent extends StateComponent {
   }
 
   extractState(state) {
+    // TODO simplify state extraction
     return {
       activity: state.currentActivity.activity,
       isFormDisabled: state.currentActivity.isFormDisabled,
@@ -59,11 +57,11 @@ class ActivitySamplingAppComponent extends StateComponent {
   }
 
   #refreshRequested() {
-    services.selectRecentActivities(store, api);
+    this.services.selectRecentActivities();
   }
 
   #activityLogged(activity) {
-    services.activityLogged(activity, store, api);
+    this.services.activityLogged(activity);
   }
 
   #activitySelected(activity) {

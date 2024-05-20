@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, test } from '@jest/globals';
 
 import { Clock, Duration, Store, Timer } from '@activity-sampling/shared';
 
-import * as services from '../../src/application/services.js';
+import { Services } from '../../src/application/services.js';
 import { initialState, reducer } from '../../src/domain/reducer.js';
 import { Api } from '../../src/infrastructure/api.js';
 import { createActivity, createActivityDto } from '../testdata.js';
@@ -13,17 +13,15 @@ describe('Services', () => {
   describe('Log activity', () => {
     describe('Logs the activity with client, project, task and optional notes', () => {
       test('Logs the activity without notes', async () => {
-        const store = createStore();
-        const api = Api.createNull();
-        const clock = Clock.createNull({ fixed: '2023-10-07T13:30Z' });
+        const { services, api } = configure({ now: '2023-10-07T13:30Z' });
         const activitiesLogged = api.trackActivitiesLogged();
 
-        await services.activityUpdated({ name: 'client', value: 'c1' }, store);
-        await services.activityUpdated({ name: 'project', value: 'p1' }, store);
-        await services.activityUpdated({ name: 'task', value: 't1' }, store);
-        await services.logActivity(store, api, clock);
+        await services.activityUpdated({ name: 'client', value: 'c1' });
+        await services.activityUpdated({ name: 'project', value: 'p1' });
+        await services.activityUpdated({ name: 'task', value: 't1' });
+        await services.logActivity();
 
-        expect(store.getState().currentActivity.activity).toEqual({
+        expect(services.store.getState().currentActivity.activity).toEqual({
           timestamp: new Date('2023-10-07T13:30Z'),
           duration: new Duration('PT30M'),
           client: 'c1',
@@ -44,18 +42,16 @@ describe('Services', () => {
       });
 
       test('Logs the activity with notes', async () => {
-        const store = createStore();
-        const api = Api.createNull();
-        const clock = Clock.createNull({ fixed: '2023-10-07T13:30Z' });
+        const { services, api } = configure({ now: '2023-10-07T13:30Z' });
         const activitiesLogged = api.trackActivitiesLogged();
 
-        await services.activityUpdated({ name: 'client', value: 'c1' }, store);
-        await services.activityUpdated({ name: 'project', value: 'p1' }, store);
-        await services.activityUpdated({ name: 'task', value: 't1' }, store);
-        await services.activityUpdated({ name: 'notes', value: 'n1' }, store);
-        await services.logActivity(store, api, clock);
+        await services.activityUpdated({ name: 'client', value: 'c1' });
+        await services.activityUpdated({ name: 'project', value: 'p1' });
+        await services.activityUpdated({ name: 'task', value: 't1' });
+        await services.activityUpdated({ name: 'notes', value: 'n1' });
+        await services.logActivity();
 
-        expect(store.getState().currentActivity.activity).toEqual({
+        expect(services.store.getState().currentActivity.activity).toEqual({
           timestamp: new Date('2023-10-07T13:30Z'),
           duration: new Duration('PT30M'),
           client: 'c1',
@@ -77,14 +73,16 @@ describe('Services', () => {
     });
 
     test('Selects an activity from recent activities', async () => {
-      const store = createStore();
+      const { services } = configure();
 
-      await services.activitySelected(
-        { client: 'c1', project: 'p1', task: 't1', notes: 'n1' },
-        store,
-      );
+      await services.activitySelected({
+        client: 'c1',
+        project: 'p1',
+        task: 't1',
+        notes: 'n1',
+      });
 
-      expect(store.getState().currentActivity).toEqual({
+      expect(services.store.getState().currentActivity).toEqual({
         ...initialState.currentActivity,
         activity: {
           ...initialState.currentActivity.activity,
@@ -98,19 +96,12 @@ describe('Services', () => {
 
     describe('Asks periodically what I am working on', () => {
       test('Starts countdown and disable form', () => {
-        const store = createStore();
-        const timer = Timer.createNull();
-        const clock = Clock.createNull({ fixed: '2024-03-03T16:53Z' });
+        const { services, timer } = configure({ now: '2024-03-03T16:53Z' });
         const scheduledTasks = timer.trackScheduledTasks();
 
-        services.askPeriodically(
-          { period: new Duration('PT20M') },
-          store,
-          timer,
-          clock,
-        );
+        services.askPeriodically({ period: new Duration('PT20M') });
 
-        expect(store.getState().currentActivity).toEqual({
+        expect(services.store.getState().currentActivity).toEqual({
           ...initialState.currentActivity,
           isFormDisabled: true,
           countdown: {
@@ -125,19 +116,12 @@ describe('Services', () => {
       });
 
       test('Progresses countdown and update remaining time', () => {
-        const store = createStore();
-        const timer = Timer.createNull();
-        const clock = Clock.createNull({ fixed: '2024-03-03T16:53Z' });
-        services.askPeriodically(
-          { period: new Duration('PT1M') },
-          store,
-          timer,
-          clock,
-        );
+        const { services, timer } = configure({ now: '2024-03-03T16:53Z' });
+        services.askPeriodically({ period: new Duration('PT1M') });
 
         timer.simulateTaskExecution({ times: 1 });
 
-        expect(store.getState().currentActivity).toEqual({
+        expect(services.store.getState().currentActivity).toEqual({
           ...initialState.currentActivity,
           isFormDisabled: true,
           countdown: {
@@ -149,19 +133,12 @@ describe('Services', () => {
       });
 
       test('Progresses countdown until end of the period', () => {
-        const store = createStore();
-        const timer = Timer.createNull();
-        const clock = Clock.createNull({ fixed: '2024-03-03T16:53Z' });
-        services.askPeriodically(
-          { period: new Duration('PT1M') },
-          store,
-          timer,
-          clock,
-        );
+        const { services, timer } = configure({ now: '2024-03-03T16:53Z' });
+        services.askPeriodically({ period: new Duration('PT1M') });
 
         timer.simulateTaskExecution({ times: 59 });
 
-        expect(store.getState().currentActivity).toEqual({
+        expect(services.store.getState().currentActivity).toEqual({
           ...initialState.currentActivity,
           isFormDisabled: true,
           countdown: {
@@ -173,19 +150,12 @@ describe('Services', () => {
       });
 
       test('Enables form when countdown has elapsed', () => {
-        const store = createStore();
-        const timer = Timer.createNull();
-        const clock = Clock.createNull({ fixed: '2024-03-03T16:53Z' });
-        services.askPeriodically(
-          { period: new Duration('PT1M') },
-          store,
-          timer,
-          clock,
-        );
+        const { services, timer } = configure({ now: '2024-03-03T16:53Z' });
+        services.askPeriodically({ period: new Duration('PT1M') });
 
         timer.simulateTaskExecution({ times: 60 });
 
-        expect(store.getState().currentActivity).toEqual({
+        expect(services.store.getState().currentActivity).toEqual({
           ...initialState.currentActivity,
           activity: {
             ...initialState.currentActivity.activity,
@@ -202,19 +172,12 @@ describe('Services', () => {
       });
 
       test('Restarts the countdown when the period has expired', () => {
-        const store = createStore();
-        const timer = Timer.createNull();
-        const clock = Clock.createNull({ fixed: '2024-03-03T16:53Z' });
-        services.askPeriodically(
-          { period: new Duration('PT1M') },
-          store,
-          timer,
-          clock,
-        );
+        const { services, timer } = configure({ now: '2024-03-03T16:53Z' });
+        services.askPeriodically({ period: new Duration('PT1M') });
 
         timer.simulateTaskExecution({ times: 61 });
 
-        expect(store.getState().currentActivity).toEqual({
+        expect(services.store.getState().currentActivity).toEqual({
           ...initialState.currentActivity,
           activity: {
             ...initialState.currentActivity.activity,
@@ -231,24 +194,18 @@ describe('Services', () => {
       });
 
       test('Disables form when activity is logged with last elapsed countdown', async () => {
-        const store = createStore();
-        const timer = Timer.createNull();
-        const clock1 = Clock.createNull({ fixed: '2024-03-03T16:53Z' });
-        const clock2 = Clock.createNull({ fixed: '2024-03-03T16:56Z' });
-        const api = Api.createNull();
+        const { services, api, timer, clock } = configure({
+          now: '2024-03-03T16:53Z',
+        });
         const activitiesLogged = api.trackActivitiesLogged();
-        services.askPeriodically(
-          { period: new Duration('PT1M') },
-          store,
-          timer,
-          clock1,
-        );
+        services.askPeriodically({ period: new Duration('PT1M') });
         timer.simulateTaskExecution({ times: 61 });
 
-        await services.activityUpdated({ name: 'client', value: 'c1' }, store);
-        await services.activityUpdated({ name: 'project', value: 'p1' }, store);
-        await services.activityUpdated({ name: 'task', value: 't1' }, store);
-        await services.logActivity(store, api, clock2);
+        await services.activityUpdated({ name: 'client', value: 'c1' });
+        await services.activityUpdated({ name: 'project', value: 'p1' });
+        await services.activityUpdated({ name: 'task', value: 't1' });
+        clock.add(new Duration('PT3M'));
+        await services.logActivity();
 
         expect(activitiesLogged.data).toEqual([
           {
@@ -260,7 +217,7 @@ describe('Services', () => {
             notes: '',
           },
         ]);
-        expect(store.getState().currentActivity).toEqual({
+        expect(services.store.getState().currentActivity).toEqual({
           ...initialState.currentActivity,
           activity: {
             timestamp: new Date('2024-03-03T16:53Z'),
@@ -279,23 +236,16 @@ describe('Services', () => {
         });
       });
 
-      test('Stops countdown and enable form', () => {
-        const store = createStore();
-        const timer = Timer.createNull();
-        const clock = Clock.createNull({ fixed: '2024-03-03T16:53Z' });
+      test('Stops countdown and enable form', async () => {
+        const { services, timer } = configure({ now: '2024-03-03T16:53Z' });
         const canceled = timer.trackCanceledTasks();
-        services.askPeriodically(
-          { period: new Duration('PT1M') },
-          store,
-          timer,
-          clock,
-        );
+        services.askPeriodically({ period: new Duration('PT1M') });
         timer.simulateTaskExecution({ times: 20 });
 
-        services.stopAskingPeriodically(store, timer);
+        await services.stopAskingPeriodically();
 
         expect(canceled.data).toHaveLength(1);
-        expect(store.getState().currentActivity).toEqual({
+        expect(services.store.getState().currentActivity).toEqual({
           ...initialState.currentActivity,
           isFormDisabled: false,
           countdown: {
@@ -342,39 +292,77 @@ describe('Services', () => {
       });
     });
 
-    test('Groups activities by working days', async () => {
-      await services.selectRecentActivities(store, api);
-
-      expect(store.getState().recentActivities.workingDays).toEqual([
-        {
-          date: new Date('2023-10-07T00:00Z'),
-          activities: [
-            createActivity({ timestamp: new Date('2023-10-07T13:00Z') }),
-            createActivity({ timestamp: new Date('2023-10-07T12:30Z') }),
-            createActivity({ timestamp: new Date('2023-10-07T12:00Z') }),
-          ],
+    test('Selects recent activities', async () => {
+      const { services } = configure({
+        response: {
+          body: {
+            workingDays: [
+              {
+                date: new Date('2023-10-07T00:00Z'),
+                activities: [
+                  createActivityDto({ timestamp: '2023-10-07T13:00Z' }),
+                  createActivityDto({ timestamp: '2023-10-07T12:30Z' }),
+                  createActivityDto({ timestamp: '2023-10-07T12:00Z' }),
+                ],
+              },
+            ],
+            timeSummary: {
+              hoursToday: 'PT1H30M',
+              hoursYesterday: 'PT0S',
+              hoursThisWeek: 'PT1H30M',
+              hoursThisMonth: 'PT1H30M',
+            },
+          },
         },
-      ]);
-    });
+      });
 
-    test('Summarizes houres worked today, yesterday, this week and this month', async () => {
-      await services.selectRecentActivities(store, api);
+      await services.selectRecentActivities();
 
-      expect(store.getState().recentActivities.timeSummary).toEqual({
-        hoursToday: new Duration('PT1H30M'),
-        hoursYesterday: new Duration(),
-        hoursThisWeek: new Duration('PT1H30M'),
-        hoursThisMonth: new Duration('PT1H30M'),
+      expect(services.store.getState().recentActivities).toEqual({
+        workingDays: [
+          {
+            date: new Date('2023-10-07T00:00Z'),
+            activities: [
+              createActivity({ timestamp: new Date('2023-10-07T13:00Z') }),
+              createActivity({ timestamp: new Date('2023-10-07T12:30Z') }),
+              createActivity({ timestamp: new Date('2023-10-07T12:00Z') }),
+            ],
+          },
+        ],
+        timeSummary: {
+          hoursToday: new Duration('PT1H30M'),
+          hoursYesterday: new Duration(),
+          hoursThisWeek: new Duration('PT1H30M'),
+          hoursThisMonth: new Duration('PT1H30M'),
+        },
       });
     });
 
     test('Asumes last activity as current activity', async () => {
+      const { services } = configure({
+        response: {
+          body: {
+            workingDays: [
+              {
+                date: new Date('2023-10-07T00:00Z'),
+                activities: [
+                  createActivityDto({ timestamp: '2023-10-07T13:00Z' }),
+                ],
+              },
+            ],
+            timeSummary: {
+              hoursToday: 'PT1H30M',
+            },
+          },
+        },
+      });
+
       await services.selectRecentActivities(store, api);
 
       const lastActivity = createActivity({
         timestamp: new Date('2023-10-07T13:00Z'),
       });
-      expect(store.getState().currentActivity).toEqual({
+      expect(services.store.getState().currentActivity).toEqual({
         ...initialState.currentActivity,
         activity: lastActivity,
       });
@@ -413,8 +401,8 @@ describe('Services', () => {
           },
         },
       };
-      const store = createStore(currentState);
-      const api = Api.createNull({
+      const { services } = configure({
+        state: { ...currentState },
         response: {
           body: {
             workingDays: [],
@@ -428,9 +416,9 @@ describe('Services', () => {
         },
       });
 
-      await services.selectRecentActivities(store, api);
+      await services.selectRecentActivities();
 
-      expect(store.getState()).toEqual({
+      expect(services.store.getState()).toEqual({
         ...currentState,
         currentActivity: {
           ...currentState.currentActivity,
@@ -478,4 +466,12 @@ describe('Services', () => {
 
 function createStore(state) {
   return new Store(reducer, state);
+}
+
+function configure({ state, response, now } = {}) {
+  const api = Api.createNull({ response });
+  const timer = Timer.createNull();
+  const clock = Clock.createNull({ fixed: now });
+  const services = new Services(state, api, timer, clock);
+  return { services, api, timer, clock };
 }

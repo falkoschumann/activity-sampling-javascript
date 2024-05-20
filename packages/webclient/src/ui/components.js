@@ -1,8 +1,14 @@
 import { html, render } from 'lit-html';
 
-import store from './store.js';
+import { Services } from '../application/services.js';
 
 export class Component extends HTMLElement {
+  static #services = Services.create();
+
+  get services() {
+    return Component.#services;
+  }
+
   connectedCallback() {
     this.updateView();
   }
@@ -24,7 +30,7 @@ export class Component extends HTMLElement {
   }
 }
 
-export class StateComponent extends Component {
+export class Container extends Component {
   #unsubscribeStore;
 
   constructor() {
@@ -33,7 +39,9 @@ export class StateComponent extends Component {
   }
 
   connectedCallback() {
-    this.#unsubscribeStore = store.subscribe(() => this.updateView());
+    this.#unsubscribeStore = this.services.store.subscribe(() =>
+      this.updateView(),
+    );
     super.connectedCallback();
   }
 
@@ -41,9 +49,9 @@ export class StateComponent extends Component {
     this.#unsubscribeStore();
   }
 
-  updateView() {
-    this.state = this.extractState(store.getState());
-    if (this.state === this.oldState) {
+  updateView({ force = false } = {}) {
+    this.state = this.extractState(this.services.store.getState());
+    if (!force && this.state === this.oldState) {
       return;
     }
 
