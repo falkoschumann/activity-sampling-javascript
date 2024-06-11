@@ -20,7 +20,7 @@ export class Timer extends EventTarget {
     this.#interval = interval;
   }
 
-  schedule(task, period) {
+  schedule(/** @type {Function} */ task, /** @type {number} */ period) {
     const intervalId = this.#doSchedule(task, period);
     this.dispatchEvent(
       new CustomEvent(TIMER_TASK_SCHEDULED_EVENT, { detail: { task, period } }),

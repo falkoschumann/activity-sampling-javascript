@@ -31,6 +31,7 @@ describe('Duration', () => {
       test('Creates positive duration', () => {
         const duration = new Duration(5000);
 
+        expect(duration.isPositive).toEqual(true);
         expect(duration.millis).toEqual(5000);
       });
 
@@ -267,15 +268,21 @@ describe('Duration', () => {
 
   describe('Convert to string', () => {
     test('Returns medium string as default', () => {
-      const duration = new Duration(3661000);
+      const duration = new Duration(3661001);
 
-      expect(duration.toString({ style: 'foo' })).toEqual('01:01:01');
+      expect(duration.toString()).toEqual('01:01:01');
     });
 
     test('Returns short string', () => {
-      const duration = new Duration(3661000);
+      const duration = new Duration(3661001);
 
       expect(duration.toString({ style: 'short' })).toEqual('01:01');
+    });
+
+    test('Returns long string', () => {
+      const duration = new Duration(3661001);
+
+      expect(duration.toString({ style: 'long' })).toEqual('01:01:01.001');
     });
 
     test('Returns negative value', () => {
@@ -285,7 +292,7 @@ describe('Duration', () => {
     });
 
     test('Is used by string interpolation', () => {
-      const duration = new Duration(3661000);
+      const duration = new Duration(3661001);
 
       const result = `${duration}`;
 

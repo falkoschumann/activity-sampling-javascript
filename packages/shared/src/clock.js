@@ -18,10 +18,6 @@ export class Clock {
   }
 
   add(millis) {
-    if (this.#date == null) {
-      return;
-    }
-
     const now = this.date();
     this.#date = new Date(now.getTime() + millis);
   }

@@ -20,7 +20,7 @@ export class Level {
     );
   }
 
-  constructor(name, value) {
+  constructor(/** @type {string} */ name, /** @type {number} */ value) {
     this.name = name;
     this.value = value;
     Level.#levels.push(this);
@@ -154,7 +154,7 @@ class LogRecord {
     /** @type {Date} */ timestamp,
     /** @type {string} */ loggerName,
     /** @type {Level} */ level,
-    message,
+    /** @type {any[]} */ message,
   ) {
     this.timestamp = timestamp;
     this.loggerName = loggerName;
@@ -204,9 +204,9 @@ class NullHandler {
 }
 
 class LogManager {
-  static #loggers = new Map();
+  /** @type {Map<string, Logger>} */ static #loggers = new Map();
 
-  static #logManager;
+  /** @type {LogManager} */ static #logManager;
 
   static getLogManager() {
     if (!LogManager.#logManager) {

@@ -51,6 +51,10 @@ export class Duration {
     return this.millis < 0;
   }
 
+  get isPositive() {
+    return this.millis > 0;
+  }
+
   get hours() {
     return this.millis / 3600000;
   }
@@ -136,10 +140,6 @@ export class Duration {
     return this.toISOString();
   }
 
-  toLocaleString() {
-    return this.toString();
-  }
-
   toString({ style = 'medium' } = {}) {
     if (Number.isNaN(this.valueOf())) {
       return 'Invalid Duration';
@@ -150,7 +150,12 @@ export class Duration {
     const minutes = String(value.minutesPart).padStart(2, '0');
     const seconds = String(value.secondsPart).padStart(2, '0');
     let string = `${hours}:${minutes}`;
-    string = style === 'short' ? string : `${string}:${seconds}`;
+    if (style === 'medium' || style === 'long') {
+      string += `:${seconds}`;
+    }
+    if (style === 'long') {
+      string += `.${String(value.millisPart).padStart(3, '0')}`;
+    }
     if (this.isNegative) {
       string = `-${string}`;
     }
