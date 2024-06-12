@@ -1,4 +1,5 @@
 export * from './clock.js';
+export * from './color.js';
 export * from './configurable-responses.js';
 export * from './duration.js';
 export * from './logging.js';
