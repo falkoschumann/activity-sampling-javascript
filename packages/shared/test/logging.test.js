@@ -32,7 +32,7 @@ describe('Logging', () => {
   describe('Logger', () => {
     test('Creates anonymous logger', () => {
       const log = Logger.getLogger();
-      const loggedMessages = log.trackMessages();
+      const loggedMessages = log.trackMessagesLogged();
 
       log.info('my message');
 
@@ -48,7 +48,7 @@ describe('Logging', () => {
 
     test('Creates named logger', () => {
       const log = Logger.getLogger('test-logger');
-      const loggedMessages = log.trackMessages();
+      const loggedMessages = log.trackMessagesLogged();
 
       log.info('my message');
 
@@ -65,7 +65,7 @@ describe('Logging', () => {
 
     test('Logs with level and message', () => {
       const log = Logger.getLogger();
-      const loggedMessages = log.trackMessages();
+      const loggedMessages = log.trackMessagesLogged();
 
       log.log(Level.INFO, 'my message');
 
@@ -80,7 +80,7 @@ describe('Logging', () => {
 
     test('Logs at level error', () => {
       const log = Logger.getLogger();
-      const loggedMessages = log.trackMessages();
+      const loggedMessages = log.trackMessagesLogged();
 
       log.error('error message');
 
@@ -95,7 +95,7 @@ describe('Logging', () => {
 
     test('Logs at level warning', () => {
       const log = Logger.getLogger();
-      const loggedMessages = log.trackMessages();
+      const loggedMessages = log.trackMessagesLogged();
 
       log.warning('warning message');
 
@@ -110,7 +110,7 @@ describe('Logging', () => {
 
     test('Logs at level info', () => {
       const log = Logger.getLogger();
-      const loggedMessages = log.trackMessages();
+      const loggedMessages = log.trackMessagesLogged();
 
       log.info('info message');
 
@@ -126,7 +126,7 @@ describe('Logging', () => {
     test('Logs at level debug', () => {
       const log = Logger.getLogger();
       log.level = Level.ALL;
-      const loggedMessages = log.trackMessages();
+      const loggedMessages = log.trackMessagesLogged();
 
       log.debug('debug message');
 
@@ -142,7 +142,7 @@ describe('Logging', () => {
     test('Logs at level trace', () => {
       const log = Logger.getLogger();
       log.level = Level.ALL;
-      const loggedMessages = log.trackMessages();
+      const loggedMessages = log.trackMessagesLogged();
 
       log.trace('trace message');
 
@@ -157,7 +157,7 @@ describe('Logging', () => {
 
     test('Logs at info level by default', () => {
       const log = Logger.getLogger();
-      const loggedMessages = log.trackMessages();
+      const loggedMessages = log.trackMessagesLogged();
 
       log.error('error message');
       log.warning('warning message');
@@ -187,7 +187,7 @@ describe('Logging', () => {
     test('Does not log below level', () => {
       const log = Logger.getLogger();
       log.level = Level.WARNING;
-      const loggedMessages = log.trackMessages();
+      const loggedMessages = log.trackMessagesLogged();
 
       log.info('info message');
 
@@ -197,7 +197,7 @@ describe('Logging', () => {
     test('Logs with local level if set', () => {
       const log = Logger.getLogger();
       log.level = Level.DEBUG;
-      const loggedMessages = log.trackMessages();
+      const loggedMessages = log.trackMessagesLogged();
 
       log.debug('debug message');
 
@@ -214,7 +214,7 @@ describe('Logging', () => {
       Logger.getLogger('').level = Level.DEBUG;
       const log = Logger.getLogger();
       log.level = undefined;
-      const loggedMessages = log.trackMessages();
+      const loggedMessages = log.trackMessagesLogged();
 
       log.debug('debug message');
 

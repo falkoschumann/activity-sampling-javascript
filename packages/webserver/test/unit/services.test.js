@@ -10,7 +10,7 @@ describe('Services', () => {
   describe('Log activity', () => {
     test('Logs the activity with client, project, task and optional notes', async () => {
       const { services, repository } = createServices();
-      const trackAdded = repository.trackEvents();
+      const trackAdded = repository.trackEventsRecorded();
 
       const event = ActivityLogged.createNull();
       await services.logActivity(event, repository);

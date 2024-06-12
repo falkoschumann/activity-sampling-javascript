@@ -18,7 +18,7 @@ const RFC4180 = {
   cast: (value, { quoting }) => (value === '' && !quoting ? undefined : value),
 };
 
-const EVENT_RECORDED = 'event-recorded';
+export const EVENT_RECORDED_EVENT = 'event-recorded';
 
 export class Repository extends EventTarget {
   static create({ filename = './data/activity-log.csv' } = {}) {
@@ -57,11 +57,13 @@ export class Repository extends EventTarget {
     };
     let csv = await this.#stringifyCsv(dto);
     await this.#writeFile(csv);
-    this.dispatchEvent(new CustomEvent(EVENT_RECORDED, { detail: event }));
+    this.dispatchEvent(
+      new CustomEvent(EVENT_RECORDED_EVENT, { detail: event }),
+    );
   }
 
-  trackEvents() {
-    return new OutputTracker(this, EVENT_RECORDED);
+  trackEventsRecorded() {
+    return new OutputTracker(this, EVENT_RECORDED_EVENT);
   }
 
   async #readFile() {

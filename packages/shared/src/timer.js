@@ -1,7 +1,7 @@
-import { OutputTracker } from '@activity-sampling/shared';
+import { OutputTracker } from './output-tracker.js';
 
 export const TIMER_TASK_SCHEDULED_EVENT = 'timer-task-scheduled';
-export const TIMER_CANCELED_EVENT = 'timer-canceled';
+export const TIMER_TASK_CANCELED_EVENT = 'timer-task-canceled';
 
 export class Timer extends EventTarget {
   static create() {
@@ -45,13 +45,13 @@ export class Timer extends EventTarget {
   #doCancel(intervalId, task) {
     this.#interval.clearInterval(intervalId);
     this.dispatchEvent(
-      new CustomEvent(TIMER_CANCELED_EVENT, { detail: { task } }),
+      new CustomEvent(TIMER_TASK_CANCELED_EVENT, { detail: { task } }),
     );
     this.#intervalIds.delete(intervalId);
   }
 
   trackCanceledTasks() {
-    return new OutputTracker(this, TIMER_CANCELED_EVENT);
+    return new OutputTracker(this, TIMER_TASK_CANCELED_EVENT);
   }
 
   simulateTaskExecution({ times = 1 } = {}) {

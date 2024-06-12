@@ -4,6 +4,8 @@ import {
   OutputTracker,
 } from '@activity-sampling/shared';
 
+export const ACTIVITY_LOGGED_EVENT = 'activity-logged';
+
 export class Api extends EventTarget {
   static create() {
     return new Api(globalThis.fetch.bind(globalThis));
@@ -29,12 +31,12 @@ export class Api extends EventTarget {
       body,
     });
     this.dispatchEvent(
-      new CustomEvent('activity-logged', { detail: activity }),
+      new CustomEvent(ACTIVITY_LOGGED_EVENT, { detail: activity }),
     );
   }
 
   trackActivitiesLogged() {
-    return new OutputTracker(this, 'activity-logged');
+    return new OutputTracker(this, ACTIVITY_LOGGED_EVENT);
   }
 
   async loadRecentActivities() {

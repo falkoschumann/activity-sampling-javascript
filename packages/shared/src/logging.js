@@ -1,7 +1,7 @@
 import { Clock } from './clock.js';
 import { OutputTracker } from './output-tracker.js';
 
-const MESSAGES_EVENT = 'messages';
+export const MESSAGE_LOGGED_EVENT = 'message-logged';
 
 export class Level {
   static #levels = [];
@@ -130,7 +130,7 @@ export class Logger extends EventTarget {
     );
     this.#getHandler().publish(record);
     this.dispatchEvent(
-      new CustomEvent(MESSAGES_EVENT, {
+      new CustomEvent(MESSAGE_LOGGED_EVENT, {
         detail: { ...record },
       }),
     );
@@ -144,8 +144,8 @@ export class Logger extends EventTarget {
     return this.#handler ?? this.#parent.#getHandler();
   }
 
-  trackMessages() {
-    return new OutputTracker(this, MESSAGES_EVENT);
+  trackMessagesLogged() {
+    return new OutputTracker(this, MESSAGE_LOGGED_EVENT);
   }
 }
 
