@@ -3,12 +3,7 @@ import express from 'express';
 import { describe, expect, test } from '@jest/globals';
 import request from 'supertest';
 
-import {
-  Duration,
-  Level,
-  Logger,
-  ValidationError,
-} from '@activity-sampling/shared';
+import { Duration, Level, Logger } from '@activity-sampling/shared';
 import { Services } from '../../src/application/services.js';
 import { Activity, LogActivity } from '../../src/domain/activities.js';
 import { Repository } from '../../src/infrastructure/repository.js';
@@ -57,8 +52,7 @@ describe('Activity Sampling App', () => {
     });
 
     test('Handles unhappy path', async () => {
-      const { app, log } = await configure();
-      const loggedMessages = log.trackMessagesLogged();
+      const { app } = await configure();
 
       const response = await request(app)
         .post('/api/log-activity')
@@ -72,14 +66,10 @@ describe('Activity Sampling App', () => {
         });
 
       expect(response.status).toBe(400);
-      expect(loggedMessages.data).toEqual([
-        {
-          loggerName: 'null-logger',
-          level: Level.ERROR,
-          message: [expect.any(ValidationError)],
-          timestamp: new Date('2024-02-21T19:16:00Z'),
-        },
-      ]);
+      expect(response.get('Content-Type')).toMatch(/text\/plain/);
+      expect(response.text).toEqual(
+        'The property "timestamp" is required for log activity.',
+      );
     });
   });
 
@@ -123,8 +113,7 @@ describe('Activity Sampling App', () => {
     });
 
     test('Handles unhappy path', async () => {
-      const { app, log } = await configure();
-      const loggedMessages = log.trackMessagesLogged();
+      const { app } = await configure();
 
       const response = await request(app)
         .get('/api/recent-activities')
@@ -132,14 +121,10 @@ describe('Activity Sampling App', () => {
         .set('Accept', 'application/json');
 
       expect(response.status).toBe(400);
-      expect(loggedMessages.data).toEqual([
-        {
-          loggerName: 'null-logger',
-          level: Level.ERROR,
-          message: [expect.any(ValidationError)],
-          timestamp: new Date('2024-02-21T19:16:00Z'),
-        },
-      ]);
+      expect(response.get('Content-Type')).toMatch(/text\/plain/);
+      expect(response.text).toEqual(
+        'The property "today" of recent activities query must be a valid Date, found string: "2024-13-05T09:57".',
+      );
     });
   });
 });
