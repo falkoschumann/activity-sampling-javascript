@@ -1,6 +1,6 @@
-import { rmSync } from 'node:fs';
+import fs from 'node:fs/promises';
 import express from 'express';
-import { beforeEach, describe, expect, test } from '@jest/globals';
+import { describe, expect, test } from '@jest/globals';
 import request from 'supertest';
 
 import {
@@ -18,12 +18,8 @@ const filename = new URL('../../data/activity-log.test.csv', import.meta.url)
   .pathname;
 
 describe('Activity Sampling App', () => {
-  beforeEach(() => {
-    rmSync(filename, { force: true });
-  });
-
   test('Starts and stops the app', async () => {
-    const { application, log } = configure();
+    const { application, log } = await configure();
     const loggedMessages = log.trackMessagesLogged();
 
     await application.start({ port: 3333 });
@@ -47,7 +43,7 @@ describe('Activity Sampling App', () => {
 
   describe('Log activity', () => {
     test('Runs happy path', async () => {
-      const { app, repository } = configure();
+      const { app, repository } = await configure();
 
       const logActivity = LogActivity.createNull();
       const response = await request(app)
@@ -61,7 +57,7 @@ describe('Activity Sampling App', () => {
     });
 
     test('Handles unhappy path', async () => {
-      const { app, log } = configure();
+      const { app, log } = await configure();
       const loggedMessages = log.trackMessagesLogged();
 
       const response = await request(app)
@@ -89,7 +85,7 @@ describe('Activity Sampling App', () => {
 
   describe('Recent activities', () => {
     test('Runs happy path', async () => {
-      const { app, repository } = configure();
+      const { app, repository } = await configure();
       const activity = Activity.createNull({
         timestamp: new Date(),
         duration: new Duration('PT30M'),
@@ -127,7 +123,7 @@ describe('Activity Sampling App', () => {
     });
 
     test('Handles unhappy path', async () => {
-      const { app, log } = configure();
+      const { app, log } = await configure();
       const loggedMessages = log.trackMessagesLogged();
 
       const response = await request(app)
@@ -148,7 +144,8 @@ describe('Activity Sampling App', () => {
   });
 });
 
-function configure() {
+async function configure() {
+  await fs.rm(filename, { force: true });
   const repository = Repository.create({ filename });
   const services = new Services(repository);
   const log = Logger.createNull();

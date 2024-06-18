@@ -1,5 +1,5 @@
 import fs from 'node:fs/promises';
-import { beforeEach, describe, expect, test } from '@jest/globals';
+import { describe, expect, test } from '@jest/globals';
 
 import { Duration, ValidationError } from '@activity-sampling/shared';
 import { ActivityLogged } from '../../src/domain/activities.js';
@@ -11,9 +11,7 @@ import {
 describe('Repository', () => {
   describe('Replay', () => {
     test('Returns list of events', async () => {
-      const repository = Repository.create({
-        filename: new URL('../data/example.csv', import.meta.url),
-      });
+      const { repository } = await configure();
 
       const events = await repository.replay();
 
@@ -30,8 +28,8 @@ describe('Repository', () => {
     });
 
     test('Returns empty list, if file does not exist', async () => {
-      const repository = Repository.create({
-        filename: new URL('../data/non-existent.csv', import.meta.url),
+      const { repository } = await configure({
+        filename: '../data/non-existent.csv',
       });
 
       const events = await repository.replay();
@@ -40,8 +38,8 @@ describe('Repository', () => {
     });
 
     test('Reports an error, if file is corrupt', async () => {
-      const repository = Repository.create({
-        filename: new URL('../data/corrupt.csv', import.meta.url),
+      const { repository } = await configure({
+        filename: '../data/corrupt.csv',
       });
 
       const events = repository.replay();
@@ -127,17 +125,11 @@ describe('Repository', () => {
   });
 
   describe('Add', () => {
-    const filename = new URL(
-      '../../data/activity-log.test.csv',
-      import.meta.url,
-    ).pathname;
-
-    beforeEach(async () => {
-      await fs.rm(filename, { force: true });
-    });
-
     test('Creates file, if it does not exist', async () => {
-      const repository = Repository.create({ filename });
+      const { repository } = await configure({
+        filename: '../../data/activity-log.test.csv',
+        removeFile: true,
+      });
       const event = ActivityLogged.createNull();
 
       await repository.record(event);
@@ -147,7 +139,10 @@ describe('Repository', () => {
     });
 
     test('Adds activtiy to existing file', async () => {
-      const repository = Repository.create({ filename });
+      const { repository } = await configure({
+        filename: '../../data/activity-log.test.csv',
+        removeFile: true,
+      });
       const event1 = ActivityLogged.createNull();
       await repository.record(event1);
 
@@ -159,3 +154,15 @@ describe('Repository', () => {
     });
   });
 });
+
+async function configure({
+  filename = '../data/example.csv',
+  removeFile = false,
+} = {}) {
+  filename = new URL(filename, import.meta.url).pathname;
+  if (removeFile) {
+    await fs.rm(filename, { force: true });
+  }
+  const repository = Repository.create({ filename });
+  return { repository };
+}

@@ -1,9 +1,9 @@
-import { beforeEach, describe, expect, test } from '@jest/globals';
+import { describe, expect, test } from '@jest/globals';
 
-import { Clock, Duration, Store, Timer } from '@activity-sampling/shared';
+import { Clock, Duration, Timer } from '@activity-sampling/shared';
 
 import { Services } from '../../src/application/services.js';
-import { initialState, reducer } from '../../src/domain/reducer.js';
+import { initialState } from '../../src/domain/reducer.js';
 import { Api } from '../../src/infrastructure/api.js';
 import { createActivity, createActivityDto } from '../testdata.js';
 
@@ -263,35 +263,6 @@ describe('Services', () => {
   });
 
   describe('Recent activities', () => {
-    /** @type {Store} */ let store;
-    /** @type {Api} */ let api;
-
-    beforeEach(() => {
-      store = createStore();
-      api = Api.createNull({
-        response: {
-          body: {
-            workingDays: [
-              {
-                date: new Date('2023-10-07T00:00Z'),
-                activities: [
-                  createActivityDto({ timestamp: '2023-10-07T13:00Z' }),
-                  createActivityDto({ timestamp: '2023-10-07T12:30Z' }),
-                  createActivityDto({ timestamp: '2023-10-07T12:00Z' }),
-                ],
-              },
-            ],
-            timeSummary: {
-              hoursToday: 'PT1H30M',
-              hoursYesterday: 'PT0S',
-              hoursThisWeek: 'PT1H30M',
-              hoursThisMonth: 'PT1H30M',
-            },
-          },
-        },
-      });
-    });
-
     test('Selects recent activities', async () => {
       const { services } = configure({
         response: {
@@ -357,7 +328,7 @@ describe('Services', () => {
         },
       });
 
-      await services.selectRecentActivities(store, api);
+      await services.selectRecentActivities();
 
       const lastActivity = createActivity({
         timestamp: new Date('2023-10-07T13:00Z'),
@@ -463,10 +434,6 @@ describe('Services', () => {
     test.todo('Takes vacation into account');
   });
 });
-
-function createStore(state) {
-  return new Store(reducer, state);
-}
 
 function configure({ state, response, now } = {}) {
   const api = Api.createNull({ response });

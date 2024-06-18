@@ -15,15 +15,15 @@ describe('Timer', () => {
 
   test('Simulates task execution', () => {
     const timer = Timer.createNull();
-    let executed = 0;
+    let calls = 0;
     const task = () => {
-      executed++;
+      calls++;
     };
     timer.schedule(task, 1000);
 
     timer.simulateTaskExecution({ times: 3 });
 
-    expect(executed).toBe(3);
+    expect(calls).toBe(3);
   });
 
   test('Cancels all tasks', () => {

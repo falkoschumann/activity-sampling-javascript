@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, jest, test } from '@jest/globals';
+import { describe, expect, test } from '@jest/globals';
 
 import { createStore } from '../src/store.js';
 
@@ -18,41 +18,41 @@ describe('Store', () => {
   });
 
   describe('Subscribe', () => {
-    let store;
-
-    beforeEach(() => {
-      store = new createStore(reducer, { user: 'Alice' });
-    });
-
     test('Does not emit event, if state is not changed', () => {
-      const listener = jest.fn();
+      const { store } = configure();
+      let calls = 0;
+      const listener = () => calls++;
       store.subscribe(listener);
 
       store.dispatch({ type: 'unknown-action' });
 
       expect(store.getState()).toEqual({ user: 'Alice' });
-      expect(listener).not.toBeCalled();
+      expect(calls).toBe(0);
     });
 
     test('Emits event, if state is changed', () => {
-      const listener = jest.fn();
+      const { store } = configure();
+      let calls = 0;
+      const listener = () => calls++;
       store.subscribe(listener);
 
       store.dispatch({ type: 'user-changed', name: 'Bob' });
 
       expect(store.getState()).toEqual({ user: 'Bob' });
-      expect(listener).toBeCalledTimes(1);
+      expect(calls).toBe(1);
     });
 
     test('Does not emit event, if listener is unsubscribed', () => {
-      const listener = jest.fn();
+      const { store } = configure();
+      let calls = 0;
+      const listener = () => calls++;
       const unsubscribe = store.subscribe(listener);
 
       unsubscribe();
       store.dispatch({ type: 'user-changed', name: 'Bob' });
 
       expect(store.getState()).toEqual({ user: 'Bob' });
-      expect(listener).not.toBeCalled();
+      expect(calls).toBe(0);
     });
   });
 });
@@ -66,4 +66,9 @@ function reducer(state = initialState, action) {
     default:
       return state;
   }
+}
+
+function configure() {
+  const store = new createStore(reducer, { user: 'Alice' });
+  return { store };
 }
