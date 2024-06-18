@@ -1,12 +1,12 @@
 import express from 'express';
 
-import { LogActivity, RecentActivitiesQuery } from '@activity-sampling/core';
 import {
   Duration,
   Logger,
   validateOptionalProperty,
   validateRequiredProperty,
 } from '@activity-sampling/shared';
+import { LogActivity, RecentActivitiesQuery } from '../domain/activities.js';
 
 import { Services } from '../application/services.js';
 

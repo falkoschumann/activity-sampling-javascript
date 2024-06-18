@@ -1,9 +1,8 @@
 import { describe, expect, test } from '@jest/globals';
 
-import { ActivityLogged } from '@activity-sampling/core';
 import { Duration } from '@activity-sampling/shared';
-
 import { Services } from '../../src/application/services.js';
+import { ActivityLogged } from '../../src/domain/activities.js';
 import { Repository } from '../../src/infrastructure/repository.js';
 
 describe('Services', () => {

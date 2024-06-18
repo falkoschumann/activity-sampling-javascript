@@ -3,17 +3,16 @@ import express from 'express';
 import { beforeEach, describe, expect, test } from '@jest/globals';
 import request from 'supertest';
 
-import { Activity, LogActivity } from '@activity-sampling/core';
 import {
   Duration,
   Level,
   Logger,
   ValidationError,
 } from '@activity-sampling/shared';
-
+import { Services } from '../../src/application/services.js';
+import { Activity, LogActivity } from '../../src/domain/activities.js';
 import { Repository } from '../../src/infrastructure/repository.js';
 import { Application } from '../../src/ui/application.js';
-import { Services } from '../../src/application/services.js';
 
 const filename = new URL('../../data/activity-log.test.csv', import.meta.url)
   .pathname;

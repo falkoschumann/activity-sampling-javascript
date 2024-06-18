@@ -1,5 +1,4 @@
-import { RecentActivities, ActivityLogged } from '@activity-sampling/core';
-
+import { RecentActivities, ActivityLogged } from '../domain/activities.js';
 import { Repository } from '../infrastructure/repository.js';
 
 export class Services {
