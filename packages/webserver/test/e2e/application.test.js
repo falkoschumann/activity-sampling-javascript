@@ -64,7 +64,7 @@ describe('Activity Sampling App', () => {
       const { app, log } = configure();
       const loggedMessages = log.trackMessagesLogged();
 
-      let response = await request(app)
+      const response = await request(app)
         .post('/api/log-activity')
         .set('Content-Type', 'application/json')
         .send({

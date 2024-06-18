@@ -27,7 +27,7 @@ export class Services {
   }
 
   async selectRecentActivities({ today }) {
-    let activities = await this.repository.replay();
+    const activities = await this.repository.replay();
     return RecentActivities.create({ activities, today });
   }
 }

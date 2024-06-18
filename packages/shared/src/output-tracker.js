@@ -27,7 +27,7 @@ export class OutputTracker {
   }
 
   clear() {
-    let result = [...this.#data];
+    const result = [...this.#data];
     this.#data.length = 0;
     return result;
   }

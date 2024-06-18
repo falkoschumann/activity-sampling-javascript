@@ -59,7 +59,7 @@ export class RecentActivitiesQuery {
 export class RecentActivities {
   static create({ activities = [], today = new Date() } = {}) {
     const result = new RecentActivities(today);
-    for (let activity of activities) {
+    for (const activity of activities) {
       result.add(activity);
     }
     return result;
@@ -191,7 +191,7 @@ function isToday(date, today) {
 }
 
 function isYesterday(date, today) {
-  let yesterday = new Date(today);
+  const yesterday = new Date(today);
   yesterday.setDate(yesterday.getDate() - 1);
   return equalsDate(date, yesterday);
 }
@@ -212,8 +212,8 @@ function isSameWeek(date1, date2, boundaryDay = 1) {
     return false;
   }
 
-  let day1 = date1.getDay();
-  let day2 = date2.getDay();
+  const day1 = date1.getDay();
+  const day2 = date2.getDay();
   if (day1 === boundaryDay) {
     return true;
   }
@@ -221,8 +221,8 @@ function isSameWeek(date1, date2, boundaryDay = 1) {
     return false;
   }
 
-  let d1BoundaryDist = (day1 - boundaryDay + 7) % 7;
-  let d2BoundaryDist = (day2 - boundaryDay + 7) % 7;
+  const d1BoundaryDist = (day1 - boundaryDay + 7) % 7;
+  const d2BoundaryDist = (day2 - boundaryDay + 7) % 7;
   return d1BoundaryDist <= d2BoundaryDist;
 }
 

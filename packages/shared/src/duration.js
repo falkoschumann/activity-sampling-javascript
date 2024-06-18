@@ -149,17 +149,17 @@ export class Duration {
     const hours = String(value.hoursPart).padStart(2, '0');
     const minutes = String(value.minutesPart).padStart(2, '0');
     const seconds = String(value.secondsPart).padStart(2, '0');
-    let string = `${hours}:${minutes}`;
+    let result = `${hours}:${minutes}`;
     if (style === 'medium' || style === 'long') {
-      string += `:${seconds}`;
+      result += `:${seconds}`;
     }
     if (style === 'long') {
-      string += `.${String(value.millisPart).padStart(3, '0')}`;
+      result += `.${String(value.millisPart).padStart(3, '0')}`;
     }
     if (this.isNegative) {
-      string = `-${string}`;
+      result = `-${result}`;
     }
-    return string;
+    return result;
   }
 
   valueOf() {

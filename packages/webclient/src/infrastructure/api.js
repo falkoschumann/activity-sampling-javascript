@@ -24,7 +24,7 @@ export class Api extends EventTarget {
 
   async logActivity({ timestamp, duration, client, project, task, notes }) {
     const activity = { timestamp, duration, client, project, task, notes };
-    let body = JSON.stringify(activity);
+    const body = JSON.stringify(activity);
     await this.#fetch('/api/log-activity', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -40,8 +40,8 @@ export class Api extends EventTarget {
   }
 
   async loadRecentActivities() {
-    let response = await this.#fetch('/api/recent-activities');
-    let dto = await response.json();
+    const response = await this.#fetch('/api/recent-activities');
+    const dto = await response.json();
     return mapRecentActivities(dto);
   }
 }

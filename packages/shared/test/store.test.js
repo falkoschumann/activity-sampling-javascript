@@ -25,7 +25,7 @@ describe('Store', () => {
     });
 
     test('Does not emit event, if state is not changed', () => {
-      let listener = jest.fn();
+      const listener = jest.fn();
       store.subscribe(listener);
 
       store.dispatch({ type: 'unknown-action' });
@@ -35,7 +35,7 @@ describe('Store', () => {
     });
 
     test('Emits event, if state is changed', () => {
-      let listener = jest.fn();
+      const listener = jest.fn();
       store.subscribe(listener);
 
       store.dispatch({ type: 'user-changed', name: 'Bob' });
@@ -45,8 +45,8 @@ describe('Store', () => {
     });
 
     test('Does not emit event, if listener is unsubscribed', () => {
-      let listener = jest.fn();
-      let unsubscribe = store.subscribe(listener);
+      const listener = jest.fn();
+      const unsubscribe = store.subscribe(listener);
 
       unsubscribe();
       store.dispatch({ type: 'user-changed', name: 'Bob' });

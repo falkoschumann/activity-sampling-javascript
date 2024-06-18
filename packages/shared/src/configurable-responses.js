@@ -12,7 +12,7 @@ export class ConfigurableResponses {
   }
 
   next() {
-    let response = Array.isArray(this.#responses)
+    const response = Array.isArray(this.#responses)
       ? this.#responses.shift()
       : this.#responses;
     if (response === undefined) {

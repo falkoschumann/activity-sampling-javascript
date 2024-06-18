@@ -12,9 +12,12 @@ import { ActivityLogged } from '../domain/activities.js';
 
 const RFC4180 = {
   delimiter: ',',
-  eof: true,
   quote: '"',
   record_delimiter: '\r\n',
+  comment: '#',
+  comment_no_infix: true,
+  skip_empty_lines: true,
+  eof: true,
   cast: (value, { quoting }) => (value === '' && !quoting ? undefined : value),
 };
 
@@ -42,7 +45,7 @@ export class Repository extends EventTarget {
   }
 
   async replay() {
-    let string = await this.#readFile();
+    const string = await this.#readFile();
     return this.#parseCsv(string);
   }
 
@@ -55,7 +58,7 @@ export class Repository extends EventTarget {
       Task: event.task,
       Notes: event.notes,
     };
-    let csv = await this.#stringifyCsv(dto);
+    const csv = await this.#stringifyCsv(dto);
     await this.#writeFile(csv);
     this.dispatchEvent(
       new CustomEvent(EVENT_RECORDED_EVENT, { detail: event }),

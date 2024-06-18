@@ -63,7 +63,7 @@ describe('Activities', () => {
           timestamp: new Date('2023-10-08T10:00Z'),
         });
 
-        let result = RecentActivities.create({
+        const result = RecentActivities.create({
           activities: [activity1, activity2, activity3],
           today: new Date('2023-10-08T14:00Z'),
         });
@@ -126,7 +126,7 @@ describe('Activities', () => {
       });
 
       test('Sums hours today', () => {
-        let result = RecentActivities.create({
+        const result = RecentActivities.create({
           activities: [
             Activity.createNull({
               timestamp: new Date('2023-10-06T12:00'), // yesterday
@@ -157,7 +157,7 @@ describe('Activities', () => {
       });
 
       test('Sums hours yesterday', () => {
-        let result = RecentActivities.create({
+        const result = RecentActivities.create({
           activities: [
             Activity.createNull({
               timestamp: new Date('2023-10-06T12:00'), // the day before yesterday
@@ -188,7 +188,7 @@ describe('Activities', () => {
       });
 
       test('Sums hours this week on a sunday', () => {
-        let result = RecentActivities.create({
+        const result = RecentActivities.create({
           activities: [
             Activity.createNull({
               timestamp: new Date('2023-10-08T12:00'), // sunday last week
@@ -219,7 +219,7 @@ describe('Activities', () => {
       });
 
       test('Sums hours this week on a monday', () => {
-        let result = RecentActivities.create({
+        const result = RecentActivities.create({
           activities: [
             Activity.createNull({
               timestamp: new Date('2023-10-09T12:00'), // monday last week
@@ -250,7 +250,7 @@ describe('Activities', () => {
       });
 
       test('Sums hours this month', () => {
-        let result = RecentActivities.create({
+        const result = RecentActivities.create({
           activities: [
             Activity.createNull({
               timestamp: new Date('2023-09-30T12:00'), // last day last month
