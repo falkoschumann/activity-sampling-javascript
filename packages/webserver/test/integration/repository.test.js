@@ -58,7 +58,9 @@ describe('Repository', () => {
           Notes: 'Show my recent activities',
         });
 
-        expect(() => dto.validate()).toThrow(ValidationError);
+        expect(() => dto.validate()).toThrow(
+          'The property "Timestamp" of activity logged must be a valid Date, found string: "2024-13-02T11:35Z".',
+        );
       });
 
       test('Reports an error, if duration is invalid', async () => {
@@ -71,7 +73,9 @@ describe('Repository', () => {
           Notes: 'Show my recent activities',
         });
 
-        expect(() => dto.validate()).toThrow(ValidationError);
+        expect(() => dto.validate()).toThrow(
+          'The property "Duration" of activity logged must be a valid Duration, found string: "30m".',
+        );
       });
 
       test('Reports an error, if client is missing', async () => {
@@ -83,7 +87,9 @@ describe('Repository', () => {
           Notes: 'Show my recent activities',
         });
 
-        expect(() => dto.validate()).toThrow(ValidationError);
+        expect(() => dto.validate()).toThrow(
+          'The property "Client" is required for activity logged.',
+        );
       });
 
       test('Reports an error, if project is missing', async () => {
@@ -95,7 +101,9 @@ describe('Repository', () => {
           Notes: 'Show my recent activities',
         });
 
-        expect(() => dto.validate()).toThrow(ValidationError);
+        expect(() => dto.validate()).toThrow(
+          'The property "Project" is required for activity logged.',
+        );
       });
 
       test('Reports an error, if task is missing', async () => {
@@ -107,7 +115,9 @@ describe('Repository', () => {
           Notes: 'Show my recent activities',
         });
 
-        expect(() => dto.validate()).toThrow(ValidationError);
+        expect(() => dto.validate()).toThrow(
+          'The property "Task" is required for activity logged.',
+        );
       });
 
       test('Reports no error, if notes is missing', async () => {
@@ -124,7 +134,7 @@ describe('Repository', () => {
     });
   });
 
-  describe('Add', () => {
+  describe('Record', () => {
     test('Creates file, if it does not exist', async () => {
       const { repository } = await configure({
         filename: '../../data/activity-log.test.csv',
@@ -151,6 +161,27 @@ describe('Repository', () => {
 
       const events = await repository.replay();
       expect(events).toEqual([event1, event2]);
+    });
+  });
+
+  describe('Stub', () => {
+    test('Tracks events recorded', async () => {
+      const repository = Repository.createNull();
+      const eventsRecorded = repository.trackEventsRecorded();
+      const event = ActivityLogged.createNull();
+
+      await repository.record(event);
+
+      expect(eventsRecorded.data).toEqual([event]);
+    });
+
+    test('Replays events', async () => {
+      const event = ActivityLogged.createNull();
+      const repository = Repository.createNull({ events: [event] });
+
+      const events = await repository.replay();
+
+      expect(events).toEqual([event]);
     });
   });
 });

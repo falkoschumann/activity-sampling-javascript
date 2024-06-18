@@ -50,14 +50,7 @@ export class Repository extends EventTarget {
   }
 
   async record(/** @type {ActivityLogged} */ event) {
-    const dto = {
-      Timestamp: event.timestamp.toISOString(),
-      Duration: event.duration.toISOString(),
-      Client: event.client,
-      Project: event.project,
-      Task: event.task,
-      Notes: event.notes,
-    };
+    const dto = ActivityLoggedDto.fromDomain(event);
     const csv = await this.#stringifyCsv(dto);
     await this.#writeFile(csv);
     this.dispatchEvent(
@@ -131,6 +124,17 @@ export class ActivityLoggedDto {
     );
   }
 
+  static fromDomain(/** @type {ActivityLogged} */ event) {
+    return ActivityLoggedDto.create({
+      Timestamp: event.timestamp.toISOString(),
+      Duration: event.duration.toISOString(),
+      Client: event.client,
+      Project: event.project,
+      Task: event.task,
+      Notes: event.notes,
+    });
+  }
+
   constructor(
     /** @type {string} */ Timestamp,
     /** @type {string} */ Duration,
@@ -148,7 +152,6 @@ export class ActivityLoggedDto {
   }
 
   validate() {
-    // TODO throw ValidationError with DTO details
     const timestamp = validateRequiredProperty(
       this,
       'activity logged',
