@@ -22,13 +22,19 @@ export function validateRequiredProperty(
     );
   }
 
-  return validateTypedProperty(
+  const value = validateTypedProperty(
     object,
     objectName,
     propertyName,
     propertyType,
     itemType,
   );
+
+  if (propertyType === 'string') {
+    validateNotEmpty(object, objectName, propertyName);
+  }
+
+  return value;
 }
 
 export function validateOptionalProperty(
@@ -54,6 +60,15 @@ export function validateOptionalProperty(
     propertyType,
     itemType,
   );
+}
+
+function validateNotEmpty(object, objectName, propertyName) {
+  const value = object[propertyName];
+  if (value === '') {
+    throw new ValidationError(
+      `The property "${propertyName}" of ${objectName} must not be empty.`,
+    );
+  }
 }
 
 function isPresent(value) {

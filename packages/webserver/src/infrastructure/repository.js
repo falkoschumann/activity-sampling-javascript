@@ -154,37 +154,37 @@ export class ActivityLoggedDto {
   validate() {
     const timestamp = validateRequiredProperty(
       this,
-      'activity logged',
+      'ActivityLogged',
       'Timestamp',
       Date,
     );
     const duration = validateRequiredProperty(
       this,
-      'activity logged',
+      'ActivityLogged',
       'Duration',
       Duration,
     );
     const client = validateRequiredProperty(
       this,
-      'activity logged',
+      'ActivityLogged',
       'Client',
       'string',
     );
     const project = validateRequiredProperty(
       this,
-      'activity logged',
+      'ActivityLogged',
       'Project',
       'string',
     );
     const task = validateRequiredProperty(
       this,
-      'activity logged',
+      'ActivityLogged',
       'Task',
       'string',
     );
     const notes = validateOptionalProperty(
       this,
-      'activity logged',
+      'ActivityLogged',
       'Notes',
       'string',
     );

@@ -15,7 +15,9 @@ describe('Configurable responses', () => {
     test('Throws error if no value is given', () => {
       const responses = ConfigurableResponses.create();
 
-      expect(() => responses.next()).toThrow('No more responses configured.');
+      expect(() => responses.next()).toThrow(
+        new Error('No more responses configured.'),
+      );
     });
   });
 
@@ -36,14 +38,16 @@ describe('Configurable responses', () => {
       responses.next();
 
       expect(() => responses.next()).toThrow(
-        'No more responses configured in foobar.',
+        new Error('No more responses configured in foobar.'),
       );
     });
 
     test('Throws error if array is empty', () => {
       const responses = ConfigurableResponses.create([]);
 
-      expect(() => responses.next()).toThrow('No more responses configured.');
+      expect(() => responses.next()).toThrow(
+        new Error('No more responses configured.'),
+      );
     });
   });
 });

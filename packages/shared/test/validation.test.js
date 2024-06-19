@@ -36,6 +36,14 @@ describe('Validation', () => {
         new Error('The property "name" is required for user.'),
       );
     });
+
+    test('Fails when string property is empty', () => {
+      const user = { name: '' };
+
+      expect(() =>
+        validateRequiredProperty(user, 'user', 'name', 'string'),
+      ).toThrow(new Error('The property "name" of user must not be empty.'));
+    });
   });
 
   describe('Optional property', () => {

@@ -47,7 +47,21 @@ describe('Repository', () => {
       await expect(events).rejects.toThrow();
     });
 
-    describe('Validate', () => {
+    describe('Validation', () => {
+      test('Reports an error, if timestamp is missing', () => {
+        const dto = ActivityLoggedDto.create({
+          Duration: 'PT30M',
+          Client: 'Muspellheim',
+          Project: 'Activity Sampling',
+          Task: 'Recent Activities',
+          Notes: 'Show my recent activities',
+        });
+
+        expect(() => dto.validate()).toThrow(
+          new Error('The property "Timestamp" is required for ActivityLogged.'),
+        );
+      });
+
       test('Reports an error, if timestamp is invalid', () => {
         const dto = ActivityLoggedDto.create({
           Timestamp: '2024-13-02T11:35Z',
@@ -59,11 +73,27 @@ describe('Repository', () => {
         });
 
         expect(() => dto.validate()).toThrow(
-          'The property "Timestamp" of activity logged must be a valid Date, found string: "2024-13-02T11:35Z".',
+          new Error(
+            'The property "Timestamp" of ActivityLogged must be a valid Date, found string: "2024-13-02T11:35Z".',
+          ),
         );
       });
 
-      test('Reports an error, if duration is invalid', async () => {
+      test('Reports an error, if duration is missing', () => {
+        const dto = ActivityLoggedDto.create({
+          Timestamp: '2024-04-02T11:35Z',
+          Client: 'Muspellheim',
+          Project: 'Activity Sampling',
+          Task: 'Recent Activities',
+          Notes: 'Show my recent activities',
+        });
+
+        expect(() => dto.validate()).toThrow(
+          new Error('The property "Duration" is required for ActivityLogged.'),
+        );
+      });
+
+      test('Reports an error, if duration is invalid', () => {
         const dto = ActivityLoggedDto.create({
           Timestamp: '2024-04-02T11:35Z',
           Duration: '30m',
@@ -74,11 +104,13 @@ describe('Repository', () => {
         });
 
         expect(() => dto.validate()).toThrow(
-          'The property "Duration" of activity logged must be a valid Duration, found string: "30m".',
+          new Error(
+            'The property "Duration" of ActivityLogged must be a valid Duration, found string: "30m".',
+          ),
         );
       });
 
-      test('Reports an error, if client is missing', async () => {
+      test('Reports an error, if client is missing', () => {
         const dto = ActivityLoggedDto.create({
           Timestamp: '2024-04-02T11:35Z',
           Duration: 'PT30M',
@@ -88,11 +120,28 @@ describe('Repository', () => {
         });
 
         expect(() => dto.validate()).toThrow(
-          'The property "Client" is required for activity logged.',
+          new Error('The property "Client" is required for ActivityLogged.'),
         );
       });
 
-      test('Reports an error, if project is missing', async () => {
+      test('Reports an error, if client is empty', () => {
+        const dto = ActivityLoggedDto.create({
+          Timestamp: '2024-04-02T11:35Z',
+          Duration: 'PT30M',
+          Client: '',
+          Project: 'Activity Sampling',
+          Task: 'Recent Activities',
+          Notes: 'Show my recent activities',
+        });
+
+        expect(() => dto.validate()).toThrow(
+          new Error(
+            'The property "Client" of ActivityLogged must not be empty.',
+          ),
+        );
+      });
+
+      test('Reports an error, if project is missing', () => {
         const dto = ActivityLoggedDto.create({
           Timestamp: '2024-04-02T11:35Z',
           Duration: 'PT30M',
@@ -102,11 +151,28 @@ describe('Repository', () => {
         });
 
         expect(() => dto.validate()).toThrow(
-          'The property "Project" is required for activity logged.',
+          new Error('The property "Project" is required for ActivityLogged.'),
         );
       });
 
-      test('Reports an error, if task is missing', async () => {
+      test('Reports an error, if project is empty', () => {
+        const dto = ActivityLoggedDto.create({
+          Timestamp: '2024-04-02T11:35Z',
+          Duration: 'PT30M',
+          Client: 'Muspellheim',
+          Project: '',
+          Task: 'Recent Activities',
+          Notes: 'Show my recent activities',
+        });
+
+        expect(() => dto.validate()).toThrow(
+          new Error(
+            'The property "Project" of ActivityLogged must not be empty.',
+          ),
+        );
+      });
+
+      test('Reports an error, if task is missing', () => {
         const dto = ActivityLoggedDto.create({
           Timestamp: '2024-04-02T11:35Z',
           Duration: 'PT30M',
@@ -116,17 +182,45 @@ describe('Repository', () => {
         });
 
         expect(() => dto.validate()).toThrow(
-          'The property "Task" is required for activity logged.',
+          new Error('The property "Task" is required for ActivityLogged.'),
         );
       });
 
-      test('Reports no error, if notes is missing', async () => {
+      test('Reports an error, if task is empty', () => {
+        const dto = ActivityLoggedDto.create({
+          Timestamp: '2024-04-02T11:35Z',
+          Duration: 'PT30M',
+          Client: 'Muspellheim',
+          Project: 'Activity Sampling',
+          Task: '',
+          Notes: 'Show my recent activities',
+        });
+
+        expect(() => dto.validate()).toThrow(
+          new Error('The property "Task" of ActivityLogged must not be empty.'),
+        );
+      });
+
+      test('Reports no error, if notes is missing', () => {
         const dto = ActivityLoggedDto.create({
           Timestamp: '2024-04-02T11:35Z',
           Duration: 'PT30M',
           Client: 'Muspellheim',
           Project: 'Activity Sampling',
           Task: 'Recent Activities',
+        });
+
+        expect(() => dto.validate()).not.toThrow(ValidationError);
+      });
+
+      test('Reports no error, if notes is empty', () => {
+        const dto = ActivityLoggedDto.create({
+          Timestamp: '2024-04-02T11:35Z',
+          Duration: 'PT30M',
+          Client: 'Muspellheim',
+          Project: 'Activity Sampling',
+          Task: 'Recent Activities',
+          Notes: '',
         });
 
         expect(() => dto.validate()).not.toThrow(ValidationError);

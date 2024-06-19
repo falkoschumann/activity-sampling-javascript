@@ -47,7 +47,7 @@ export class ActivitiesController {
   }
 }
 
-class LogActivityDto {
+export class LogActivityDto {
   static create({ timestamp, duration, client, project, task, notes }) {
     return new LogActivityDto(
       timestamp,
@@ -78,37 +78,37 @@ class LogActivityDto {
   validate() {
     const timestamp = validateRequiredProperty(
       this,
-      'log activity',
+      'LogActivity',
       'timestamp',
       Date,
     );
     const duration = validateRequiredProperty(
       this,
-      'log activity',
+      'LogActivity',
       'duration',
       Duration,
     );
     const client = validateRequiredProperty(
       this,
-      'log activity',
+      'LogActivity',
       'client',
       'string',
     );
     const project = validateRequiredProperty(
       this,
-      'log activity',
+      'LogActivity',
       'project',
       'string',
     );
     const task = validateRequiredProperty(
       this,
-      'log activity',
+      'LogActivity',
       'task',
       'string',
     );
     const notes = validateOptionalProperty(
       this,
-      'log activity',
+      'LogActivity',
       'notes',
       'string',
     );
@@ -123,8 +123,8 @@ class LogActivityDto {
   }
 }
 
-class RecentActivitiesQueryDto {
-  static create({ today }) {
+export class RecentActivitiesQueryDto {
+  static create({ today } = {}) {
     return new RecentActivitiesQueryDto(today);
   }
 
@@ -135,7 +135,7 @@ class RecentActivitiesQueryDto {
   validate() {
     const today = validateOptionalProperty(
       this,
-      'recent activities query',
+      'RecentActivitiesQuery',
       'today',
       Date,
     );
