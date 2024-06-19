@@ -1,9 +1,9 @@
 import express from 'express';
 
-import { Logger } from '@activity-sampling/shared';
+import { Logger, ValidationError } from '@activity-sampling/shared';
 import { Services } from '../application/services.js';
 import { ActivitiesController } from './activities-controller.js';
-import { errorHandler } from './handler.js';
+import { reply } from './handler.js';
 
 export class Application {
   static create() {
@@ -30,7 +30,7 @@ export class Application {
     app.use(express.json());
     app.use('/', express.static('./public'));
     new ActivitiesController(services, app);
-    app.use(errorHandler());
+    app.use(this.#errorHandler.bind(this));
   }
 
   start({ port = 3000 } = {}) {
@@ -50,5 +50,20 @@ export class Application {
       });
       this.#server.close();
     });
+  }
+
+  // eslint-disable-next-line no-unused-vars
+  #errorHandler(error, request, response, next) {
+    if (error instanceof ValidationError) {
+      reply(response, {
+        status: 400,
+        headers: { 'Content-Type': 'text/plain' },
+        body: error.message,
+      });
+      return;
+    }
+
+    this.#log.error(error);
+    response.status(500).end();
   }
 }
