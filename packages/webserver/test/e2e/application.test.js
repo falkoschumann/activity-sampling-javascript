@@ -49,15 +49,14 @@ describe('Activity Sampling App', () => {
     test('Runs happy path', async () => {
       const { app, repository } = await configure();
 
-      const logActivity = LogActivity.createNull();
       const response = await request(app)
         .post('/api/log-activity')
         .set('Content-Type', 'application/json')
-        .send(logActivity);
+        .send(LogActivity.createTestInstance());
 
       expect(response.status).toBe(204);
       const activities = await repository.replay();
-      expect(activities).toEqual([logActivity]);
+      expect(activities).toEqual([LogActivity.createTestInstance()]);
     });
 
     test('Handles unhappy path', async () => {
@@ -261,7 +260,7 @@ describe('Activity Sampling App', () => {
   describe('Recent activities', () => {
     test('Runs happy path', async () => {
       const { app, repository } = await configure();
-      const activity = Activity.createNull({
+      const activity = Activity.createTestInstance({
         timestamp: new Date(),
         duration: new Duration('PT30M'),
       });

@@ -234,12 +234,11 @@ describe('Repository', () => {
         filename: '../../data/activity-log.test.csv',
         removeFile: true,
       });
-      const event = ActivityLogged.createNull();
 
-      await repository.record(event);
+      await repository.record(ActivityLogged.createTestInstance());
 
       const events = await repository.replay();
-      expect(events).toEqual([event]);
+      expect(events).toEqual([ActivityLogged.createTestInstance()]);
     });
 
     test('Adds activtiy to existing file', async () => {
@@ -247,10 +246,14 @@ describe('Repository', () => {
         filename: '../../data/activity-log.test.csv',
         removeFile: true,
       });
-      const event1 = ActivityLogged.createNull();
+      const event1 = ActivityLogged.createTestInstance({
+        timestamp: new Date('2024-03-03T12:00'),
+      });
       await repository.record(event1);
 
-      const event2 = ActivityLogged.createNull();
+      const event2 = ActivityLogged.createTestInstance({
+        timestamp: new Date('2024-03-04T12:30'),
+      });
       await repository.record(event2);
 
       const events = await repository.replay();
@@ -258,24 +261,33 @@ describe('Repository', () => {
     });
   });
 
-  describe('Stub', () => {
-    test('Tracks events recorded', async () => {
-      const repository = Repository.createNull();
-      const eventsRecorded = repository.trackEventsRecorded();
-      const event = ActivityLogged.createNull();
-
-      await repository.record(event);
-
-      expect(eventsRecorded.data).toEqual([event]);
-    });
-
+  describe('Nullable', () => {
     test('Replays events', async () => {
-      const event = ActivityLogged.createNull();
-      const repository = Repository.createNull({ events: [event] });
+      const repository = Repository.createNull();
 
       const events = await repository.replay();
 
-      expect(events).toEqual([event]);
+      expect(events).toEqual([
+        ActivityLogged.create({
+          timestamp: new Date('2024-03-03T12:00'),
+          duration: new Duration('PT30M'),
+          client: 'Test client',
+          project: 'Test project',
+          task: 'Test task',
+          notes: 'Test notes',
+        }),
+      ]);
+    });
+
+    test('Tracks events recorded', async () => {
+      const repository = Repository.createNull();
+      const eventsRecorded = repository.trackEventsRecorded();
+
+      await repository.record(ActivityLogged.createTestInstance());
+
+      expect(eventsRecorded.data).toEqual([
+        ActivityLogged.createTestInstance(),
+      ]);
     });
   });
 });

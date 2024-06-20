@@ -28,7 +28,18 @@ export class Repository extends EventTarget {
     return new Repository(filename, fsPromises);
   }
 
-  static createNull({ events = [] } = {}) {
+  static createNull({
+    events = [
+      ActivityLogged.create({
+        timestamp: new Date('2024-03-03T12:00'),
+        duration: new Duration('PT30M'),
+        client: 'Test client',
+        project: 'Test project',
+        task: 'Test task',
+        notes: 'Test notes',
+      }),
+    ],
+  } = {}) {
     return new Repository('null-file.csv', createFsStub(events));
   }
 

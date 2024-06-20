@@ -5,13 +5,13 @@ export class LogActivity {
     return new LogActivity(timestamp, duration, client, project, task, notes);
   }
 
-  static createNull({
-    timestamp = randomTimestamp(),
-    duration = randomDuration(),
-    client = randomClient(),
-    project = randomProject(),
-    task = randomTask(),
-    notes = randomNotes(),
+  static createTestInstance({
+    timestamp = new Date('2024-06-20T10:30Z'),
+    duration = new Duration('PT30M'),
+    client = 'Test client',
+    project = 'Test project',
+    task = 'Test task',
+    notes = 'Test notes',
   } = {}) {
     return LogActivity.create({
       timestamp,
@@ -45,7 +45,7 @@ export class RecentActivitiesQuery {
     return new RecentActivitiesQuery(today);
   }
 
-  static createNull({ today = new randomDate() }) {
+  static createTestInstance({ today = new Date('2024-06-20T08:00Z') }) {
     return RecentActivitiesQuery.create({
       today,
     });
@@ -242,13 +242,13 @@ export class ActivityLogged {
     );
   }
 
-  static createNull({
-    timestamp = randomTimestamp(),
-    duration = randomDuration(),
-    client = randomClient(),
-    project = randomProject(),
-    task = randomTask(),
-    notes = randomNotes(),
+  static createTestInstance({
+    timestamp = new Date('2024-06-20T10:30Z'),
+    duration = new Duration('PT30M'),
+    client = 'Test client',
+    project = 'Test project',
+    task = 'Test task',
+    notes = 'Test notes',
   } = {}) {
     return ActivityLogged.create({
       timestamp,
@@ -282,13 +282,13 @@ export class Activity {
     return new Activity(timestamp, duration, client, project, task, notes);
   }
 
-  static createNull({
-    timestamp = randomTimestamp(),
-    duration = randomDuration(),
-    client = randomClient(),
-    project = randomProject(),
-    task = randomTask(),
-    notes = randomNotes(),
+  static createTestInstance({
+    timestamp = new Date('2024-06-20T10:30Z'),
+    duration = new Duration('PT30M'),
+    client = 'Test client',
+    project = 'Test project',
+    task = 'Test task',
+    notes = 'Test notes',
   } = {}) {
     return Activity.create({
       timestamp,
@@ -315,42 +315,4 @@ export class Activity {
     this.task = task;
     this.notes = notes;
   }
-}
-
-function randomTimestamp() {
-  return new Date(Math.random() * Date.now());
-}
-
-function randomDate() {
-  const date = new Date(Math.random() * Date.now());
-  date.setHours(0, 0, 0, 0);
-  return date;
-}
-
-function randomDuration() {
-  return new Duration(Math.random() * 60 * 60 * 1000);
-}
-
-function randomClient() {
-  return 'client-' + randomId();
-}
-
-function randomProject() {
-  return 'project-' + randomId();
-}
-
-function randomTask() {
-  return 'task-' + randomId();
-}
-
-function randomNotes() {
-  if (Math.random() < 0.5) {
-    return undefined;
-  }
-
-  return 'notes-' + randomId();
-}
-
-function randomId() {
-  return crypto.randomUUID().substring(0, 8);
 }
