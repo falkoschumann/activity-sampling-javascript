@@ -2,17 +2,17 @@ import { describe, expect, test } from '@jest/globals';
 
 import { Duration } from '@activity-sampling/shared';
 
+import { Activity } from '../../../webserver/src/domain/messages.js';
 import { Api } from '../../src/infrastructure/api.js';
-import { createActivity, createActivityDto } from '../testdata.js';
 
 describe('API', () => {
   test('Logs activity', async () => {
     const api = Api.createNull();
     const activitiesLogged = api.trackActivitiesLogged();
 
-    await api.logActivity(createActivity());
+    await api.logActivity(Activity.createTestInstance());
 
-    expect(activitiesLogged.data).toEqual([createActivity()]);
+    expect(activitiesLogged.data).toEqual([Activity.createTestInstance()]);
   });
 
   test('Loads recent activities', async () => {
@@ -23,8 +23,8 @@ describe('API', () => {
             {
               date: new Date('2023-10-07T00:00Z'),
               activities: [
-                createActivityDto({ timestamp: '2024-03-07T18:00Z' }),
-                createActivityDto({ timestamp: '2024-03-07T17:30Z' }),
+                Activity.createTestInstance({ timestamp: '2024-03-07T18:00Z' }),
+                Activity.createTestInstance({ timestamp: '2024-03-07T17:30Z' }),
               ],
             },
           ],
@@ -45,8 +45,12 @@ describe('API', () => {
         {
           date: new Date('2023-10-07T00:00Z'),
           activities: [
-            createActivity({ timestamp: new Date('2024-03-07T18:00Z') }),
-            createActivity({ timestamp: new Date('2024-03-07T17:30Z') }),
+            Activity.createTestInstance({
+              timestamp: new Date('2024-03-07T18:00Z'),
+            }),
+            Activity.createTestInstance({
+              timestamp: new Date('2024-03-07T17:30Z'),
+            }),
           ],
         },
       ],

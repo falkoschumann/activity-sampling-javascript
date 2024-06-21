@@ -2,10 +2,10 @@ import { describe, expect, test } from '@jest/globals';
 
 import { Clock, Duration, Timer } from '@activity-sampling/shared';
 
+import { Activity } from '../../../webserver/src/domain/messages.js';
 import { Services } from '../../src/application/services.js';
 import { initialState } from '../../src/domain/reducer.js';
 import { Api } from '../../src/infrastructure/api.js';
-import { createActivity, createActivityDto } from '../testdata.js';
 
 // TODO do not write to console while testing
 
@@ -271,9 +271,15 @@ describe('Services', () => {
               {
                 date: new Date('2023-10-07T00:00Z'),
                 activities: [
-                  createActivityDto({ timestamp: '2023-10-07T13:00Z' }),
-                  createActivityDto({ timestamp: '2023-10-07T12:30Z' }),
-                  createActivityDto({ timestamp: '2023-10-07T12:00Z' }),
+                  Activity.createTestInstance({
+                    timestamp: '2023-10-07T13:00Z',
+                  }),
+                  Activity.createTestInstance({
+                    timestamp: '2023-10-07T12:30Z',
+                  }),
+                  Activity.createTestInstance({
+                    timestamp: '2023-10-07T12:00Z',
+                  }),
                 ],
               },
             ],
@@ -294,9 +300,15 @@ describe('Services', () => {
           {
             date: new Date('2023-10-07T00:00Z'),
             activities: [
-              createActivity({ timestamp: new Date('2023-10-07T13:00Z') }),
-              createActivity({ timestamp: new Date('2023-10-07T12:30Z') }),
-              createActivity({ timestamp: new Date('2023-10-07T12:00Z') }),
+              Activity.createTestInstance({
+                timestamp: new Date('2023-10-07T13:00Z'),
+              }),
+              Activity.createTestInstance({
+                timestamp: new Date('2023-10-07T12:30Z'),
+              }),
+              Activity.createTestInstance({
+                timestamp: new Date('2023-10-07T12:00Z'),
+              }),
             ],
           },
         ],
@@ -317,7 +329,9 @@ describe('Services', () => {
               {
                 date: new Date('2023-10-07T00:00Z'),
                 activities: [
-                  createActivityDto({ timestamp: '2023-10-07T13:00Z' }),
+                  Activity.createTestInstance({
+                    timestamp: '2023-10-07T13:00Z',
+                  }),
                 ],
               },
             ],
@@ -330,7 +344,7 @@ describe('Services', () => {
 
       await services.selectRecentActivities();
 
-      const lastActivity = createActivity({
+      const lastActivity = Activity.createTestInstance({
         timestamp: new Date('2023-10-07T13:00Z'),
       });
       expect(services.store.getState().currentActivity).toEqual({
@@ -358,9 +372,9 @@ describe('Services', () => {
             {
               date: new Date('2023-10-07T00:00Z'),
               activities: [
-                createActivity({ timestamp: '2023-10-07T13:00Z' }),
-                createActivity({ timestamp: '2023-10-07T12:30Z' }),
-                createActivity({ timestamp: '2023-10-07T12:00Z' }),
+                Activity.createTestInstance({ timestamp: '2023-10-07T13:00Z' }),
+                Activity.createTestInstance({ timestamp: '2023-10-07T12:30Z' }),
+                Activity.createTestInstance({ timestamp: '2023-10-07T12:00Z' }),
               ],
             },
           ],
