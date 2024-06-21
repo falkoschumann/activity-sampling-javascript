@@ -8,7 +8,7 @@ import {
   validateOptionalProperty,
   validateRequiredProperty,
 } from '@activity-sampling/shared';
-import { ActivityLogged } from '../domain/activities.js';
+import { ActivityLogged } from '../domain/domain.js';
 
 const RFC4180 = {
   delimiter: ',',

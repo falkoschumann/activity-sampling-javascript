@@ -1,6 +1,7 @@
 import { Duration } from '@activity-sampling/shared';
 
 // TODO move to createTestInstance()
+// TODO use modelToDto if DTO needed
 
 export function createActivityDto({
   timestamp = '2023-10-07T11:00Z',

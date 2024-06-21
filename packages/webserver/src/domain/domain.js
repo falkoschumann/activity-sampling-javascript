@@ -1,61 +1,5 @@
 import { Duration } from '@activity-sampling/shared';
 
-export class LogActivity {
-  static create({ timestamp, duration, client, project, task, notes }) {
-    return new LogActivity(timestamp, duration, client, project, task, notes);
-  }
-
-  static createTestInstance({
-    timestamp = new Date('2024-06-20T10:30Z'),
-    duration = new Duration('PT30M'),
-    client = 'Test client',
-    project = 'Test project',
-    task = 'Test task',
-    notes = 'Test notes',
-  } = {}) {
-    return LogActivity.create({
-      timestamp,
-      duration,
-      client,
-      project,
-      task,
-      notes,
-    });
-  }
-
-  constructor(
-    /** @type {Date} */ timestamp,
-    /** @type {Duration} */ duration,
-    /** @type {string} */ client,
-    /** @type {string} */ project,
-    /** @type {string} */ task,
-    /** @type {string} */ notes,
-  ) {
-    this.timestamp = timestamp;
-    this.duration = duration;
-    this.client = client;
-    this.project = project;
-    this.task = task;
-    this.notes = notes;
-  }
-}
-
-export class RecentActivitiesQuery {
-  static create({ today = new Date() } = {}) {
-    return new RecentActivitiesQuery(today);
-  }
-
-  static createTestInstance({ today = new Date('2024-06-20T08:00Z') }) {
-    return RecentActivitiesQuery.create({
-      today,
-    });
-  }
-
-  constructor(/** @type {Date} */ today) {
-    this.today = today;
-  }
-}
-
 export class RecentActivities {
   static create({ activities = [], today = new Date() } = {}) {
     const result = new RecentActivities(today);
@@ -267,46 +211,6 @@ export class ActivityLogged {
     /** @type {string} */ project,
     /** @type {string} */ task,
     /** @type {string} */ notes,
-  ) {
-    this.timestamp = timestamp;
-    this.duration = duration;
-    this.client = client;
-    this.project = project;
-    this.task = task;
-    this.notes = notes;
-  }
-}
-
-export class Activity {
-  static create({ timestamp, duration, client, project, task, notes }) {
-    return new Activity(timestamp, duration, client, project, task, notes);
-  }
-
-  static createTestInstance({
-    timestamp = new Date('2024-06-20T10:30Z'),
-    duration = new Duration('PT30M'),
-    client = 'Test client',
-    project = 'Test project',
-    task = 'Test task',
-    notes = 'Test notes',
-  } = {}) {
-    return Activity.create({
-      timestamp,
-      duration,
-      client,
-      project,
-      task,
-      notes,
-    });
-  }
-
-  constructor(
-    /** @type {Date} */ timestamp,
-    /** @type {Duration} */ duration,
-    /** @type {string} */ client,
-    /** @type {string} */ project,
-    /** @type {string} */ task,
-    /** @type {string!} */ notes,
   ) {
     this.timestamp = timestamp;
     this.duration = duration;

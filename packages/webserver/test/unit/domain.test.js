@@ -2,9 +2,10 @@ import { describe, expect, test } from '@jest/globals';
 
 import { Duration } from '@activity-sampling/shared';
 
-import { Activity, RecentActivities } from '../../src/domain/activities.js';
+import { RecentActivities } from '../../src/domain/domain.js';
+import { Activity } from '../../src/domain/messages.js';
 
-describe('Activities', () => {
+describe('Domain', () => {
   describe('Recent activities', () => {
     describe('Working days', () => {
       test('Returns empty list', () => {

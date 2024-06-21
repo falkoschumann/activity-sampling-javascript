@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import { describe, expect, test } from '@jest/globals';
 
 import { Duration, ValidationError } from '@activity-sampling/shared';
-import { ActivityLogged } from '../../src/domain/activities.js';
+import { ActivityLogged } from '../../src/domain/domain.js';
 import {
   ActivityLoggedDto,
   Repository,

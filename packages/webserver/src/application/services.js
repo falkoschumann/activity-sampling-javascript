@@ -1,4 +1,4 @@
-import { RecentActivities, ActivityLogged } from '../domain/activities.js';
+import { RecentActivities, ActivityLogged } from '../domain/domain.js';
 import { Repository } from '../infrastructure/repository.js';
 
 export class Services {
