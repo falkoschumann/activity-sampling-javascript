@@ -56,6 +56,7 @@ export class Repository extends EventTarget {
   }
 
   async replay() {
+    // TODO Return generator instead of array
     const string = await this.#readFile();
     return this.#parseCsv(string);
   }

@@ -2,16 +2,19 @@ import { describe, expect, test } from '@jest/globals';
 
 import { Duration } from '@activity-sampling/shared';
 
-import { RecentActivities } from '../../src/domain/domain.js';
+import {
+  determineTimeSummary,
+  determineWorkingDays,
+} from '../../src/domain/domain.js';
 import { Activity } from '../../src/domain/messages.js';
 
 describe('Domain', () => {
   describe('Recent activities', () => {
     describe('Working days', () => {
       test('Returns empty list', () => {
-        const result = RecentActivities.create();
+        const days = determineWorkingDays([]);
 
-        expect(result.workingDays).toEqual([]);
+        expect(days).toEqual([]);
       });
 
       test('Returns one day with one activity', () => {
@@ -19,12 +22,12 @@ describe('Domain', () => {
           timestamp: new Date('2024-04-04T10:00Z'),
         });
 
-        const result = RecentActivities.create({
-          activities: [activity],
-          today: new Date('2024-04-07T14:00Z'),
-        });
+        const days = determineWorkingDays(
+          [activity],
+          new Date('2024-04-07T14:00Z'),
+        );
 
-        expect(result.workingDays).toEqual([
+        expect(days).toEqual([
           { date: new Date('2024-04-04T00:00'), activities: [activity] },
         ]);
       });
@@ -40,12 +43,12 @@ describe('Domain', () => {
           timestamp: new Date('2023-10-07T11:00Z'),
         });
 
-        const result = RecentActivities.create({
-          activities: [activity1, activity2, activity3],
-          today: new Date('2023-10-07T14:00Z'),
-        });
+        const days = determineWorkingDays(
+          [activity1, activity2, activity3],
+          new Date('2023-10-07T14:00Z'),
+        );
 
-        expect(result.workingDays).toEqual([
+        expect(days).toEqual([
           {
             date: new Date('2023-10-07T00:00'),
             activities: [activity3, activity2, activity1],
@@ -64,12 +67,12 @@ describe('Domain', () => {
           timestamp: new Date('2023-10-08T10:00Z'),
         });
 
-        const result = RecentActivities.create({
-          activities: [activity1, activity2, activity3],
-          today: new Date('2023-10-08T14:00Z'),
-        });
+        const days = determineWorkingDays(
+          [activity1, activity2, activity3],
+          new Date('2023-10-08T14:00Z'),
+        );
 
-        expect(result.workingDays).toEqual([
+        expect(days).toEqual([
           {
             date: new Date('2023-10-08T00:00'),
             activities: [activity3],
@@ -96,12 +99,12 @@ describe('Domain', () => {
           timestamp: new Date('2024-04-04T10:00Z'),
         });
 
-        const result = RecentActivities.create({
-          activities: [activity1, activity2, activity3],
-          today: new Date('2024-04-04T14:00Z'),
-        });
+        const days = determineWorkingDays(
+          [activity1, activity2, activity3],
+          new Date('2024-04-04T14:00Z'),
+        );
 
-        expect(result.workingDays).toEqual([
+        expect(days).toEqual([
           {
             date: new Date('2024-04-04T00:00'),
             activities: [activity3],
@@ -114,11 +117,11 @@ describe('Domain', () => {
       });
     });
 
-    describe('Time summary', () => {
+    describe('Determine time summary', () => {
       test('Returns zero hours', () => {
-        const result = RecentActivities.create();
+        const summary = determineTimeSummary([]);
 
-        expect(result.timeSummary).toEqual({
+        expect(summary).toEqual({
           hoursToday: Duration.zero(),
           hoursYesterday: Duration.zero(),
           hoursThisWeek: Duration.zero(),
@@ -127,8 +130,8 @@ describe('Domain', () => {
       });
 
       test('Sums hours today', () => {
-        const result = RecentActivities.create({
-          activities: [
+        const summary = determineTimeSummary(
+          [
             Activity.createTestInstance({
               timestamp: new Date('2023-10-06T12:00'), // yesterday
               duration: new Duration('PT15M'),
@@ -146,20 +149,21 @@ describe('Domain', () => {
               duration: new Duration('PT60M'),
             }),
           ],
-          today: new Date('2023-10-07T00:00'),
-        });
+          new Date('2023-10-07T00:00'),
+        );
 
-        expect(result.timeSummary).toEqual({
+        expect(summary).toEqual({
           hoursToday: new Duration('PT50M'),
           hoursYesterday: new Duration('PT15M'),
-          hoursThisWeek: new Duration('PT1H5M'),
-          hoursThisMonth: new Duration('PT1H5M'),
+          // Also add up hours in the future, such as planned vacation days
+          hoursThisWeek: new Duration('PT2H5M'),
+          hoursThisMonth: new Duration('PT2H5M'),
         });
       });
 
       test('Sums hours yesterday', () => {
-        const result = RecentActivities.create({
-          activities: [
+        const summary = determineTimeSummary(
+          [
             Activity.createTestInstance({
               timestamp: new Date('2023-10-06T12:00'), // the day before yesterday
               duration: new Duration('PT15M'),
@@ -177,10 +181,10 @@ describe('Domain', () => {
               duration: new Duration('PT60M'),
             }),
           ],
-          today: new Date('2023-10-08T00:00'),
-        });
+          new Date('2023-10-08T00:00'),
+        );
 
-        expect(result.timeSummary).toEqual({
+        expect(summary).toEqual({
           hoursToday: new Duration('PT60M'),
           hoursYesterday: new Duration('PT50M'),
           hoursThisWeek: new Duration('PT2H5M'),
@@ -189,8 +193,8 @@ describe('Domain', () => {
       });
 
       test('Sums hours this week on a sunday', () => {
-        const result = RecentActivities.create({
-          activities: [
+        const summary = determineTimeSummary(
+          [
             Activity.createTestInstance({
               timestamp: new Date('2023-10-08T12:00'), // sunday last week
               duration: new Duration('PT15M'),
@@ -208,20 +212,21 @@ describe('Domain', () => {
               duration: new Duration('PT60M'),
             }),
           ],
-          today: new Date('2023-10-15T00:00'),
-        });
+          new Date('2023-10-15T00:00'),
+        );
 
-        expect(result.timeSummary).toEqual({
+        expect(summary).toEqual({
           hoursToday: new Duration('PT30M'),
           hoursYesterday: Duration.zero(),
           hoursThisWeek: new Duration('PT50M'),
-          hoursThisMonth: new Duration('PT1H5M'),
+          // Also add up hours in the future, such as planned vacation days
+          hoursThisMonth: new Duration('PT2H5M'),
         });
       });
 
       test('Sums hours this week on a monday', () => {
-        const result = RecentActivities.create({
-          activities: [
+        const summary = determineTimeSummary(
+          [
             Activity.createTestInstance({
               timestamp: new Date('2023-10-09T12:00'), // monday last week
               duration: new Duration('PT15M'),
@@ -239,20 +244,21 @@ describe('Domain', () => {
               duration: new Duration('PT60M'),
             }),
           ],
-          today: new Date('2023-10-16T00:00'),
-        });
+          new Date('2023-10-16T00:00'),
+        );
 
-        expect(result.timeSummary).toEqual({
+        expect(summary).toEqual({
           hoursToday: new Duration('PT30M'),
           hoursYesterday: new Duration('PT20M'),
-          hoursThisWeek: new Duration('PT30M'),
-          hoursThisMonth: new Duration('PT1H5M'),
+          // Also add up hours in the future, such as planned vacation days
+          hoursThisWeek: new Duration('PT1H30M'),
+          hoursThisMonth: new Duration('PT2H5M'),
         });
       });
 
       test('Sums hours this month', () => {
-        const result = RecentActivities.create({
-          activities: [
+        const summary = determineTimeSummary(
+          [
             Activity.createTestInstance({
               timestamp: new Date('2023-09-30T12:00'), // last day last month
               duration: new Duration('PT15M'),
@@ -270,13 +276,15 @@ describe('Domain', () => {
               duration: new Duration('PT60M'),
             }),
           ],
-          today: new Date('2023-10-31T00:00'),
-        });
+          new Date('2023-10-31T00:00'),
+        );
 
-        expect(result.timeSummary).toEqual({
+        expect(summary).toEqual({
           hoursToday: new Duration('PT30M'),
           hoursYesterday: Duration.zero(),
-          hoursThisWeek: new Duration('PT30M'),
+          // Also add up hours in the future, such as planned vacation days
+          hoursThisWeek: new Duration('PT1H30M'),
+          // Do not add up hours in the next month
           hoursThisMonth: new Duration('PT50M'),
         });
       });

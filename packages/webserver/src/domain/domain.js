@@ -1,42 +1,31 @@
 import { Duration } from '@activity-sampling/shared';
+import { RecentActivities, TimeSummary } from './messages.js';
 
-export class RecentActivities {
-  static create({ activities = [], today = new Date() } = {}) {
-    const result = new RecentActivities(today);
-    for (const activity of activities) {
-      result.add(activity);
-    }
-    return result;
-  }
+export function determineRecentActivities(activities, today = new Date()) {
+  const workingDays = determineWorkingDays(activities, today);
+  const timeSummary = determineTimeSummary(activities, today);
+  return RecentActivities.create({ workingDays, timeSummary });
+}
 
-  #startDate;
-  /** @type {WorkingDay[]} */ workingDays = [];
-  timeSummary;
-
-  constructor(/** @type {Date} */ today) {
-    this.#startDate = toDate(new Date(today - 30 * 24 * 60 * 60 * 1000));
-    this.timeSummary = TimeSummary.create({ today });
-  }
-
-  add(activity) {
-    if (activity.timestamp < this.#startDate) {
-      return;
-    }
-
-    this.#addToWorkingDays(activity);
-    this.timeSummary.add(activity);
-  }
-
-  #addToWorkingDays(activity) {
+export function determineWorkingDays(activities, today = new Date()) {
+  const period = 30 * 24 * 60 * 60 * 1000; // 30 days
+  const startDate = toDate(new Date(today - period));
+  const days = [];
+  for (const activity of activities) {
     const date = toDate(activity.timestamp);
-    let day = this.workingDays.find((d) => equalsDate(d.date, date));
+    if (date < startDate) {
+      continue;
+    }
+
+    let day = days.find((d) => equalsDate(d.date, date));
     if (day == null) {
       day = WorkingDay.create({ date });
-      this.workingDays.push(day);
-      this.workingDays.sort((a, b) => b.date - a.date);
+      days.push(day);
+      days.sort((a, b) => b.date - a.date);
     }
     day.add(activity);
   }
+  return days;
 }
 
 export class WorkingDay {
@@ -55,69 +44,33 @@ export class WorkingDay {
   }
 }
 
-export class TimeSummary {
-  static create({
-    today = new Date(),
-    hoursToday = new Duration(),
-    hoursYesterday = new Duration(),
-    hoursThisWeek = new Duration(),
-    hoursThisMonth = new Duration(),
-  } = {}) {
-    return new TimeSummary(
-      today,
-      hoursToday,
-      hoursYesterday,
-      hoursThisWeek,
-      hoursThisMonth,
-    );
-  }
-
-  #today;
-
-  constructor(
-    /** @type {Date} */ today,
-    /** @type {Duration} */ hoursToday,
-    /** @type {Duration} */ hoursYesterday,
-    /** @type {Duration} */ hoursThisWeek,
-    /** @type {Duration} */ hoursThisMonth,
-  ) {
-    this.#today = today;
-    this.hoursToday = hoursToday;
-    this.hoursYesterday = hoursYesterday;
-    this.hoursThisWeek = hoursThisWeek;
-    this.hoursThisMonth = hoursThisMonth;
-  }
-
-  add(activity) {
-    this.#addActivityToHoursToday(activity);
-    this.#addActivityToHoursYesterday(activity);
-    this.#addActivityToHoursThisWeek(activity);
-    this.#addActivityToHoursThisMonth(activity);
-  }
-
-  #addActivityToHoursToday(activity) {
-    if (isToday(activity.timestamp, this.#today)) {
-      this.hoursToday.plus(activity.duration);
+export function determineTimeSummary(activities, today = new Date()) {
+  const hoursYesterday = new Duration();
+  const hoursToday = new Duration();
+  const hoursThisWeek = new Duration();
+  const hoursThisMonth = new Duration();
+  for (const activity of activities) {
+    if (isSameDay(activity.timestamp, today)) {
+      hoursToday.plus(activity.duration);
+    }
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    if (isSameDay(activity.timestamp, yesterday)) {
+      hoursYesterday.plus(activity.duration);
+    }
+    if (isSameWeek(activity.timestamp, today)) {
+      hoursThisWeek.plus(activity.duration);
+    }
+    if (isSameMonth(activity.timestamp, today)) {
+      hoursThisMonth.plus(activity.duration);
     }
   }
-
-  #addActivityToHoursYesterday(activity) {
-    if (isYesterday(activity.timestamp, this.#today)) {
-      this.hoursYesterday.plus(activity.duration);
-    }
-  }
-
-  #addActivityToHoursThisWeek(activity) {
-    if (isThisWeek(activity.timestamp, this.#today)) {
-      this.hoursThisWeek.plus(activity.duration);
-    }
-  }
-
-  #addActivityToHoursThisMonth(activity) {
-    if (isThisMonth(activity.timestamp, this.#today)) {
-      this.hoursThisMonth.plus(activity.duration);
-    }
-  }
+  return TimeSummary.create({
+    hoursYesterday,
+    hoursToday,
+    hoursThisWeek,
+    hoursThisMonth,
+  });
 }
 
 function toDate(timestamp) {
@@ -130,18 +83,12 @@ function equalsDate(date1, date2) {
   return date1.toDateString() === date2.toDateString();
 }
 
-function isToday(date, today) {
-  return equalsDate(date, today);
-}
-
-function isYesterday(date, today) {
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
-  return equalsDate(date, yesterday);
-}
-
-function isThisWeek(date, today, boundaryDay = 1) {
-  return toDate(date) <= toDate(today) && isSameWeek(date, today, boundaryDay);
+function isSameDay(date1, date2) {
+  return (
+    date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth() &&
+    date1.getDate() === date2.getDate()
+  );
 }
 
 function isSameWeek(date1, date2, boundaryDay = 1) {
@@ -170,8 +117,11 @@ function isSameWeek(date1, date2, boundaryDay = 1) {
   return d1BoundaryDist <= d2BoundaryDist;
 }
 
-function isThisMonth(date, today) {
-  return toDate(date) <= toDate(today) && date.getMonth() === today.getMonth();
+function isSameMonth(date1, date2) {
+  return (
+    date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth()
+  );
 }
 
 export class ActivityLogged {

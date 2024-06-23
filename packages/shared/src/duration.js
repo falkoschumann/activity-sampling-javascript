@@ -3,7 +3,8 @@ export class Duration {
     return new Duration();
   }
 
-  /** Parse a string like `[-]PT[hH][mM][s[.f]S]`. */
+  /* TODO Parse a ISO 8601 string like `[-]P[dD]T[hH][mM][s[.f]S]`. */
+  /** Parse a ISO 8601 string like `[-]PT[hH][mM][s[.f]S]`. */
   static parse(isoString) {
     const match = isoString.match(
       /^(-)?PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+\.?\d*)S)?$/,

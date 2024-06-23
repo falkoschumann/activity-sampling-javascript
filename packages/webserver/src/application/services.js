@@ -1,5 +1,10 @@
-import { RecentActivities, ActivityLogged } from '../domain/domain.js';
+import { ActivityLogged, determineRecentActivities } from '../domain/domain.js';
 import { Repository } from '../infrastructure/repository.js';
+
+/**
+ * @typedef {import('../domain/messages.js').LogActivity} LogActivity
+ * @typedef {import('../domain/messages.js').RecentActivitiesQuery} RecentActivitiesQuery
+ */
 
 export class Services {
   static create() {
@@ -14,20 +19,13 @@ export class Services {
     this.repository = repository;
   }
 
-  async logActivity({ timestamp, duration, client, project, task, notes }) {
-    const activityLogged = ActivityLogged.create({
-      timestamp,
-      duration,
-      client,
-      project,
-      task,
-      notes,
-    });
+  async logActivity(/** @type {LogActivity} */ command) {
+    const activityLogged = ActivityLogged.create(command);
     await this.repository.record(activityLogged);
   }
 
-  async selectRecentActivities({ today }) {
+  async selectRecentActivities(/** @type {RecentActivitiesQuery} */ query) {
     const activities = await this.repository.replay();
-    return RecentActivities.create({ activities, today });
+    return determineRecentActivities(activities, query.today);
   }
 }
