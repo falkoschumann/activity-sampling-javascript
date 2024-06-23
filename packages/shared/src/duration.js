@@ -3,23 +3,28 @@ export class Duration {
     return new Duration();
   }
 
-  /* TODO Parse a ISO 8601 string like `[-]P[dD]T[hH][mM][s[.f]S]`. */
-  /** Parse a ISO 8601 string like `[-]PT[hH][mM][s[.f]S]`. */
+  /** Parse a ISO 8601 string like `[-]P[dD]T[hH][mM][s[.f]S]`. */
   static parse(isoString) {
     const match = isoString.match(
-      /^(-)?PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+\.?\d*)S)?$/,
+      /^(-)?P(?:(\d+)D)?T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+\.?\d*)S)?$/,
     );
     if (match == null) {
       return new Duration(NaN);
     }
 
     const sign = match[1] === '-' ? -1 : 1;
-    const hours = Number(match[2] || 0);
-    const minutes = Number(match[3] || 0);
-    const seconds = Number(match[4] || 0);
-    const millis = Number(match[5] || 0);
+    const days = Number(match[2] || 0);
+    const hours = Number(match[3] || 0);
+    const minutes = Number(match[4] || 0);
+    const seconds = Number(match[5] || 0);
+    const millis = Number(match[6] || 0);
     return new Duration(
-      sign * (hours * 3600000 + minutes * 60000 + seconds * 1000 + millis),
+      sign *
+        (days * 86400000 +
+          hours * 3600000 +
+          minutes * 60000 +
+          seconds * 1000 +
+          millis),
     );
   }
 
@@ -56,12 +61,21 @@ export class Duration {
     return this.millis > 0;
   }
 
+  get days() {
+    return this.millis / 86400000;
+  }
+
+  get daysPart() {
+    const value = this.millis / 86400000;
+    return this.isNegative ? Math.ceil(value) : Math.floor(value);
+  }
+
   get hours() {
     return this.millis / 3600000;
   }
 
   get hoursPart() {
-    const value = this.millis / 3600000;
+    const value = (this.millis - this.daysPart * 86400000) / 3600000;
     return this.isNegative ? Math.ceil(value) : Math.floor(value);
   }
 
@@ -70,7 +84,9 @@ export class Duration {
   }
 
   get minutesPart() {
-    const value = (this.millis - this.hoursPart * 3600000) / 60000;
+    const value =
+      (this.millis - this.daysPart * 86400000 - this.hoursPart * 3600000) /
+      60000;
     return this.isNegative ? Math.ceil(value) : Math.floor(value);
   }
 
@@ -80,7 +96,10 @@ export class Duration {
 
   get secondsPart() {
     const value =
-      (this.millis - this.hoursPart * 3600000 - this.minutesPart * 60000) /
+      (this.millis -
+        this.daysPart * 86400000 -
+        this.hoursPart * 3600000 -
+        this.minutesPart * 60000) /
       1000;
     return this.isNegative ? Math.ceil(value) : Math.floor(value);
   }
@@ -88,6 +107,7 @@ export class Duration {
   get millisPart() {
     const value =
       this.millis -
+      this.daysPart * 86400000 -
       this.hoursPart * 3600000 -
       this.minutesPart * 60000 -
       this.secondsPart * 1000;
@@ -114,27 +134,37 @@ export class Duration {
 
   toISOString() {
     const value = this.absolutized();
-    let result = 'PT';
+
+    let period = 'P';
+    const days = value.daysPart;
+    if (days > 0) {
+      period += `${days}D`;
+    }
+
+    let time = '';
     const hours = value.hoursPart;
     if (hours > 0) {
-      result += `${hours}H`;
+      time += `${hours}H`;
     }
     const minutes = value.minutesPart;
     if (minutes > 0) {
-      result += `${minutes}M`;
+      time += `${minutes}M`;
     }
     const seconds = value.secondsPart;
     const millis = value.millisPart;
     if (seconds > 0 || millis > 0) {
-      result += `${seconds + millis / 1000}S`;
+      time += `${seconds + millis / 1000}S`;
     }
-    if (result === 'PT') {
-      result += '0S';
+    if (time !== '') {
+      period += `T${time}`;
+    }
+    if (period === 'P') {
+      period += 'T0S';
     }
     if (this.isNegative) {
-      result = `-${result}`;
+      period = `-${period}`;
     }
-    return result;
+    return period;
   }
 
   toJSON() {
@@ -147,7 +177,7 @@ export class Duration {
     }
 
     const value = this.absolutized();
-    const hours = String(value.hoursPart).padStart(2, '0');
+    const hours = String(Math.floor(value.hours)).padStart(2, '0');
     const minutes = String(value.minutesPart).padStart(2, '0');
     const seconds = String(value.secondsPart).padStart(2, '0');
     let result = `${hours}:${minutes}`;
