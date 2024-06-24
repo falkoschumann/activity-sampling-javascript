@@ -4,8 +4,8 @@ import { describe, expect, test } from '@jest/globals';
 import request from 'supertest';
 
 import { Duration, Level, Logger } from '@activity-sampling/shared';
+import { Activity, LogActivity } from '@activity-sampling/domain';
 import { Services } from '../../src/application/services.js';
-import { Activity, LogActivity } from '../../src/domain/messages.js';
 import { Repository } from '../../src/infrastructure/repository.js';
 import { Application } from '../../src/ui/application.js';
 

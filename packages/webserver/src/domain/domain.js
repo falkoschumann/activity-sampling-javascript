@@ -1,5 +1,5 @@
 import { Duration } from '@activity-sampling/shared';
-import { RecentActivities, TimeSummary } from './messages.js';
+import { RecentActivities, TimeSummary } from '@activity-sampling/domain';
 
 export function determineRecentActivities(activities, today = new Date()) {
   const workingDays = determineWorkingDays(activities, today);

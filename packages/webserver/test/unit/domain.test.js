@@ -1,12 +1,11 @@
 import { describe, expect, test } from '@jest/globals';
 
 import { Duration } from '@activity-sampling/shared';
-
+import { Activity } from '@activity-sampling/domain';
 import {
   determineTimeSummary,
   determineWorkingDays,
 } from '../../src/domain/domain.js';
-import { Activity } from '../../src/domain/messages.js';
 
 describe('Domain', () => {
   describe('Recent activities', () => {

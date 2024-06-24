@@ -4,7 +4,6 @@ import {
   validateRequiredProperty,
 } from '@activity-sampling/shared';
 
-// TODO extract domain package
 // TODO treat messages as DTOs with validation
 
 export class LogActivity {

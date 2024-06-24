@@ -1,0 +1,21 @@
+{
+  "name": "@activity-sampling/domain",
+  "version": "0.1.0",
+  "author": "Falko Schumann",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.7.0"
+  },
+  "type": "module",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "npx jest"
+  },
+  "dependencies": {
+    "@activity-sampling/shared": "0.1.0"
+  },
+  "devDependencies": {
+    "@jest/globals": "29.7.0",
+    "jest": "29.7.0"
+  }
+}

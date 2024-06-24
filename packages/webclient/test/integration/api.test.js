@@ -2,7 +2,7 @@ import { describe, expect, test } from '@jest/globals';
 
 import { Duration } from '@activity-sampling/shared';
 
-import { Activity } from '../../../webserver/src/domain/messages.js';
+import { Activity } from '@activity-sampling/domain';
 import { Api } from '../../src/infrastructure/api.js';
 
 describe('API', () => {

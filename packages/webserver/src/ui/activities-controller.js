@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { LogActivity, RecentActivitiesQuery } from '../domain/messages.js';
+import { LogActivity, RecentActivitiesQuery } from '@activity-sampling/domain';
 import { reply, runSafe } from './handler.js';
 
 /**

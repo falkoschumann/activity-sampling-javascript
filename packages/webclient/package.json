@@ -14,7 +14,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@activity-sampling/core": "0.1.0",
+    "@activity-sampling/domain": "0.1.0",
+    "@activity-sampling/shared": "0.1.0",
     "lit-html": "3.1.4"
   },
   "devDependencies": {

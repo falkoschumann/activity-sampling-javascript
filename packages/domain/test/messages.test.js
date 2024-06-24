@@ -1,10 +1,7 @@
 import { describe, expect, test } from '@jest/globals';
 
-import {
-  LogActivity,
-  RecentActivitiesQuery,
-} from '../../src/domain/messages.js';
 import { ValidationError } from '@activity-sampling/shared';
+import { LogActivity, RecentActivitiesQuery } from '../src/messages.js';
 
 describe('Messages', () => {
   describe('Log activity', () => {

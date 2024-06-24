@@ -2,7 +2,7 @@ import { describe, expect, test } from '@jest/globals';
 
 import { Clock, Duration, Timer } from '@activity-sampling/shared';
 
-import { Activity } from '../../../webserver/src/domain/messages.js';
+import { Activity } from '@activity-sampling/domain';
 import { Services } from '../../src/application/services.js';
 import { initialState } from '../../src/domain/reducer.js';
 import { Api } from '../../src/infrastructure/api.js';
