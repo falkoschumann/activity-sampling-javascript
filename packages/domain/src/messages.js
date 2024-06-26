@@ -98,7 +98,7 @@ export class RecentActivitiesQuery {
     return new RecentActivitiesQuery(today);
   }
 
-  static createTestInstance({ today = new Date('2024-06-20T08:00Z') }) {
+  static createTestInstance({ today = new Date('2024-06-20T08:00Z') } = {}) {
     return RecentActivitiesQuery.create({
       today,
     });
@@ -125,30 +125,41 @@ export class RecentActivities {
   }
 
   static createTestInstance({
-    workingDays = WorkingDay.createTestInstance(),
+    workingDays = [WorkingDay.createTestInstance()],
     timeSummary = TimeSummary.createTestInstance(),
   } = {}) {
     return new RecentActivities(workingDays, timeSummary);
   }
 
   constructor(
-    /** @type {WorkingDay[]} */ workingDays = [],
+    /** @type {WorkingDay[]} */ workingDays,
     /** @type {TimeSummary} */ timeSummary,
   ) {
     this.workingDays = workingDays;
     this.timeSummary = timeSummary;
   }
 
-  // TODO Implement validate()
+  validate() {
+    const workingDays = validateRequiredProperty(
+      this,
+      'RecentActivities',
+      'workingDays',
+      'array',
+    ).map((workingDay) => WorkingDay.create(workingDay).validate());
+    const timeSummary = TimeSummary.create(
+      validateRequiredProperty(this, 'RecentActivities', 'timeSummary'),
+    ).validate();
+    return RecentActivities.create({ workingDays, timeSummary });
+  }
 }
 
 export class WorkingDay {
-  static create({ date = new Date(), activities = [] } = {}) {
+  static create({ date, activities } = {}) {
     return new WorkingDay(date, activities);
   }
 
   static createTestInstance({
-    date = new Date(),
+    date = new Date('2024-06-20T00:00'),
     activities = [Activity.createTestInstance()],
   } = {}) {
     return WorkingDay.create({ date, activities });
@@ -159,7 +170,16 @@ export class WorkingDay {
     this.activities = activities;
   }
 
-  // TODO Implement validate()
+  validate() {
+    const date = validateRequiredProperty(this, 'WorkingDay', 'date', Date);
+    const activities = validateRequiredProperty(
+      this,
+      'WorkingDay',
+      'activities',
+      'array',
+    ).map((activity) => Activity.create(activity).validate());
+    return WorkingDay.create({ date, activities });
+  }
 }
 
 export class Activity {
@@ -168,7 +188,7 @@ export class Activity {
   }
 
   static createTestInstance({
-    timestamp = new Date('2024-06-20T10:30Z'),
+    timestamp = new Date('2024-06-20T12:30'),
     duration = new Duration('PT30M'),
     client = 'Test client',
     project = 'Test project',
@@ -201,15 +221,50 @@ export class Activity {
     this.notes = notes;
   }
 
-  // TODO Implement validate()
+  validate() {
+    const timestamp = validateRequiredProperty(
+      this,
+      'Activity',
+      'timestamp',
+      Date,
+    );
+    const duration = validateRequiredProperty(
+      this,
+      'Activity',
+      'duration',
+      Duration,
+    );
+    const client = validateRequiredProperty(
+      this,
+      'Activity',
+      'client',
+      'string',
+    );
+    const project = validateRequiredProperty(
+      this,
+      'Activity',
+      'project',
+      'string',
+    );
+    const task = validateRequiredProperty(this, 'Activity', 'task', 'string');
+    const notes = validateOptionalProperty(this, 'Activity', 'notes', 'string');
+    return Activity.create({
+      timestamp,
+      duration,
+      client,
+      project,
+      task,
+      notes,
+    });
+  }
 }
 
 export class TimeSummary {
   static create({
-    hoursToday = new Duration(),
-    hoursYesterday = new Duration(),
-    hoursThisWeek = new Duration(),
-    hoursThisMonth = new Duration(),
+    hoursToday,
+    hoursYesterday,
+    hoursThisWeek,
+    hoursThisMonth,
   } = {}) {
     return new TimeSummary(
       hoursToday,
@@ -245,5 +300,36 @@ export class TimeSummary {
     this.hoursThisMonth = hoursThisMonth;
   }
 
-  // TODO Implement validate()
+  validate() {
+    const hoursToday = validateRequiredProperty(
+      this,
+      'TimeSummary',
+      'hoursToday',
+      Duration,
+    );
+    const hoursYesterday = validateRequiredProperty(
+      this,
+      'TimeSummary',
+      'hoursYesterday',
+      Duration,
+    );
+    const hoursThisWeek = validateRequiredProperty(
+      this,
+      'TimeSummary',
+      'hoursThisWeek',
+      Duration,
+    );
+    const hoursThisMonth = validateRequiredProperty(
+      this,
+      'TimeSummary',
+      'hoursThisMonth',
+      Duration,
+    );
+    return TimeSummary.create({
+      hoursToday,
+      hoursYesterday,
+      hoursThisWeek,
+      hoursThisMonth,
+    });
+  }
 }
