@@ -1,8 +1,8 @@
 import {
   ConfigurableResponses,
-  Duration,
   OutputTracker,
 } from '@activity-sampling/shared';
+import { RecentActivities } from '@activity-sampling/domain';
 
 export const ACTIVITY_LOGGED_EVENT = 'activity-logged';
 
@@ -39,33 +39,12 @@ export class Api extends EventTarget {
     return new OutputTracker(this, ACTIVITY_LOGGED_EVENT);
   }
 
-  async loadRecentActivities() {
+  async selectRecentActivities() {
     const response = await this.#fetch('/api/recent-activities');
-    const dto = await response.json();
-    return mapRecentActivities(dto);
+    const json = await response.json();
+    const dto = RecentActivities.create(json);
+    return dto.validate();
   }
-}
-
-function mapRecentActivities(dto) {
-  return {
-    workingDays: dto.workingDays.map((dtoDay) => ({
-      date: new Date(dtoDay.date),
-      activities: dtoDay.activities.map((dtoActivity) => ({
-        timestamp: new Date(dtoActivity.timestamp),
-        duration: new Duration(dtoActivity.duration),
-        client: dtoActivity.client,
-        project: dtoActivity.project,
-        task: dtoActivity.task,
-        notes: dtoActivity.notes,
-      })),
-    })),
-    timeSummary: {
-      hoursToday: new Duration(dto.timeSummary.hoursToday),
-      hoursYesterday: new Duration(dto.timeSummary.hoursYesterday),
-      hoursThisWeek: new Duration(dto.timeSummary.hoursThisWeek),
-      hoursThisMonth: new Duration(dto.timeSummary.hoursThisMonth),
-    },
-  };
 }
 
 function createFetchStub(responses) {

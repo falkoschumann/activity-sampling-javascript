@@ -337,6 +337,9 @@ describe('Services', () => {
             ],
             timeSummary: {
               hoursToday: 'PT1H30M',
+              hoursYesterday: 'PT0S',
+              hoursThisWeek: 'PT1H30M',
+              hoursThisMonth: 'PT1H30M',
             },
           },
         },

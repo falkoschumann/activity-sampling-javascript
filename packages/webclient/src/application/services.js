@@ -85,7 +85,7 @@ export class Services {
   }
 
   async selectRecentActivities() {
-    const recentActivities = await this.#api.loadRecentActivities();
+    const recentActivities = await this.#api.selectRecentActivities();
     this.#store.dispatch({
       type: 'recent-activities-loaded',
       recentActivities,

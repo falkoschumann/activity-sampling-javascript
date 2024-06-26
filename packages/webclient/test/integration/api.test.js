@@ -38,7 +38,7 @@ describe('API', () => {
       },
     });
 
-    const activities = await api.loadRecentActivities();
+    const activities = await api.selectRecentActivities();
 
     expect(activities).toEqual({
       workingDays: [
