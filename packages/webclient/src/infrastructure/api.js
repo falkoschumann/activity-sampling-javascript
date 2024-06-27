@@ -4,6 +4,10 @@ import {
 } from '@activity-sampling/shared';
 import { RecentActivities } from '@activity-sampling/domain';
 
+/**
+ * @typedef {import('@activity-sampling/domain').LogActivity} LogActivity
+ */
+
 export const ACTIVITY_LOGGED_EVENT = 'activity-logged';
 
 export class Api extends EventTarget {
@@ -22,8 +26,7 @@ export class Api extends EventTarget {
     this.#fetch = fetch;
   }
 
-  async logActivity({ timestamp, duration, client, project, task, notes }) {
-    const activity = { timestamp, duration, client, project, task, notes };
+  async logActivity(/** @type {LogActivity} */ activity) {
     const body = JSON.stringify(activity);
     await this.#fetch('/api/log-activity', {
       method: 'POST',
