@@ -26,10 +26,6 @@ export const initialState = {
       hoursThisMonth: new Duration(),
     },
   },
-  hoursWorked: {
-    report: [],
-    totalHours: new Duration(),
-  },
 };
 
 export function reducer(state = initialState, action) {
@@ -48,8 +44,6 @@ export function reducer(state = initialState, action) {
       return countdownStopped(state, action);
     case 'recent-activities-loaded':
       return recentActivitiesLoaded(state, action);
-    case 'hours-worked-loaded':
-      return hoursWorkedLoaded(state, action);
     default:
       return state;
   }
@@ -184,8 +178,4 @@ function recentActivitiesLoaded(state, { recentActivities }) {
     },
     recentActivities,
   };
-}
-
-function hoursWorkedLoaded(state, { hoursWorked }) {
-  return { ...state, hoursWorked };
 }

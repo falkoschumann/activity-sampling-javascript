@@ -91,9 +91,4 @@ export class Services {
       recentActivities,
     });
   }
-
-  async selectHoursWorked() {
-    const hoursWorked = await this.#api.loadHoursWorked();
-    this.#store.dispatch({ type: 'hours-worked-loaded', hoursWorked });
-  }
 }
