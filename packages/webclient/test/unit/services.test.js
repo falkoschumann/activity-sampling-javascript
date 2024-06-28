@@ -7,8 +7,6 @@ import { Services } from '../../src/application/services.js';
 import { initialState } from '../../src/domain/reducer.js';
 import { Api } from '../../src/infrastructure/api.js';
 
-// TODO do not write to console while testing
-
 describe('Services', () => {
   describe('Log activity', () => {
     describe('Logs the activity with client, project, task and optional notes', () => {

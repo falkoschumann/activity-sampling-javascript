@@ -4,8 +4,6 @@ import {
   validateRequiredProperty,
 } from '@activity-sampling/shared';
 
-// TODO treat messages as DTOs with validation
-
 export class LogActivity {
   static create({ timestamp, duration, client, project, task, notes } = {}) {
     return new LogActivity(timestamp, duration, client, project, task, notes);
