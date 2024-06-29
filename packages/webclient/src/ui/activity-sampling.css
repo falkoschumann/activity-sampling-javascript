@@ -1,4 +1,4 @@
-m-activity-sampling-app {
+m-activity-sampling {
   height: 100vh;
   padding: 8px;
   display: flex;
@@ -8,7 +8,7 @@ m-activity-sampling-app {
   background-color: var(--white);
 }
 
-m-activity-sampling-app > main {
+m-activity-sampling > main {
   display: block;
   flex: 1 1 1px;
   overflow-y: auto;

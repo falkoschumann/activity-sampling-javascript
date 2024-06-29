@@ -5,16 +5,14 @@ import './reset.css';
 import './fragments.css';
 import './components.css';
 import './modules.css';
-import './activity-sampling-app.css';
+import './activity-sampling.css';
 import './current-activity.js';
 import './countdown.js';
 import './recent-activities.js';
 import './time-summary.js';
 import { Container } from './components.js';
 
-// TODO name without suffix app
-
-class ActivitySamplingAppComponent extends Container {
+class ActivitySamplingComponent extends Container {
   #currentActivityRef = createRef();
 
   connectedCallback() {
@@ -69,7 +67,4 @@ class ActivitySamplingAppComponent extends Container {
   }
 }
 
-window.customElements.define(
-  'm-activity-sampling-app',
-  ActivitySamplingAppComponent,
-);
+window.customElements.define('m-activity-sampling', ActivitySamplingComponent);

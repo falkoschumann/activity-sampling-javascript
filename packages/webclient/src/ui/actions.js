@@ -7,6 +7,7 @@ const api = Api.create();
 
 const notifer = new Notifier();
 
+// TODO remove actions if services are used directly
 // TODO create missing service functions for notifier
 // TODO on startup refresh and request notifications
 
