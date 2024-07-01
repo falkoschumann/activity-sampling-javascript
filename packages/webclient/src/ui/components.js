@@ -3,12 +3,6 @@ import { html, render } from 'lit-html';
 import { Services } from '../application/services.js';
 
 export class Component extends HTMLElement {
-  static #services = Services.create();
-
-  get services() {
-    return Component.#services;
-  }
-
   connectedCallback() {
     this.updateView();
   }
@@ -31,11 +25,16 @@ export class Component extends HTMLElement {
 }
 
 export class Container extends Component {
+  static #services = Services.create();
   #unsubscribeStore;
 
   constructor() {
     super();
     this.oldState = this.state = {};
+  }
+
+  get services() {
+    return Container.#services;
   }
 
   connectedCallback() {
