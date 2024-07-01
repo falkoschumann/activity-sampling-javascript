@@ -1,4 +1,5 @@
-import { Clock } from './clock.js';
+import fsPromises from 'fs/promises';
+
 import { OutputTracker } from './output-tracker.js';
 
 export const MESSAGE_LOGGED_EVENT = 'message-logged';
@@ -36,61 +37,38 @@ export class Level {
 }
 
 export class Logger extends EventTarget {
-  static getLogger(/** @type {?string} */ name) {
+  static getLogger(/** @type {string} */ name) {
     const manager = LogManager.getLogManager();
-    let logger = manager.getLogger(name);
-    if (logger == null) {
-      logger = new Logger(manager.getLogger(''), name);
-      manager.addLogger(logger);
-    }
+    return manager.demandLogger(name);
+  }
+
+  static getAnonymousLogger() {
+    const manager = LogManager.getLogManager();
+    const logger = new Logger();
+    logger.parent = manager.getLogger('');
     return logger;
   }
 
-  static createNull({ level = Level.INFO, clock = Clock.createNull() } = {}) {
-    return new Logger(
-      undefined,
-      'null-logger',
-      level,
-      new NullHandler(),
-      clock,
-    );
+  static createNull({ level = Level.INFO } = {}) {
+    const logger = new Logger('null-logger');
+    logger.level = level;
+    logger.handler = new Handler();
+    return logger;
   }
 
-  #parent;
+  /** @type {?Logger} */ parent;
+  /** @type {?Level} */ level;
+  /** @type {Handler[]} */ #handlers = [];
+
   #name;
-  #level;
-  #clock;
-  #handler;
 
-  constructor(
-    /** @type {Logger} */ parent,
-    /** @type {string} */ name,
-    /** @type {Level} */ level,
-    /** @type {Handler} */ handler,
-    /** @type {Clock} */ clock,
-  ) {
+  constructor(/** @type {string} */ name) {
     super();
-    this.#parent = parent;
     this.#name = name;
-    this.#level = level;
-    this.#handler = handler;
-    this.#clock = clock;
-  }
-
-  get parent() {
-    return this.#parent;
   }
 
   get name() {
     return this.#name;
-  }
-
-  get level() {
-    return this.#level ?? this.#parent.level;
-  }
-
-  set level(/** @type {Level} */ level) {
-    this.#level = level;
   }
 
   error(...message) {
@@ -113,35 +91,38 @@ export class Logger extends EventTarget {
     this.log(Level.TRACE, ...message);
   }
 
-  isLoggable(/** @type {Level} */ level) {
-    return level >= this.level;
-  }
-
   log(/** @type {Level} */ level, ...message) {
     if (!this.isLoggable(level)) {
       return;
     }
 
-    const record = new LogRecord(
-      this.#getClock().date(),
-      this.name,
-      level,
-      message,
-    );
-    this.#getHandler().publish(record);
+    const record = new LogRecord(level, message);
+    record.loggerName = this.name;
+    let logger = this;
+    while (logger != null) {
+      logger.#handlers.forEach((handler) => handler.publish(record));
+      logger = logger.parent;
+    }
     this.dispatchEvent(
-      new CustomEvent(MESSAGE_LOGGED_EVENT, {
-        detail: { ...record },
-      }),
+      new CustomEvent(MESSAGE_LOGGED_EVENT, { detail: record }),
     );
   }
 
-  #getClock() {
-    return this.#clock ?? this.#parent.#getClock();
+  isLoggable(/** @type {Level} */ level) {
+    return this.level != null
+      ? level >= this.level
+      : this.parent?.isLoggable(level);
   }
 
-  #getHandler() {
-    return this.#handler ?? this.#parent.#getHandler();
+  addHandler(/** @type {Handler} */ handler) {
+    this.#handlers.push(handler);
+  }
+
+  removeHandler(/** @type {Handler} */ handler) {
+    const index = this.#handlers.indexOf(handler);
+    if (index !== -1) {
+      this.#handlers.splice(index, 1);
+    }
   }
 
   trackMessagesLogged() {
@@ -150,88 +131,147 @@ export class Logger extends EventTarget {
 }
 
 class LogRecord {
-  constructor(
-    /** @type {Date} */ timestamp,
-    /** @type {string} */ loggerName,
-    /** @type {Level} */ level,
-    /** @type {any[]} */ message,
-  ) {
-    this.timestamp = timestamp;
-    this.loggerName = loggerName;
+  /** @type {?string} */ loggerName;
+
+  constructor(/** @type {Level} */ level, /** @type {any[]} */ message) {
     this.level = level;
     this.message = message;
+    this.timestamp = new Date();
   }
 }
 
-/**
- * @typedef {Object} Handler
- * @property {(record: LogRecord) => void} publish
- */
+export class Formatter {
+  format(/** @type {LogRecord} */ record) {
+    return String(record.message);
+  }
+}
 
-class ConsoleHandler {
-  publish(/** @type {LogRecord} */ record) {
-    const message = record.loggerName
-      ? [
-          record.timestamp,
-          record.loggerName,
-          record.level.toString(),
-          ...record.message,
-        ]
-      : [record.timestamp, record.level.toString(), ...record.message];
+export class SimpleFormatter extends Formatter {
+  format(/** @type {LogRecord} */ record) {
+    let s = record.timestamp.toISOString();
+    if (record.loggerName) {
+      s += ' ' + record.loggerName;
+    }
+    s += ' ' + record.level.toString();
+    s += ' ' + record.message.map((m) => JSON.stringify(m)).join(' ');
+    return s;
+  }
+}
 
+export class Handler {
+  level = Level.ALL;
+  /** @type {Formatter} */ formatter;
+
+  // eslint-disable-next-line no-unused-vars
+  async publish(/** @type {LogRecord} */ record) {}
+
+  isLoggable(/** @type {Level} */ level) {
+    return level >= this.level;
+  }
+}
+
+export class ConsoleHandler extends Handler {
+  async publish(/** @type {LogRecord} */ record) {
+    if (!this.isLoggable(record.level)) {
+      return;
+    }
+
+    const message = this.formatter.format(record);
     switch (record.level) {
       case Level.ERROR:
-        console.error(...message);
+        console.error(message);
         break;
       case Level.WARNING:
-        console.warn(...message);
+        console.warn(message);
         break;
       case Level.INFO:
-        console.info(...message);
+        console.info(message);
         break;
       case Level.DEBUG:
-        console.debug(...message);
+        console.debug(message);
         break;
       case Level.TRACE:
-        console.trace(...message);
+        console.trace(message);
         break;
     }
   }
 }
 
-class NullHandler {
-  publish() {}
+export class FileHandler extends Handler {
+  #filename;
+  #limit;
+
+  constructor(/** @type {string} */ filename, /** @type {number} */ limit = 0) {
+    super();
+    this.#filename = filename;
+    this.#limit = limit < 0 ? 0 : limit;
+  }
+
+  async publish(/** @type {LogRecord} */ record) {
+    if (!this.isLoggable(record.level)) {
+      return;
+    }
+
+    const message = this.formatter.format(record);
+    if (this.#limit > 0) {
+      try {
+        const stats = await fsPromises.stat(this.#filename);
+        const fileSize = stats.size;
+        const newSize = fileSize + message.length;
+        if (newSize > this.#limit) {
+          await fsPromises.rm(this.#filename);
+        }
+      } catch (error) {
+        // ignore error if file does not exist
+        if (error.code !== 'ENOENT') {
+          console.error(error);
+        }
+      }
+    }
+    await fsPromises.appendFile(this.#filename, message + '\n');
+  }
 }
 
 class LogManager {
-  /** @type {Map<string, Logger>} */ static #loggers = new Map();
-
   /** @type {LogManager} */ static #logManager;
+
+  /** @type {Map<string, Logger>} */ #namedLoggers = new Map();
+  /** @type {Logger} */ #rootLogger;
 
   static getLogManager() {
     if (!LogManager.#logManager) {
       LogManager.#logManager = new LogManager();
-      const rootLogger = new Logger(
-        undefined,
-        '',
-        Level.INFO,
-        new ConsoleHandler(),
-        Clock.create(),
-      );
-      LogManager.#logManager.addLogger(rootLogger);
+      LogManager.#logManager.#rootLogger = createRootLogger();
+      LogManager.#logManager.addLogger(LogManager.#logManager.#rootLogger);
     }
+
     return LogManager.#logManager;
   }
 
-  addLogger(/** @type {Logger} */ logger) {
-    if (logger.name == null) {
-      return;
-    }
-
-    LogManager.#loggers.set(logger.name, logger);
-  }
-
   getLogger(/** @type {string} */ name) {
-    return LogManager.#loggers.get(name);
+    return this.#namedLoggers.get(name);
   }
+
+  demandLogger(/** @type {string} */ name) {
+    let logger = this.getLogger(name);
+    if (logger == null) {
+      logger = new Logger(name);
+      logger.parent = this.#rootLogger;
+      this.addLogger(logger);
+    }
+    return logger;
+  }
+
+  addLogger(/** @type {Logger} */ logger) {
+    this.#namedLoggers.set(logger.name, logger);
+  }
+}
+
+function createRootLogger() {
+  const logger = new Logger('');
+  logger.level = Level.INFO;
+  const handler = new ConsoleHandler();
+  handler.formatter = new SimpleFormatter();
+  logger.addHandler(handler);
+  return logger;
 }

@@ -1,6 +1,6 @@
 import { describe, expect, test } from '@jest/globals';
 
-import { Level, Logger } from '../src/logging.js';
+import { Handler, Level, Logger } from '../src/logging.js';
 
 describe('Logging', () => {
   describe('Level', () => {
@@ -29,9 +29,24 @@ describe('Logging', () => {
     });
   });
 
+  describe('Handler', () => {
+    test('Handles all levels as default', () => {
+      const handler = new Handler();
+
+      expect(handler.isLoggable(Level.ALL)).toBe(true);
+    });
+
+    test('Does not handle below level', () => {
+      const handler = new Handler();
+      handler.level = Level.WARNING;
+
+      expect(handler.isLoggable(Level.INFO)).toBe(false);
+    });
+  });
+
   describe('Logger', () => {
     test('Creates anonymous logger', () => {
-      const log = Logger.getLogger();
+      const log = Logger.getAnonymousLogger();
       const loggedMessages = log.trackMessagesLogged();
 
       log.info('my message');
@@ -64,7 +79,7 @@ describe('Logging', () => {
     });
 
     test('Logs with level and message', () => {
-      const log = Logger.getLogger();
+      const log = Logger.getAnonymousLogger();
       const loggedMessages = log.trackMessagesLogged();
 
       log.log(Level.INFO, 'my message');
@@ -79,7 +94,7 @@ describe('Logging', () => {
     });
 
     test('Logs at level error', () => {
-      const log = Logger.getLogger();
+      const log = Logger.getAnonymousLogger();
       const loggedMessages = log.trackMessagesLogged();
 
       log.error('error message');
@@ -94,7 +109,7 @@ describe('Logging', () => {
     });
 
     test('Logs at level warning', () => {
-      const log = Logger.getLogger();
+      const log = Logger.getAnonymousLogger();
       const loggedMessages = log.trackMessagesLogged();
 
       log.warning('warning message');
@@ -109,7 +124,7 @@ describe('Logging', () => {
     });
 
     test('Logs at level info', () => {
-      const log = Logger.getLogger();
+      const log = Logger.getAnonymousLogger();
       const loggedMessages = log.trackMessagesLogged();
 
       log.info('info message');
@@ -124,7 +139,7 @@ describe('Logging', () => {
     });
 
     test('Logs at level debug', () => {
-      const log = Logger.getLogger();
+      const log = Logger.getAnonymousLogger();
       log.level = Level.ALL;
       const loggedMessages = log.trackMessagesLogged();
 
@@ -140,7 +155,7 @@ describe('Logging', () => {
     });
 
     test('Logs at level trace', () => {
-      const log = Logger.getLogger();
+      const log = Logger.getAnonymousLogger();
       log.level = Level.ALL;
       const loggedMessages = log.trackMessagesLogged();
 
@@ -156,7 +171,7 @@ describe('Logging', () => {
     });
 
     test('Logs at info level by default', () => {
-      const log = Logger.getLogger();
+      const log = Logger.getAnonymousLogger();
       const loggedMessages = log.trackMessagesLogged();
 
       log.error('error message');
@@ -185,7 +200,7 @@ describe('Logging', () => {
     });
 
     test('Does not log below level', () => {
-      const log = Logger.getLogger();
+      const log = Logger.getAnonymousLogger();
       log.level = Level.WARNING;
       const loggedMessages = log.trackMessagesLogged();
 
@@ -195,7 +210,7 @@ describe('Logging', () => {
     });
 
     test('Logs with local level if set', () => {
-      const log = Logger.getLogger();
+      const log = Logger.getAnonymousLogger();
       log.level = Level.DEBUG;
       const loggedMessages = log.trackMessagesLogged();
 
@@ -212,7 +227,7 @@ describe('Logging', () => {
 
     test('Logs with parent level if local level is not set', () => {
       Logger.getLogger('').level = Level.DEBUG;
-      const log = Logger.getLogger();
+      const log = Logger.getAnonymousLogger();
       log.level = undefined;
       const loggedMessages = log.trackMessagesLogged();
 

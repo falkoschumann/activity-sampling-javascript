@@ -22,16 +22,17 @@ describe('Activity Sampling App', () => {
 
     expect(loggedMessages.data).toEqual([
       {
+        timestamp: expect.any(Date),
         loggerName: 'null-logger',
         level: Level.INFO,
         message: ['Server is listening on port 3333.'],
-        timestamp: new Date('2024-02-21T19:16:00Z'),
       },
       {
+        timestamp: expect.any(Date),
+
         loggerName: 'null-logger',
         level: Level.INFO,
         message: ['Server stopped.'],
-        timestamp: new Date('2024-02-21T19:16:00Z'),
       },
     ]);
   });
