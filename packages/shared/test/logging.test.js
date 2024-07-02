@@ -1,6 +1,12 @@
 import { describe, expect, test } from '@jest/globals';
 
-import { Handler, Level, Logger } from '../src/logging.js';
+import {
+  Handler,
+  Level,
+  LogRecord,
+  Logger,
+  SimpleFormatter,
+} from '../src/logging.js';
 
 describe('Logging', () => {
   describe('Level', () => {
@@ -240,6 +246,38 @@ describe('Logging', () => {
           message: ['debug message'],
         },
       ]);
+    });
+  });
+
+  describe('Simple formatter', () => {
+    test('Returns 1 line', () => {
+      const formatter = new SimpleFormatter();
+
+      const record = new LogRecord(Level.INFO, 'my message');
+      record.timestamp = new Date('2024-07-02T11:38:00');
+      const s = formatter.format(record);
+
+      expect(s).toBe('2024-07-02T09:38:00.000Z INFO my message');
+    });
+
+    test('Concats messages with space', () => {
+      const formatter = new SimpleFormatter();
+
+      const record = new LogRecord(Level.INFO, 'count:', 5);
+      record.timestamp = new Date('2024-07-02T11:38:00');
+      const s = formatter.format(record);
+
+      expect(s).toBe('2024-07-02T09:38:00.000Z INFO count: 5');
+    });
+
+    test('Stringifies object and array', () => {
+      const formatter = new SimpleFormatter();
+
+      const record = new LogRecord(Level.INFO, { foo: 'bar' }, [1, 2, 3]);
+      record.timestamp = new Date('2024-07-02T11:38:00');
+      const s = formatter.format(record);
+
+      expect(s).toBe('2024-07-02T09:38:00.000Z INFO {"foo":"bar"} [1,2,3]');
     });
   });
 });

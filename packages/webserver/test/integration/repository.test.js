@@ -136,7 +136,7 @@ describe('Repository', () => {
 
         expect(() => dto.validate()).toThrow(
           new Error(
-            'The property "Client" of ActivityLogged must not be empty.',
+            'The property "Client" of ActivityLogged must not be an empty string.',
           ),
         );
       });
@@ -167,7 +167,7 @@ describe('Repository', () => {
 
         expect(() => dto.validate()).toThrow(
           new Error(
-            'The property "Project" of ActivityLogged must not be empty.',
+            'The property "Project" of ActivityLogged must not be an empty string.',
           ),
         );
       });
@@ -197,7 +197,9 @@ describe('Repository', () => {
         });
 
         expect(() => dto.validate()).toThrow(
-          new Error('The property "Task" of ActivityLogged must not be empty.'),
+          new Error(
+            'The property "Task" of ActivityLogged must not be an empty string.',
+          ),
         );
       });
 

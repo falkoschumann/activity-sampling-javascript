@@ -37,12 +37,24 @@ describe('Validation', () => {
       );
     });
 
-    test('Fails when string property is empty', () => {
+    test('Fails when string property is an empty string', () => {
       const user = { name: '' };
 
       expect(() =>
         validateRequiredProperty(user, 'user', 'name', 'string'),
-      ).toThrow(new Error('The property "name" of user must not be empty.'));
+      ).toThrow(
+        new Error('The property "name" of user must not be an empty string.'),
+      );
+    });
+
+    test.skip('Fails when array property is an empty array', () => {
+      const user = { roles: [] };
+
+      expect(() =>
+        validateRequiredProperty(user, 'user', 'roles', 'array'),
+      ).toThrow(
+        new Error('The property "roles" of user must not be an empty array.'),
+      );
     });
   });
 
@@ -133,6 +145,43 @@ describe('Validation', () => {
       ).toThrow(
         new Error(
           'The property "dayOfBirth" of user must be a valid Date, found string: "no-date".',
+        ),
+      );
+    });
+
+    test('Returns value when property is an object', () => {
+      const user = { address: { street: 'Test street', city: 'Test city' } };
+
+      const address = validateRequiredProperty(
+        user,
+        'user',
+        'address',
+        'object',
+      );
+
+      expect(address).toEqual({ street: 'Test street', city: 'Test city' });
+    });
+
+    test('Fails when property is not an object', () => {
+      const user = { address: 'not an object' };
+
+      expect(() =>
+        validateRequiredProperty(user, 'user', 'address', 'object'),
+      ).toThrow(
+        new Error(
+          'The property "address" of user must be an object, found string: "not an object".',
+        ),
+      );
+    });
+
+    test('Fails when property is not an object also it is an array', () => {
+      const user = { address: ['not an object'] };
+
+      expect(() =>
+        validateRequiredProperty(user, 'user', 'address', 'object'),
+      ).toThrow(
+        new Error(
+          'The property "address" of user must be an object, found array: ["not an object"].',
         ),
       );
     });

@@ -115,7 +115,9 @@ describe('Messages', () => {
         });
 
         expect(() => dto.validate()).toThrow(
-          new Error('The property "client" of LogActivity must not be empty.'),
+          new Error(
+            'The property "client" of LogActivity must not be an empty string.',
+          ),
         );
       });
 
@@ -144,7 +146,9 @@ describe('Messages', () => {
         });
 
         expect(() => dto.validate()).toThrow(
-          new Error('The property "project" of LogActivity must not be empty.'),
+          new Error(
+            'The property "project" of LogActivity must not be an empty string.',
+          ),
         );
       });
 
@@ -173,7 +177,9 @@ describe('Messages', () => {
         });
 
         expect(() => dto.validate()).toThrow(
-          new Error('The property "task" of LogActivity must not be empty.'),
+          new Error(
+            'The property "task" of LogActivity must not be an empty string.',
+          ),
         );
       });
 
@@ -598,7 +604,9 @@ describe('Messages', () => {
         });
 
         expect(() => dto.validate()).toThrow(
-          new Error('The property "client" of Activity must not be empty.'),
+          new Error(
+            'The property "client" of Activity must not be an empty string.',
+          ),
         );
       });
 
@@ -627,7 +635,9 @@ describe('Messages', () => {
         });
 
         expect(() => dto.validate()).toThrow(
-          new Error('The property "project" of Activity must not be empty.'),
+          new Error(
+            'The property "project" of Activity must not be an empty string.',
+          ),
         );
       });
 
@@ -656,7 +666,9 @@ describe('Messages', () => {
         });
 
         expect(() => dto.validate()).toThrow(
-          new Error('The property "task" of Activity must not be empty.'),
+          new Error(
+            'The property "task" of Activity must not be an empty string.',
+          ),
         );
       });
 

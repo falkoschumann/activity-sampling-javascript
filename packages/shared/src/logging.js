@@ -96,7 +96,7 @@ export class Logger extends EventTarget {
       return;
     }
 
-    const record = new LogRecord(level, message);
+    const record = new LogRecord(level, ...message);
     record.loggerName = this.name;
     let logger = this;
     while (logger != null) {
@@ -130,10 +130,10 @@ export class Logger extends EventTarget {
   }
 }
 
-class LogRecord {
+export class LogRecord {
   /** @type {?string} */ loggerName;
 
-  constructor(/** @type {Level} */ level, /** @type {any[]} */ message) {
+  constructor(/** @type {Level} */ level, /** @type {any[]} */ ...message) {
     this.level = level;
     this.message = message;
     this.timestamp = new Date();
@@ -153,7 +153,11 @@ export class SimpleFormatter extends Formatter {
       s += ' ' + record.loggerName;
     }
     s += ' ' + record.level.toString();
-    s += ' ' + record.message.map((m) => JSON.stringify(m)).join(' ');
+    s +=
+      ' ' +
+      record.message
+        .map((m) => (typeof m === 'object' ? JSON.stringify(m) : m))
+        .join(' ');
     return s;
   }
 }

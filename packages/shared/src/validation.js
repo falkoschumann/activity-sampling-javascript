@@ -30,7 +30,8 @@ export function validateRequiredProperty(
     itemType,
   );
 
-  if (propertyType === 'string') {
+  // TODO make not empty optional
+  if (propertyType === 'string' /*|| propertyType === 'array'*/) {
     validateNotEmpty(object, objectName, propertyName);
   }
 
@@ -64,9 +65,15 @@ export function validateOptionalProperty(
 
 function validateNotEmpty(object, objectName, propertyName) {
   const value = object[propertyName];
-  if (value === '') {
+  if (typeof value === 'string' && value === '') {
     throw new ValidationError(
-      `The property "${propertyName}" of ${objectName} must not be empty.`,
+      `The property "${propertyName}" of ${objectName} must not be an empty string.`,
+    );
+  }
+
+  if (Array.isArray(value) && value.length === 0) {
+    throw new ValidationError(
+      `The property "${propertyName}" of ${objectName} must not be an empty array.`,
     );
   }
 }
@@ -88,6 +95,10 @@ function validateTypedProperty(
 
   if (propertyType === 'array') {
     return validateArrayProperty(object, objectName, propertyName, itemType);
+  }
+
+  if (propertyType === 'object') {
+    return validateObjectProperty(object, objectName, propertyName, itemType);
   }
 
   if (typeof propertyType === 'function') {
@@ -118,12 +129,31 @@ function validateArrayProperty(object, objectName, propertyName, itemType) {
 
   if (itemType != null) {
     value.forEach((item, index) => {
+      // TODO use validateTypedProperty
       if (typeof item !== itemType) {
         throw new ValidationError(
           `The property "${propertyName}" of ${objectName} must be an array of ${itemType}s, found ${typeof item} at #${index + 1}: ${JSON.stringify(item)}.`,
         );
       }
     });
+  }
+
+  return value;
+}
+
+function validateObjectProperty(object, objectName, propertyName) {
+  const value = object[propertyName];
+  const valueType = typeof value;
+  if (valueType !== 'object') {
+    throw new ValidationError(
+      `The property "${propertyName}" of ${objectName} must be an object, found ${valueType}: ${JSON.stringify(value)}.`,
+    );
+  }
+
+  if (Array.isArray(value)) {
+    throw new ValidationError(
+      `The property "${propertyName}" of ${objectName} must be an object, found array: ${JSON.stringify(value)}.`,
+    );
   }
 
   return value;
