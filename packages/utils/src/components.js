@@ -1,12 +1,6 @@
 import { html, render } from 'lit-html';
 
 export class Component extends HTMLElement {
-  static #services;
-
-  get services() {
-    return Component.#services;
-  }
-
   connectedCallback() {
     this.updateView();
   }
@@ -29,6 +23,12 @@ export class Component extends HTMLElement {
 }
 
 export class Container extends Component {
+  static initStore(store) {
+    Container.#store = store;
+  }
+
+  static #store;
+
   #unsubscribeStore;
 
   constructor() {
@@ -37,7 +37,7 @@ export class Container extends Component {
   }
 
   connectedCallback() {
-    this.#unsubscribeStore = this.services.store.subscribe(() =>
+    this.#unsubscribeStore = Container.#store.subscribe(() =>
       this.updateView(),
     );
     super.connectedCallback();
@@ -52,7 +52,7 @@ export class Container extends Component {
       return;
     }
 
-    this.state = this.extractState(this.services.store.getState());
+    this.state = this.extractState(Container.#store.getState());
     if (!force && this.state === this.oldState) {
       return;
     }

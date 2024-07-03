@@ -1,7 +1,5 @@
 import { html, render } from 'lit-html';
 
-import { Services } from '../application/services.js';
-
 export class Component extends HTMLElement {
   connectedCallback() {
     this.updateView();
@@ -25,7 +23,12 @@ export class Component extends HTMLElement {
 }
 
 export class Container extends Component {
-  static #services = Services.create();
+  static initStore(store) {
+    Container.#store = store;
+  }
+
+  static #store;
+
   #unsubscribeStore;
 
   constructor() {
@@ -33,12 +36,8 @@ export class Container extends Component {
     this.oldState = this.state = {};
   }
 
-  get services() {
-    return Container.#services;
-  }
-
   connectedCallback() {
-    this.#unsubscribeStore = this.services.store.subscribe(() =>
+    this.#unsubscribeStore = Container.#store.subscribe(() =>
       this.updateView(),
     );
     super.connectedCallback();
@@ -49,7 +48,11 @@ export class Container extends Component {
   }
 
   updateView({ force = false } = {}) {
-    this.state = this.extractState(this.services.store.getState());
+    if (!this.isConnected) {
+      return;
+    }
+
+    this.state = this.extractState(Container.#store.getState());
     if (!force && this.state === this.oldState) {
       return;
     }

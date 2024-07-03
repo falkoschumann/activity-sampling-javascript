@@ -10,10 +10,17 @@ import './current-activity.js';
 import './countdown.js';
 import './recent-activities.js';
 import './time-summary.js';
+import { Services } from '../application/services.js';
 import { Container } from './components.js';
 
 class ActivitySamplingComponent extends Container {
   #currentActivityRef = createRef();
+
+  constructor() {
+    super();
+    Container.services = Services.create();
+    Container.initStore(Container.services.store);
+  }
 
   connectedCallback() {
     super.connectedCallback();
@@ -37,8 +44,8 @@ class ActivitySamplingComponent extends Container {
         <m-current-activity
           ${ref(this.#currentActivityRef)}
           .activity=${this.state.activity}
-          .isDisabled=${this.state.isFormDisabled}
-          @activity-logged=${this.#activityLogged.bind(this)}
+          .disabled=${this.state.isFormDisabled}
+          @activitylogged=${this.#activityLogged.bind(this)}
         ></m-current-activity>
         <m-countdown .value=${this.state.countdown}></m-countdown>
       </aside>
@@ -55,11 +62,11 @@ class ActivitySamplingComponent extends Container {
   }
 
   #refreshRequested() {
-    this.services.selectRecentActivities();
+    Container.services.selectRecentActivities();
   }
 
-  #activityLogged(activity) {
-    this.services.activityLogged(activity);
+  #activityLogged(event) {
+    Container.services.activityLogged(event.activity);
   }
 
   #activitySelected(activity) {
