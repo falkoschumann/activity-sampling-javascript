@@ -5,6 +5,9 @@ export class ValidationError extends Error {
   }
 }
 
+// TODO validateRequired(value, name, type)
+// TODO validateOptional(value, name, type)
+
 export function validateNotEmptyProperty(
   object,
   objectName,
