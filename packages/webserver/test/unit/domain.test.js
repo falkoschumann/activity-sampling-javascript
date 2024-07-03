@@ -1,6 +1,6 @@
 import { describe, expect, test } from '@jest/globals';
 
-import { Duration } from '@activity-sampling/shared';
+import { Duration } from '@activity-sampling/utils';
 import { Activity } from '@activity-sampling/domain';
 import {
   determineTimeSummary,

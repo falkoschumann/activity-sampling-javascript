@@ -1,4 +1,4 @@
-import { Clock, Duration, Timer, createStore } from '@activity-sampling/shared';
+import { Clock, Duration, Timer, createStore } from '@activity-sampling/utils';
 import { Api } from '../infrastructure/api.js';
 import { reducer } from '../domain/reducer.js';
 

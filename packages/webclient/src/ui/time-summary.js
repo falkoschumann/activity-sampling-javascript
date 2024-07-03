@@ -1,6 +1,6 @@
 import { html } from 'lit-html';
 
-import { Duration } from '@activity-sampling/shared';
+import { Duration } from '@activity-sampling/utils';
 
 import './time-summary.css';
 import { Component } from './components.js';

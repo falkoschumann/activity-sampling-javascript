@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import { describe, expect, test } from '@jest/globals';
 
-import { Duration, ValidationError } from '@activity-sampling/shared';
+import { Duration, ValidationError } from '@activity-sampling/utils';
 import { ActivityLogged } from '../../src/domain/domain.js';
 import {
   ActivityLoggedDto,

@@ -1,4 +1,4 @@
-import { Duration } from '@activity-sampling/shared';
+import { Duration } from '@activity-sampling/utils';
 import { RecentActivities, TimeSummary } from '@activity-sampling/domain';
 
 export function determineRecentActivities(activities, today = new Date()) {

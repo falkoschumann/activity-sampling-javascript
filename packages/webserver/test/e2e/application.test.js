@@ -3,7 +3,7 @@ import express from 'express';
 import { describe, expect, test } from '@jest/globals';
 import request from 'supertest';
 
-import { Duration, Level, Logger } from '@activity-sampling/shared';
+import { Duration, Level, Logger } from '@activity-sampling/utils';
 import { Activity, LogActivity } from '@activity-sampling/domain';
 import { Services } from '../../src/application/services.js';
 import { Repository } from '../../src/infrastructure/repository.js';

@@ -1,7 +1,4 @@
-import {
-  ConfigurableResponses,
-  OutputTracker,
-} from '@activity-sampling/shared';
+import { ConfigurableResponses, OutputTracker } from '@activity-sampling/utils';
 import { RecentActivities } from '@activity-sampling/domain';
 
 /**

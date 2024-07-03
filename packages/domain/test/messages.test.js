@@ -1,6 +1,6 @@
 import { describe, expect, test } from '@jest/globals';
 
-import { ValidationError } from '@activity-sampling/shared';
+import { ValidationError } from '@activity-sampling/utils';
 import {
   Activity,
   LogActivity,

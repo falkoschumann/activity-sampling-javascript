@@ -3,7 +3,7 @@ import {
   validateNotEmptyProperty,
   validateOptionalProperty,
   validateRequiredProperty,
-} from '@activity-sampling/shared';
+} from '@activity-sampling/utils';
 
 export class LogActivity {
   static create({ timestamp, duration, client, project, task, notes } = {}) {

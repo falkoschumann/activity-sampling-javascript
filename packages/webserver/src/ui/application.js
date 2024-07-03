@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { Logger, ValidationError } from '@activity-sampling/shared';
+import { Logger, ValidationError } from '@activity-sampling/utils';
 import { Services } from '../application/services.js';
 import { ActivitiesController } from './activities-controller.js';
 import { reply } from './handler.js';

@@ -1,7 +1,7 @@
 import { html } from 'lit-html';
 import { classMap } from 'lit-html/directives/class-map.js';
 
-import { Duration } from '@activity-sampling/shared';
+import { Duration } from '@activity-sampling/utils';
 
 import './countdown.css';
 import { Component } from './components.js';

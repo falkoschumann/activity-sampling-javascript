@@ -1,4 +1,4 @@
-import { Duration } from '@activity-sampling/shared';
+import { Duration } from '@activity-sampling/utils';
 
 // TODO Convert notifier into servie worker?
 

@@ -12,7 +12,7 @@
     "test": "npx jest"
   },
   "dependencies": {
-    "@activity-sampling/shared": "0.1.0"
+    "@activity-sampling/utils": "0.1.0"
   },
   "devDependencies": {
     "@jest/globals": "29.7.0",

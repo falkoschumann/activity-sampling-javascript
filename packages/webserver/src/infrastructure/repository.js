@@ -8,7 +8,7 @@ import {
   validateNotEmptyProperty,
   validateOptionalProperty,
   validateRequiredProperty,
-} from '@activity-sampling/shared';
+} from '@activity-sampling/utils';
 import { ActivityLogged } from '../domain/domain.js';
 
 const RFC4180 = {

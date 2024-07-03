@@ -1,6 +1,6 @@
 import { describe, expect, test } from '@jest/globals';
 
-import { Clock, Duration, Timer } from '@activity-sampling/shared';
+import { Clock, Duration, Timer } from '@activity-sampling/utils';
 
 import { Activity } from '@activity-sampling/domain';
 import { Services } from '../../src/application/services.js';
