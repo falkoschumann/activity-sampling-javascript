@@ -1,3 +1,5 @@
+import { Enum } from './enum.js';
+
 export class ValidationError extends Error {
   constructor(message) {
     super(message);
@@ -191,8 +193,25 @@ function validateObjectTypeProperty(
     return value;
   }
 
+  if (
+    Object.getPrototypeOf(propertyType) === Enum &&
+    typeof value === 'string'
+  ) {
+    try {
+      return propertyType.valueOf(value.toUpperCase());
+    } catch (error) {
+      if (error.message?.startsWith('No enum constant')) {
+        throw new ValidationError(
+          `The property "${propertyName}" of ${objectName} must be a valid ${propertyType.name} constant name, found ${valueType}: ${JSON.stringify(value)}.`,
+        );
+      }
+
+      throw error;
+    }
+  }
+
   const convertedValue = new propertyType(value);
-  if (convertedValue.toString().startsWith('Invalid')) {
+  if (String(convertedValue).toLowerCase().startsWith('invalid')) {
     throw new ValidationError(
       `The property "${propertyName}" of ${objectName} must be a valid ${propertyType.name}, found ${valueType}: ${JSON.stringify(value)}.`,
     );

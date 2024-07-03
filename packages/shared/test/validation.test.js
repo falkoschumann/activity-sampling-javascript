@@ -5,6 +5,7 @@ import {
   validateOptionalProperty,
   validateNotEmptyProperty,
 } from '../src/validation.js';
+import { Enum } from '../src/enum.js';
 
 describe('Validation', () => {
   describe('Required property', () => {
@@ -150,6 +151,44 @@ describe('Validation', () => {
       );
     });
 
+    test('Returns constant when property is an expected enum constant', () => {
+      const user = { isMarried: YesNo.YES };
+
+      const isMarried = validateRequiredProperty(
+        user,
+        'user',
+        'isMarried',
+        YesNo,
+      );
+
+      expect(isMarried).toEqual(YesNo.YES);
+    });
+
+    test('Returns constant when property can convert to an expected enum constant', () => {
+      const user = { isMarried: 'yes' };
+
+      const isMarried = validateRequiredProperty(
+        user,
+        'user',
+        'isMarried',
+        YesNo,
+      );
+
+      expect(isMarried).toEqual(YesNo.YES);
+    });
+
+    test('Fails when property can not convert an expected enum constant', () => {
+      const user = { isMarried: 'no-enum-name' };
+
+      expect(() =>
+        validateRequiredProperty(user, 'user', 'isMarried', YesNo),
+      ).toThrow(
+        new Error(
+          'The property "isMarried" of user must be a valid YesNo constant name, found string: "no-enum-name".',
+        ),
+      );
+    });
+
     test('Returns value when property is an object', () => {
       const user = { address: { street: 'Test street', city: 'Test city' } };
 
@@ -234,3 +273,8 @@ describe('Validation', () => {
     });
   });
 });
+
+class YesNo extends Enum {
+  static YES = new YesNo(0, 'YES');
+  static NO = new YesNo(1, 'NO');
+}
