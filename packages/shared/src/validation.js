@@ -5,6 +5,28 @@ export class ValidationError extends Error {
   }
 }
 
+export function validateNotEmptyProperty(
+  object,
+  objectName,
+  propertyName,
+  propertyType,
+  itemType,
+) {
+  const value = validateRequiredProperty(
+    object,
+    objectName,
+    propertyName,
+    propertyType,
+    itemType,
+  );
+
+  if (propertyType === 'string' || propertyType === 'array') {
+    validateNotEmpty(object, objectName, propertyName);
+  }
+
+  return value;
+}
+
 export function validateRequiredProperty(
   object,
   objectName,
@@ -29,11 +51,6 @@ export function validateRequiredProperty(
     propertyType,
     itemType,
   );
-
-  // TODO make not empty optional
-  if (propertyType === 'string' /*|| propertyType === 'array'*/) {
-    validateNotEmpty(object, objectName, propertyName);
-  }
 
   return value;
 }

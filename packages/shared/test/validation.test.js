@@ -3,6 +3,7 @@ import { describe, expect, test } from '@jest/globals';
 import {
   validateRequiredProperty,
   validateOptionalProperty,
+  validateNotEmptyProperty,
 } from '../src/validation.js';
 
 describe('Validation', () => {
@@ -41,17 +42,17 @@ describe('Validation', () => {
       const user = { name: '' };
 
       expect(() =>
-        validateRequiredProperty(user, 'user', 'name', 'string'),
+        validateNotEmptyProperty(user, 'user', 'name', 'string'),
       ).toThrow(
         new Error('The property "name" of user must not be an empty string.'),
       );
     });
 
-    test.skip('Fails when array property is an empty array', () => {
+    test('Fails when array property is an empty array', () => {
       const user = { roles: [] };
 
       expect(() =>
-        validateRequiredProperty(user, 'user', 'roles', 'array'),
+        validateNotEmptyProperty(user, 'user', 'roles', 'array'),
       ).toThrow(
         new Error('The property "roles" of user must not be an empty array.'),
       );
