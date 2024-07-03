@@ -1,6 +1,10 @@
 import { Clock, Duration, Timer, createStore } from '@activity-sampling/utils';
-import { Api } from '../infrastructure/api.js';
 import { reducer } from '../domain/reducer.js';
+import { Api } from '../infrastructure/api.js';
+
+/**
+ * @import { Activity } from '@activity-sampling/domain';
+ */
 
 export class Services {
   static create() {

@@ -2,8 +2,8 @@ import { ActivityLogged, determineRecentActivities } from '../domain/domain.js';
 import { Repository } from '../infrastructure/repository.js';
 
 /**
- * @typedef {import('@activity-sampling/domain').LogActivity} LogActivity
- * @typedef {import('@activity-sampling/domain').RecentActivitiesQuery} RecentActivitiesQuery
+ * @import { LogActivity } from '@activity-sampling/domain'
+ * @import { RecentActivitiesQuery } from '@activity-sampling/domain'
  */
 
 export class Services {

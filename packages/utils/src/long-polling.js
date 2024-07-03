@@ -1,8 +1,7 @@
 import * as handler from './handler.js';
 
 /**
- * @typedef {import('express').Response} Response
- * @typedef {import('express').Request} Request
+ * @import * as express from 'express'
  */
 
 export class LongPolling {
@@ -14,7 +13,10 @@ export class LongPolling {
     this.#getData = getData;
   }
 
-  async poll(/** @type {Request} */ request, /** @type {Response} */ response) {
+  async poll(
+    /** @type {express.Request} */ request,
+    /** @type {express.Response} */ response,
+  ) {
     if (this.#isCurrentVersion(request)) {
       const responseData = await this.#tryLongPolling(request);
       handler.reply(response, responseData);
@@ -31,12 +33,12 @@ export class LongPolling {
     this.#waiting = [];
   }
 
-  #isCurrentVersion(/** @type {Request} */ request) {
+  #isCurrentVersion(/** @type {express.Request} */ request) {
     const tag = /"(.*)"/.exec(request.get('If-None-Match'));
     return tag && tag[1] === String(this.#version);
   }
 
-  async #tryLongPolling(/** @type {Request} */ request) {
+  async #tryLongPolling(/** @type {express.Request} */ request) {
     const time = this.#getPollingTime(request);
     if (time == null) {
       return { status: 304 };
@@ -45,7 +47,7 @@ export class LongPolling {
     return this.#waitForChange(time);
   }
 
-  #getPollingTime(/** @type {Request} */ request) {
+  #getPollingTime(/** @type {express.Request} */ request) {
     const wait = /\bwait=(\d+)/.exec(request.get('Prefer'));
     return wait != null ? Number(wait[1]) : null;
   }

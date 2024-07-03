@@ -1,11 +1,9 @@
 import * as handler from './handler.js';
 
 /**
- * @typedef {import('../application/services.js').Services} Services
- * @typedef {import('../util/health.js').HealthRegistry} HealthRegistry
- * @typedef {import('express').Express} Express
- * @typedef {import('express').Response} Response
- * @typedef {import('express').Request} Request
+ * @import { Services } from '../application/services.js'
+ * @import { HealthRegistry } from '../util/health.js'
+ * @import * as express from 'express'
  */
 
 export class ActuatorController {
@@ -15,7 +13,7 @@ export class ActuatorController {
   constructor(
     /** @type {Services} */ services,
     /** @type {HealthRegistry} */ healthRegistry,
-    /** @type {Express} */ app,
+    /** @type {express.Express} */ app,
   ) {
     this.#services = services;
     this.#healthRegistry = healthRegistry;
@@ -31,8 +29,8 @@ export class ActuatorController {
   }
 
   async #getActuator(
-    /** @type {Request} */ request,
-    /** @type {Response} */ response,
+    /** @type {express.Request} */ request,
+    /** @type {express.Response} */ response,
   ) {
     let requestedUrl =
       request.protocol + '://' + request.get('host') + request.originalUrl;
@@ -51,8 +49,8 @@ export class ActuatorController {
   }
 
   async #getActuatorInfo(
-    /** @type {Request} */ request,
-    /** @type {Response} */ response,
+    /** @type {express.Request} */ request,
+    /** @type {express.Response} */ response,
   ) {
     const info = {};
     info[process.env.npm_package_name] = {
@@ -62,8 +60,8 @@ export class ActuatorController {
   }
 
   async #getActuatorMetrics(
-    /** @type {Request} */ request,
-    /** @type {Response} */ response,
+    /** @type {express.Request} */ request,
+    /** @type {express.Response} */ response,
   ) {
     response.status(200).json({
       cpu: process.cpuUsage(),
@@ -73,8 +71,8 @@ export class ActuatorController {
   }
 
   #getActuatorHealth(
-    /** @type {Request} */ request,
-    /** @type {Response} */ response,
+    /** @type {express.Request} */ request,
+    /** @type {express.Response} */ response,
   ) {
     const health = this.#healthRegistry.health();
     const status = health.status === 'UP' ? 200 : 503;
@@ -82,8 +80,8 @@ export class ActuatorController {
   }
 
   async #getMetrics(
-    /** @type {Request} */ request,
-    /** @type {Response} */ response,
+    /** @type {express.Request} */ request,
+    /** @type {express.Response} */ response,
   ) {
     // TODO count warnings and errors
     // TODO create class MeterRegistry

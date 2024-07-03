@@ -1,7 +1,5 @@
 /**
- * @typedef {import('express').Request} Request
- * @typedef {import('express').Response} Response
- * @typedef {import('express').NextFunction} NextFunction
+ * @import * as express from 'express'
  */
 
 export function runSafe(/** @type {Function} */ handler) {
@@ -16,7 +14,7 @@ export function runSafe(/** @type {Function} */ handler) {
 }
 
 export function reply(
-  /** @type {Response} */ response,
+  /** @type {express.Response} */ response,
   {
     status = 200,
     headers = { 'Content-Type': 'application/json' },

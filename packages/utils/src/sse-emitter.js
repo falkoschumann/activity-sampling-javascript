@@ -1,5 +1,5 @@
 /**
- * @typedef {import('express').Response} Response
+ * @import * as express from 'express'
  */
 
 export class SseEmitter {
@@ -11,7 +11,7 @@ export class SseEmitter {
   #timeoutId;
 
   constructor(
-    /** @type {Response} */ response,
+    /** @type {express.Response} */ response,
     /** @type {?number} */ timeout,
   ) {
     this.#response = response

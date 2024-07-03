@@ -1,5 +1,5 @@
 /**
- * @typedef {import('express').Response} Response
+ * @import * as express from 'express'
  */
 
 export function runSafe(/** @type {Function} */ handler) {
@@ -14,7 +14,7 @@ export function runSafe(/** @type {Function} */ handler) {
 }
 
 export function reply(
-  /** @type {Response} */ response,
+  /** @type {express.Response} */ response,
   { status = 200, headers = { 'Content-Type': 'text/plain' }, body = '' } = {},
 ) {
   response.status(status).header(headers).send(body);

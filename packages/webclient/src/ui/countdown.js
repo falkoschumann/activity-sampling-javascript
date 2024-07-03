@@ -1,12 +1,11 @@
 import { html } from 'lit-html';
 import { classMap } from 'lit-html/directives/class-map.js';
+import { ref } from 'lit-html/directives/ref.js';
 
 import { Duration } from '@activity-sampling/utils';
 
 import './countdown.css';
 import { Component } from './components.js';
-
-import { ref } from 'lit-html/directives/ref.js';
 
 const COUNTDOWN_STARTED_EVENT = 'countdown-started';
 const COUNTDOWN_STOPPED_EVENT = 'countdown-stopped';

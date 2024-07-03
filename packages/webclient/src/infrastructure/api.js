@@ -2,7 +2,7 @@ import { ConfigurableResponses, OutputTracker } from '@activity-sampling/utils';
 import { RecentActivities } from '@activity-sampling/domain';
 
 /**
- * @typedef {import('@activity-sampling/domain').LogActivity} LogActivity
+ * @import { LogActivity } from '@activity-sampling/domain'
  */
 
 export const ACTIVITY_LOGGED_EVENT = 'activity-logged';

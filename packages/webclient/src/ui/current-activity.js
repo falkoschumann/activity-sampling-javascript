@@ -3,7 +3,7 @@ import { createRef, ref } from 'lit-html/directives/ref.js';
 
 import { Component } from './components.js';
 
-const ACTIVITY_LOGGED_EVENT = 'activity-logged';
+const ACTIVITY_LOGGED_EVENT = 'activitylogged';
 
 class ActivityLoggedEvent extends Event {
   constructor(activity) {
@@ -13,6 +13,8 @@ class ActivityLoggedEvent extends Event {
 }
 
 class CurrentActivityComponent extends Component {
+  static observedAttributes = ['disabled'];
+
   #clientRef = createRef();
   #projectRef = createRef();
   #taskRef = createRef();
@@ -25,7 +27,7 @@ class CurrentActivityComponent extends Component {
     notes: '',
   };
 
-  #isDisabled = false;
+  #disabled = false;
 
   get activity() {
     return this.#activity;
@@ -36,19 +38,19 @@ class CurrentActivityComponent extends Component {
       return;
     }
 
-    this.#activity = activity;
+    this.#activity = { ...activity, timestamp: undefined };
     this.updateView();
   }
 
-  get isDisabled() {
-    return this.#isDisabled;
+  get disabled() {
+    return this.#disabled;
   }
 
-  set isDisabled(isDisabled) {
-    if (this.#isDisabled === isDisabled) {
+  set disabled(disabled) {
+    if (this.#disabled === disabled) {
       return;
     }
-    this.#isDisabled = isDisabled;
+    this.#disabled = disabled;
     this.updateView();
   }
 
@@ -76,7 +78,7 @@ class CurrentActivityComponent extends Component {
         ${this.#textInputTemplate(this.#projectRef, 'project', 'Project', true)}
         ${this.#textInputTemplate(this.#taskRef, 'task', 'Task', true)}
         ${this.#textInputTemplate(this.#notesRef, 'notes', 'Notes')}
-        <button type="submit" class="mt-75" ?disabled="${this.#isDisabled}">
+        <button type="submit" class="mt-75" ?disabled="${this.disabled}">
           Log
         </button>
       </form>
@@ -91,7 +93,7 @@ class CurrentActivityComponent extends Component {
           ${ref(inputRef)}
           type="text"
           ?required="${required}"
-          ?disabled="${this.#isDisabled}"
+          ?disabled="${this.disabled}"
           id="${name}"
           name="${name}"
           @keyup=${(e) => this.#inputChanged(e)}

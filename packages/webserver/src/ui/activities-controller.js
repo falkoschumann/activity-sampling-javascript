@@ -4,7 +4,7 @@ import { LogActivity, RecentActivitiesQuery } from '@activity-sampling/domain';
 import { reply, runSafe } from './handler.js';
 
 /**
- * @typedef {import ('../application/services.js').Services} Services
+ * @import { Services } from '../application/services.js'
  */
 
 export class ActivitiesController {
