@@ -52,7 +52,7 @@ class ActivitySamplingComponent extends Container {
       <main>
         <m-recent-activities
           .workingDays=${this.state.workingDays}
-          @activity-selected=${this.#activitySelected.bind(this)}
+          @activityselected=${this.#activitySelected.bind(this)}
         ></m-recent-activities>
       </main>
       <footer>
@@ -62,14 +62,17 @@ class ActivitySamplingComponent extends Container {
   }
 
   #refreshRequested() {
+    // TODO Rename to loadRecentActivities
     Container.services.selectRecentActivities();
   }
 
   #activityLogged(event) {
+    // FIXME activityLogged has no parameter
     Container.services.activityLogged(event.activity);
   }
 
   #activitySelected(activity) {
+    // FIXME this has no effect
     this.#currentActivityRef.value.activity = activity;
   }
 }

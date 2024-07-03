@@ -17,7 +17,7 @@ describe('Services', () => {
         await services.activityUpdated({ name: 'client', value: 'c1' });
         await services.activityUpdated({ name: 'project', value: 'p1' });
         await services.activityUpdated({ name: 'task', value: 't1' });
-        await services.logActivity();
+        await services.activityLogged();
 
         expect(services.store.getState().currentActivity.activity).toEqual({
           timestamp: new Date('2023-10-07T13:30Z'),
@@ -47,7 +47,7 @@ describe('Services', () => {
         await services.activityUpdated({ name: 'project', value: 'p1' });
         await services.activityUpdated({ name: 'task', value: 't1' });
         await services.activityUpdated({ name: 'notes', value: 'n1' });
-        await services.logActivity();
+        await services.activityLogged();
 
         expect(services.store.getState().currentActivity.activity).toEqual({
           timestamp: new Date('2023-10-07T13:30Z'),
@@ -203,7 +203,7 @@ describe('Services', () => {
         await services.activityUpdated({ name: 'project', value: 'p1' });
         await services.activityUpdated({ name: 'task', value: 't1' });
         clock.add(new Duration('PT3M'));
-        await services.logActivity();
+        await services.activityLogged();
 
         expect(activitiesLogged.data).toEqual([
           {

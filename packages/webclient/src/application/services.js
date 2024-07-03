@@ -50,7 +50,7 @@ export class Services {
     this.#store.dispatch({ type: 'activity-updated', name, value });
   }
 
-  async logActivity() {
+  async activityLogged() {
     const activity = { ...this.#store.getState().currentActivity.activity };
     if (!activity.timestamp) {
       activity.timestamp = this.#clock.date();

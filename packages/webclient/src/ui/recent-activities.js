@@ -3,7 +3,7 @@ import { html } from 'lit-html';
 import './recent-activities.css';
 import { Component } from './components.js';
 
-const ACTIVITY_SELECTED_EVENT = 'activity-selected';
+const ACTIVITY_SELECTED_EVENT = 'activityselected';
 
 class ActivitySelectedEvent extends Event {
   constructor({ client, project, task, notes }) {
