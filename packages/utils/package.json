@@ -11,6 +11,9 @@
   "scripts": {
     "test": "npx jest"
   },
+  "peerDependencies": {
+    "lit-html": "3.1.4"
+  },
   "devDependencies": {
     "@jest/globals": "29.7.0",
     "jest": "29.7.0"

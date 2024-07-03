@@ -1,4 +1,4 @@
-import * as handler from '../ui/handler.js';
+import * as handler from './handler.js';
 
 /**
  * @typedef {import('express').Response} Response

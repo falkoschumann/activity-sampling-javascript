@@ -1,9 +1,7 @@
 import { html, render } from 'lit-html';
 
-import { Services } from '../../application/services.js';
-
 export class Component extends HTMLElement {
-  static #services = Services.create();
+  static #services;
 
   get services() {
     return Component.#services;
