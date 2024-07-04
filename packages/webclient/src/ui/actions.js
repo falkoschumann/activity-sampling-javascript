@@ -32,7 +32,6 @@ export async function refreshRequested() {
   activityChanged();
 }
 
-/** @deprecated */
 export async function activityUpdated({ name, value }) {
   // TODO use UI event instead of store?
   await services.activityUpdated({ name, value }, store);

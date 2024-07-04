@@ -77,7 +77,6 @@ export class Services {
     this.#store.dispatch({ type: 'countdown-stopped' });
   }
 
-  /** @deprecated */
   async activitySelected({ client, project, task, notes }) {
     this.#store.dispatch({
       type: 'activity-selected',
