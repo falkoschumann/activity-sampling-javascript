@@ -1,7 +1,8 @@
 import { html } from 'lit-html';
 
+import { Component } from '@activity-sampling/utils/src/browser.js';
+
 import './recent-activities.css';
-import { Component } from './components.js';
 
 const ACTIVITY_SELECTED_EVENT = 'activityselected';
 

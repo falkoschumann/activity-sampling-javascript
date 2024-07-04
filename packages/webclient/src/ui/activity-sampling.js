@@ -1,6 +1,8 @@
 import { html } from 'lit-html';
 import { createRef, ref } from 'lit-html/directives/ref.js';
 
+import { Container } from '@activity-sampling/utils/src/browser.js';
+
 import './reset.css';
 import './fragments.css';
 import './components.css';
@@ -11,7 +13,6 @@ import './countdown.js';
 import './recent-activities.js';
 import './time-summary.js';
 import { Services } from '../application/services.js';
-import { Container } from './components.js';
 
 class ActivitySamplingComponent extends Container {
   #currentActivityRef = createRef();

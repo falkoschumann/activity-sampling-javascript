@@ -1,9 +1,9 @@
 import { html } from 'lit-html';
 
 import { Duration } from '@activity-sampling/utils';
+import { Component } from '@activity-sampling/utils/src/browser.js';
 
 import './time-summary.css';
-import { Component } from './components.js';
 
 class TimeSummaryComponent extends Component {
   #hours = {
