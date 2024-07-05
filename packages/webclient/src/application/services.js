@@ -51,7 +51,7 @@ export class Services {
   }
 
   async activityLogged() {
-    const activity = { ...this.#store.getState().currentActivity.activity };
+    const activity = { ...this.#store.getState().currentActivity };
     if (!activity.timestamp) {
       activity.timestamp = this.#clock.date();
     }

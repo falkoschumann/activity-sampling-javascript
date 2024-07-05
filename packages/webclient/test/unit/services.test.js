@@ -19,7 +19,7 @@ describe('Services', () => {
         await services.activityUpdated({ name: 'task', value: 't1' });
         await services.activityLogged();
 
-        expect(services.store.getState().currentActivity.activity).toEqual({
+        expect(services.store.getState().currentActivity).toEqual({
           timestamp: new Date('2023-10-07T13:30Z'),
           duration: new Duration('PT30M'),
           client: 'c1',
@@ -49,7 +49,7 @@ describe('Services', () => {
         await services.activityUpdated({ name: 'notes', value: 'n1' });
         await services.activityLogged();
 
-        expect(services.store.getState().currentActivity.activity).toEqual({
+        expect(services.store.getState().currentActivity).toEqual({
           timestamp: new Date('2023-10-07T13:30Z'),
           duration: new Duration('PT30M'),
           client: 'c1',
@@ -80,10 +80,10 @@ describe('Services', () => {
         notes: 'n1',
       });
 
-      expect(services.store.getState().currentActivity).toEqual({
-        ...initialState.currentActivity,
-        activity: {
-          ...initialState.currentActivity.activity,
+      expect(services.store.getState()).toEqual({
+        ...initialState,
+        currentActivity: {
+          ...initialState.currentActivity,
           client: 'c1',
           project: 'p1',
           task: 't1',
@@ -99,8 +99,8 @@ describe('Services', () => {
 
         services.askPeriodically({ period: new Duration('PT20M') });
 
-        expect(services.store.getState().currentActivity).toEqual({
-          ...initialState.currentActivity,
+        expect(services.store.getState()).toEqual({
+          ...initialState,
           isFormDisabled: true,
           countdown: {
             isRunning: true,
@@ -119,8 +119,8 @@ describe('Services', () => {
 
         timer.simulateTaskExecution({ times: 1 });
 
-        expect(services.store.getState().currentActivity).toEqual({
-          ...initialState.currentActivity,
+        expect(services.store.getState()).toEqual({
+          ...initialState,
           isFormDisabled: true,
           countdown: {
             isRunning: true,
@@ -136,8 +136,8 @@ describe('Services', () => {
 
         timer.simulateTaskExecution({ times: 59 });
 
-        expect(services.store.getState().currentActivity).toEqual({
-          ...initialState.currentActivity,
+        expect(services.store.getState()).toEqual({
+          ...initialState,
           isFormDisabled: true,
           countdown: {
             isRunning: true,
@@ -153,10 +153,10 @@ describe('Services', () => {
 
         timer.simulateTaskExecution({ times: 60 });
 
-        expect(services.store.getState().currentActivity).toEqual({
-          ...initialState.currentActivity,
-          activity: {
-            ...initialState.currentActivity.activity,
+        expect(services.store.getState()).toEqual({
+          ...initialState,
+          currentActivity: {
+            ...initialState.currentActivity,
             timestamp: new Date('2024-03-03T16:53Z'),
             duration: new Duration('PT1M'),
           },
@@ -175,10 +175,10 @@ describe('Services', () => {
 
         timer.simulateTaskExecution({ times: 61 });
 
-        expect(services.store.getState().currentActivity).toEqual({
-          ...initialState.currentActivity,
-          activity: {
-            ...initialState.currentActivity.activity,
+        expect(services.store.getState()).toEqual({
+          ...initialState,
+          currentActivity: {
+            ...initialState.currentActivity,
             timestamp: new Date('2024-03-03T16:53Z'),
             duration: new Duration('PT1M'),
           },
@@ -215,9 +215,9 @@ describe('Services', () => {
             notes: '',
           },
         ]);
-        expect(services.store.getState().currentActivity).toEqual({
-          ...initialState.currentActivity,
-          activity: {
+        expect(services.store.getState()).toEqual({
+          ...initialState,
+          currentActivity: {
             timestamp: new Date('2024-03-03T16:53Z'),
             duration: new Duration('PT1M'),
             client: 'c1',
@@ -243,8 +243,8 @@ describe('Services', () => {
         await services.stopAskingPeriodically();
 
         expect(canceled.data).toHaveLength(1);
-        expect(services.store.getState().currentActivity).toEqual({
-          ...initialState.currentActivity,
+        expect(services.store.getState()).toEqual({
+          ...initialState,
           isFormDisabled: false,
           countdown: {
             isRunning: false,
@@ -348,10 +348,7 @@ describe('Services', () => {
       const lastActivity = Activity.createTestInstance({
         timestamp: new Date('2023-10-07T13:00Z'),
       });
-      expect(services.store.getState().currentActivity).toEqual({
-        ...initialState.currentActivity,
-        activity: lastActivity,
-      });
+      expect(services.store.getState().currentActivity).toEqual(lastActivity);
     });
 
     test('Resets last activity if activity log is empty', async () => {
@@ -407,14 +404,11 @@ describe('Services', () => {
       expect(services.store.getState()).toEqual({
         ...currentState,
         currentActivity: {
-          ...currentState.currentActivity,
-          activity: {
-            timestamp: undefined,
-            client: '',
-            project: '',
-            task: '',
-            notes: '',
-          },
+          timestamp: undefined,
+          client: '',
+          project: '',
+          task: '',
+          notes: '',
         },
         recentActivities: {
           workingDays: [],

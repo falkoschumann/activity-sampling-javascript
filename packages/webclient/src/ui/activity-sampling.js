@@ -31,9 +31,9 @@ class ActivitySamplingComponent extends Container {
   extractState(state) {
     // TODO simplify state extraction
     return {
-      activity: state.currentActivity.activity,
-      isFormDisabled: state.currentActivity.isFormDisabled,
-      countdown: state.currentActivity.countdown,
+      currentActivity: state.currentActivity,
+      isFormDisabled: state.isFormDisabled,
+      countdown: state.countdown,
       workingDays: state.recentActivities.workingDays,
       timeSummary: state.recentActivities.timeSummary,
     };
@@ -44,7 +44,7 @@ class ActivitySamplingComponent extends Container {
       <aside class="space-y-100">
         <m-current-activity
           ${ref(this.#currentActivityRef)}
-          .activity=${this.state.activity}
+          .activity=${this.state.currentActivity}
           .disabled=${this.state.isFormDisabled}
           @activitylogged=${this.#activityLogged.bind(this)}
         ></m-current-activity>

@@ -2,20 +2,18 @@ import { Duration } from '@activity-sampling/utils';
 
 export const initialState = {
   currentActivity: {
-    activity: {
-      timestamp: undefined,
-      duration: new Duration('PT30M'),
-      client: '',
-      project: '',
-      task: '',
-      notes: '',
-    },
-    isFormDisabled: false,
-    countdown: {
-      isRunning: false,
-      period: new Duration('PT30M'),
-      remainingTime: new Duration('PT30M'),
-    },
+    timestamp: undefined,
+    duration: new Duration('PT30M'),
+    client: '',
+    project: '',
+    task: '',
+    notes: '',
+  },
+  isFormDisabled: false,
+  countdown: {
+    isRunning: false,
+    period: new Duration('PT30M'),
+    remainingTime: new Duration('PT30M'),
   },
   recentActivities: {
     workingDays: [],
@@ -54,26 +52,20 @@ function activityUpdated(state, { name, value }) {
     ...state,
     currentActivity: {
       ...state.currentActivity,
-      activity: {
-        ...state.currentActivity.activity,
-        [name]: value,
-      },
+      [name]: value,
     },
   };
 }
 
 function activityLogged(state, { activity }) {
-  let isFormDisabled = state.currentActivity.isFormDisabled;
-  if (state.currentActivity.countdown.isRunning) {
+  let isFormDisabled = state.isFormDisabled;
+  if (state.countdown.isRunning) {
     isFormDisabled = true;
   }
   return {
     ...state,
-    currentActivity: {
-      ...state.currentActivity,
-      activity,
-      isFormDisabled,
-    },
+    currentActivity: activity,
+    isFormDisabled,
   };
 }
 
@@ -82,13 +74,10 @@ function activitySelected(state, { client, project, task, notes }) {
     ...state,
     currentActivity: {
       ...state.currentActivity,
-      activity: {
-        ...state.currentActivity.activity,
-        client,
-        project,
-        task,
-        notes,
-      },
+      client,
+      project,
+      task,
+      notes,
     },
   };
 }
@@ -96,50 +85,42 @@ function activitySelected(state, { client, project, task, notes }) {
 function countdownStarted(state, { period }) {
   return {
     ...state,
-    currentActivity: {
-      ...state.currentActivity,
-      isFormDisabled: true,
-      countdown: {
-        isRunning: true,
-        period,
-        remainingTime: new Duration(period),
-      },
+    isFormDisabled: true,
+    countdown: {
+      isRunning: true,
+      period,
+      remainingTime: new Duration(period),
     },
   };
 }
 
 function countdownProgressed(state, { timestamp, duration }) {
-  let remainingTime = new Duration(
-    state.currentActivity.countdown.remainingTime,
-  );
+  let remainingTime = new Duration(state.countdown.remainingTime);
   remainingTime.minus(duration);
   const elapsed = remainingTime.isZero || remainingTime.isNegative;
   if (remainingTime.isNegative) {
-    remainingTime = new Duration(state.currentActivity.countdown.period).minus(
+    remainingTime = new Duration(state.countdown.period).minus(
       remainingTime.absolutized(),
     );
   }
-  let isFormDisabled = state.currentActivity.isFormDisabled;
+  let isFormDisabled = state.isFormDisabled;
   if (elapsed) {
     isFormDisabled = false;
-    duration = new Duration(state.currentActivity.countdown.period);
+    duration = new Duration(state.countdown.period);
   } else {
-    ({ timestamp, duration } = state.currentActivity.activity);
+    ({ timestamp, duration } = state.currentActivity);
   }
   return {
     ...state,
     currentActivity: {
       ...state.currentActivity,
-      activity: {
-        ...state.currentActivity.activity,
-        timestamp,
-        duration,
-      },
-      isFormDisabled,
-      countdown: {
-        ...state.currentActivity.countdown,
-        remainingTime,
-      },
+      timestamp,
+      duration,
+    },
+    isFormDisabled,
+    countdown: {
+      ...state.countdown,
+      remainingTime,
     },
   };
 }
@@ -147,14 +128,11 @@ function countdownProgressed(state, { timestamp, duration }) {
 function countdownStopped(state) {
   return {
     ...state,
-    currentActivity: {
-      ...state.currentActivity,
-      isFormDisabled: false,
-      countdown: {
-        ...state.currentActivity.countdown,
-        isRunning: false,
-        remainingTime: Duration.zero(),
-      },
+    isFormDisabled: false,
+    countdown: {
+      ...state.countdown,
+      isRunning: false,
+      remainingTime: Duration.zero(),
     },
   };
 }
@@ -172,10 +150,7 @@ function recentActivitiesLoaded(state, { recentActivities }) {
   }
   return {
     ...state,
-    currentActivity: {
-      ...state.currentActivity,
-      activity: lastActivity,
-    },
+    currentActivity: lastActivity,
     recentActivities,
   };
 }
