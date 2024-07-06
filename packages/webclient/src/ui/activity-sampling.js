@@ -58,7 +58,7 @@ class ActivitySamplingComponent extends Container {
   }
 
   #activityLogged(event) {
-    this.#services.activityLogged(event.activity);
+    this.#services.logActivity(event.activity);
   }
 
   #activitySelected(activity) {
