@@ -46,6 +46,14 @@ export class Services {
     this.#store.dispatch({ type: 'activity-logged', activity });
   }
 
+  async selectRecentActivities() {
+    const recentActivities = await this.#api.selectRecentActivities();
+    this.#store.dispatch({
+      type: 'recent-activities-selected',
+      recentActivities,
+    });
+  }
+
   async askPeriodically({ period }) {
     this.#timer.schedule(() => {
       const timestamp = this.#clock.date();
@@ -62,13 +70,5 @@ export class Services {
   async stopAskingPeriodically() {
     this.#timer.cancel();
     this.#store.dispatch({ type: 'countdown-stopped' });
-  }
-
-  async selectRecentActivities() {
-    const recentActivities = await this.#api.selectRecentActivities();
-    this.#store.dispatch({
-      type: 'recent-activities-loaded',
-      recentActivities,
-    });
   }
 }

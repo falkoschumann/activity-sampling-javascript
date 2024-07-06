@@ -32,14 +32,14 @@ export function reducer(state = initialState, action) {
       return activityUpdated(state, action);
     case 'activity-logged':
       return activityLogged(state, action);
+    case 'recent-activities-selected':
+      return recentActivitiesSelected(state, action);
     case 'countdown-started':
       return countdownStarted(state, action);
     case 'countdown-progressed':
       return countdownProgressed(state, action);
     case 'countdown-stopped':
       return countdownStopped(state, action);
-    case 'recent-activities-loaded':
-      return recentActivitiesLoaded(state, action);
     default:
       return state;
   }
@@ -64,6 +64,24 @@ function activityLogged(state, { activity }) {
     ...state,
     currentActivity: activity,
     isFormDisabled,
+  };
+}
+
+function recentActivitiesSelected(state, { recentActivities }) {
+  let lastActivity = recentActivities.workingDays[0]?.activities[0];
+  if (!lastActivity) {
+    lastActivity = {
+      timestamp: undefined,
+      client: '',
+      project: '',
+      task: '',
+      notes: '',
+    };
+  }
+  return {
+    ...state,
+    currentActivity: lastActivity,
+    recentActivities,
   };
 }
 
@@ -119,23 +137,5 @@ function countdownStopped(state) {
       isRunning: false,
       remainingTime: Duration.zero(),
     },
-  };
-}
-
-function recentActivitiesLoaded(state, { recentActivities }) {
-  let lastActivity = recentActivities.workingDays[0]?.activities[0];
-  if (!lastActivity) {
-    lastActivity = {
-      timestamp: undefined,
-      client: '',
-      project: '',
-      task: '',
-      notes: '',
-    };
-  }
-  return {
-    ...state,
-    currentActivity: lastActivity,
-    recentActivities,
   };
 }

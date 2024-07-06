@@ -74,6 +74,175 @@ describe('Services', () => {
       });
     });
 
+    describe('Recent activities', () => {
+      test('Selects recent activities', async () => {
+        const { services } = configure({
+          response: {
+            body: {
+              workingDays: [
+                {
+                  date: new Date('2023-10-07T00:00Z'),
+                  activities: [
+                    Activity.createTestInstance({
+                      timestamp: '2023-10-07T13:00Z',
+                    }),
+                    Activity.createTestInstance({
+                      timestamp: '2023-10-07T12:30Z',
+                    }),
+                    Activity.createTestInstance({
+                      timestamp: '2023-10-07T12:00Z',
+                    }),
+                  ],
+                },
+              ],
+              timeSummary: {
+                hoursToday: 'PT1H30M',
+                hoursYesterday: 'PT0S',
+                hoursThisWeek: 'PT1H30M',
+                hoursThisMonth: 'PT1H30M',
+              },
+            },
+          },
+        });
+
+        await services.selectRecentActivities();
+
+        expect(services.store.getState().recentActivities).toEqual({
+          workingDays: [
+            {
+              date: new Date('2023-10-07T00:00Z'),
+              activities: [
+                Activity.createTestInstance({
+                  timestamp: new Date('2023-10-07T13:00Z'),
+                }),
+                Activity.createTestInstance({
+                  timestamp: new Date('2023-10-07T12:30Z'),
+                }),
+                Activity.createTestInstance({
+                  timestamp: new Date('2023-10-07T12:00Z'),
+                }),
+              ],
+            },
+          ],
+          timeSummary: {
+            hoursToday: new Duration('PT1H30M'),
+            hoursYesterday: new Duration(),
+            hoursThisWeek: new Duration('PT1H30M'),
+            hoursThisMonth: new Duration('PT1H30M'),
+          },
+        });
+      });
+
+      test('Asumes last activity as current activity', async () => {
+        const { services } = configure({
+          response: {
+            body: {
+              workingDays: [
+                {
+                  date: new Date('2023-10-07T00:00Z'),
+                  activities: [
+                    Activity.createTestInstance({
+                      timestamp: '2023-10-07T13:00Z',
+                    }),
+                  ],
+                },
+              ],
+              timeSummary: {
+                hoursToday: 'PT1H30M',
+                hoursYesterday: 'PT0S',
+                hoursThisWeek: 'PT1H30M',
+                hoursThisMonth: 'PT1H30M',
+              },
+            },
+          },
+        });
+
+        await services.selectRecentActivities();
+
+        const lastActivity = Activity.createTestInstance({
+          timestamp: new Date('2023-10-07T13:00Z'),
+        });
+        expect(services.store.getState().currentActivity).toEqual(lastActivity);
+      });
+
+      test('Resets last activity if activity log is empty', async () => {
+        const currentState = {
+          ...initialState,
+          currentActivity: {
+            timestamp: new Date('2023-10-07T13:00Z'),
+            duration: new Duration('PT20M'),
+            client: 'c1',
+            project: 'p1',
+            task: 't1',
+            notes: 'n1',
+            isFormDisabled: true,
+            remainingTime: new Duration('PT3M'),
+            isTimerRunning: true,
+          },
+          recentActivities: {
+            workingDays: [
+              {
+                date: new Date('2023-10-07T00:00Z'),
+                activities: [
+                  Activity.createTestInstance({
+                    timestamp: '2023-10-07T13:00Z',
+                  }),
+                  Activity.createTestInstance({
+                    timestamp: '2023-10-07T12:30Z',
+                  }),
+                  Activity.createTestInstance({
+                    timestamp: '2023-10-07T12:00Z',
+                  }),
+                ],
+              },
+            ],
+            timeSummary: {
+              hoursToday: new Duration('PT1H30M'),
+              hoursYesterday: new Duration('PT0S'),
+              hoursThisWeek: new Duration('PT1H30M'),
+              hoursThisMonth: new Duration('PT1H30M'),
+            },
+          },
+        };
+        const { services } = configure({
+          state: { ...currentState },
+          response: {
+            body: {
+              workingDays: [],
+              timeSummary: {
+                hoursToday: 'PT0S',
+                hoursYesterday: 'PT0S',
+                hoursThisWeek: 'PT0S',
+                hoursThisMonth: 'PT0S',
+              },
+            },
+          },
+        });
+
+        await services.selectRecentActivities();
+
+        expect(services.store.getState()).toEqual({
+          ...currentState,
+          currentActivity: {
+            timestamp: undefined,
+            client: '',
+            project: '',
+            task: '',
+            notes: '',
+          },
+          recentActivities: {
+            workingDays: [],
+            timeSummary: {
+              hoursToday: new Duration('PT0S'),
+              hoursYesterday: new Duration('PT0S'),
+              hoursThisWeek: new Duration('PT0S'),
+              hoursThisMonth: new Duration('PT0S'),
+            },
+          },
+        });
+      });
+    });
+
     describe('Asks periodically what I am working on', () => {
       test('Starts countdown and disable form', () => {
         const { services, timer } = configure({ now: '2024-03-03T16:53Z' });
@@ -242,169 +411,6 @@ describe('Services', () => {
     test.todo(
       'Starts countdown with the default interval when the application starts',
     );
-  });
-
-  describe('Recent activities', () => {
-    test('Selects recent activities', async () => {
-      const { services } = configure({
-        response: {
-          body: {
-            workingDays: [
-              {
-                date: new Date('2023-10-07T00:00Z'),
-                activities: [
-                  Activity.createTestInstance({
-                    timestamp: '2023-10-07T13:00Z',
-                  }),
-                  Activity.createTestInstance({
-                    timestamp: '2023-10-07T12:30Z',
-                  }),
-                  Activity.createTestInstance({
-                    timestamp: '2023-10-07T12:00Z',
-                  }),
-                ],
-              },
-            ],
-            timeSummary: {
-              hoursToday: 'PT1H30M',
-              hoursYesterday: 'PT0S',
-              hoursThisWeek: 'PT1H30M',
-              hoursThisMonth: 'PT1H30M',
-            },
-          },
-        },
-      });
-
-      await services.selectRecentActivities();
-
-      expect(services.store.getState().recentActivities).toEqual({
-        workingDays: [
-          {
-            date: new Date('2023-10-07T00:00Z'),
-            activities: [
-              Activity.createTestInstance({
-                timestamp: new Date('2023-10-07T13:00Z'),
-              }),
-              Activity.createTestInstance({
-                timestamp: new Date('2023-10-07T12:30Z'),
-              }),
-              Activity.createTestInstance({
-                timestamp: new Date('2023-10-07T12:00Z'),
-              }),
-            ],
-          },
-        ],
-        timeSummary: {
-          hoursToday: new Duration('PT1H30M'),
-          hoursYesterday: new Duration(),
-          hoursThisWeek: new Duration('PT1H30M'),
-          hoursThisMonth: new Duration('PT1H30M'),
-        },
-      });
-    });
-
-    test('Asumes last activity as current activity', async () => {
-      const { services } = configure({
-        response: {
-          body: {
-            workingDays: [
-              {
-                date: new Date('2023-10-07T00:00Z'),
-                activities: [
-                  Activity.createTestInstance({
-                    timestamp: '2023-10-07T13:00Z',
-                  }),
-                ],
-              },
-            ],
-            timeSummary: {
-              hoursToday: 'PT1H30M',
-              hoursYesterday: 'PT0S',
-              hoursThisWeek: 'PT1H30M',
-              hoursThisMonth: 'PT1H30M',
-            },
-          },
-        },
-      });
-
-      await services.selectRecentActivities();
-
-      const lastActivity = Activity.createTestInstance({
-        timestamp: new Date('2023-10-07T13:00Z'),
-      });
-      expect(services.store.getState().currentActivity).toEqual(lastActivity);
-    });
-
-    test('Resets last activity if activity log is empty', async () => {
-      const currentState = {
-        ...initialState,
-        currentActivity: {
-          timestamp: new Date('2023-10-07T13:00Z'),
-          duration: new Duration('PT20M'),
-          client: 'c1',
-          project: 'p1',
-          task: 't1',
-          notes: 'n1',
-          isFormDisabled: true,
-          remainingTime: new Duration('PT3M'),
-          isTimerRunning: true,
-        },
-        recentActivities: {
-          workingDays: [
-            {
-              date: new Date('2023-10-07T00:00Z'),
-              activities: [
-                Activity.createTestInstance({ timestamp: '2023-10-07T13:00Z' }),
-                Activity.createTestInstance({ timestamp: '2023-10-07T12:30Z' }),
-                Activity.createTestInstance({ timestamp: '2023-10-07T12:00Z' }),
-              ],
-            },
-          ],
-          timeSummary: {
-            hoursToday: new Duration('PT1H30M'),
-            hoursYesterday: new Duration('PT0S'),
-            hoursThisWeek: new Duration('PT1H30M'),
-            hoursThisMonth: new Duration('PT1H30M'),
-          },
-        },
-      };
-      const { services } = configure({
-        state: { ...currentState },
-        response: {
-          body: {
-            workingDays: [],
-            timeSummary: {
-              hoursToday: 'PT0S',
-              hoursYesterday: 'PT0S',
-              hoursThisWeek: 'PT0S',
-              hoursThisMonth: 'PT0S',
-            },
-          },
-        },
-      });
-
-      await services.selectRecentActivities();
-
-      expect(services.store.getState()).toEqual({
-        ...currentState,
-        currentActivity: {
-          timestamp: undefined,
-          client: '',
-          project: '',
-          task: '',
-          notes: '',
-        },
-        recentActivities: {
-          workingDays: [],
-          timeSummary: {
-            hoursToday: new Duration('PT0S'),
-            hoursYesterday: new Duration('PT0S'),
-            hoursThisWeek: new Duration('PT0S'),
-            hoursThisMonth: new Duration('PT0S'),
-          },
-        },
-      });
-    });
   });
 
   describe('Hours worked', () => {
