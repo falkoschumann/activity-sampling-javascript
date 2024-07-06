@@ -30,7 +30,11 @@ class CurrentActivityComponent extends Container {
         ${this.#textInputTemplate(this.#projectRef, 'project', 'Project', true)}
         ${this.#textInputTemplate(this.#taskRef, 'task', 'Task', true)}
         ${this.#textInputTemplate(this.#notesRef, 'notes', 'Notes')}
-        <button type="submit" class="mt-75" ?disabled="${this.disabled}">
+        <button
+          type="submit"
+          class="mt-75"
+          ?disabled="${this.state.isSubmitDisabled}"
+        >
           Log
         </button>
       </form>
@@ -44,8 +48,7 @@ class CurrentActivityComponent extends Container {
         <input
           ${ref(inputRef)}
           type="text"
-          ?required="${required}"
-          ?disabled="${this.disabled}"
+          ?disabled="${this.state.isFormDisabled}"
           id="${name}"
           name="${name}"
           @keyup=${(e) => this.#inputChanged(e)}

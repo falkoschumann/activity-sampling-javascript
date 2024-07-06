@@ -40,6 +40,7 @@ describe('Services', () => {
             task: 't1',
             notes: 'n1',
           },
+          isSubmitDisabled: false,
         },
       });
     });
@@ -66,6 +67,55 @@ describe('Services', () => {
             task: 't1',
             notes: 'n1',
           },
+          isSubmitDisabled: false,
+        },
+      });
+    });
+
+    test('Enables submit if all required properties are set', async () => {
+      const { services } = configure();
+
+      await services.activityUpdated({
+        client: 'c1',
+        project: 'p1',
+        task: 't1',
+      });
+
+      expect(services.store.getState()).toEqual({
+        ...initialState,
+        currentActivity: {
+          ...initialState.currentActivity,
+          activity: {
+            timestamp: undefined,
+            duration: new Duration('PT30M'),
+            client: 'c1',
+            project: 'p1',
+            task: 't1',
+            notes: '',
+          },
+          isSubmitDisabled: false,
+        },
+      });
+    });
+
+    test('Disables submit unless all required properties are set', async () => {
+      const { services } = configure();
+
+      await services.activityUpdated({ client: 'c1' });
+
+      expect(services.store.getState()).toEqual({
+        ...initialState,
+        currentActivity: {
+          ...initialState.currentActivity,
+          activity: {
+            timestamp: undefined,
+            duration: new Duration('PT30M'),
+            client: 'c1',
+            project: '',
+            task: '',
+            notes: '',
+          },
+          isSubmitDisabled: true,
         },
       });
     });
@@ -96,6 +146,7 @@ describe('Services', () => {
               task: 't1',
               notes: '',
             },
+            isSubmitDisabled: false,
           },
         });
         expect(activitiesLogged.data).toEqual([
@@ -134,6 +185,7 @@ describe('Services', () => {
               task: 't1',
               notes: 'n1',
             },
+            isSubmitDisabled: false,
           },
         });
         expect(activitiesLogged.data).toEqual([
@@ -189,6 +241,8 @@ describe('Services', () => {
             activity: Activity.createTestInstance({
               timestamp: new Date('2023-10-07T13:00Z'),
             }),
+            isSubmitDisabled: false,
+            isFormDisabled: false,
           },
           recentActivities: {
             workingDays: [
@@ -285,6 +339,8 @@ describe('Services', () => {
               task: '',
               notes: '',
             },
+            isSubmitDisabled: true,
+            isFormDisabled: false,
           },
           recentActivities: {
             workingDays: [],
@@ -310,6 +366,7 @@ describe('Services', () => {
           ...initialState,
           currentActivity: {
             ...initialState.currentActivity,
+            isSubmitDisabled: true,
             isFormDisabled: true,
           },
           countdown: {
@@ -333,6 +390,7 @@ describe('Services', () => {
           ...initialState,
           currentActivity: {
             ...initialState.currentActivity,
+            isSubmitDisabled: true,
             isFormDisabled: true,
           },
           countdown: {
@@ -353,6 +411,7 @@ describe('Services', () => {
           ...initialState,
           currentActivity: {
             ...initialState.currentActivity,
+            isSubmitDisabled: true,
             isFormDisabled: true,
           },
           countdown: {
@@ -442,6 +501,7 @@ describe('Services', () => {
         expect(services.store.getState()).toEqual({
           ...initialState,
           currentActivity: {
+            ...initialState.currentActivity,
             activity: {
               timestamp: new Date('2024-03-03T16:56Z'),
               duration: new Duration('PT1M'),
@@ -450,6 +510,7 @@ describe('Services', () => {
               task: 't1',
               notes: '',
             },
+            isSubmitDisabled: true,
             isFormDisabled: true,
           },
           countdown: {

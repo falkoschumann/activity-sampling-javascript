@@ -10,7 +10,7 @@ export const initialState = {
       task: '',
       notes: '',
     },
-    // TODO add isSubmittable
+    isSubmitDisabled: true,
     isFormDisabled: false,
   },
   countdown: {
@@ -49,28 +49,25 @@ export function reducer(state = initialState, action) {
 }
 
 function activityUpdated(state, { activity }) {
-  return {
+  const newState = {
     ...state,
     currentActivity: {
       ...state.currentActivity,
       activity: { ...state.currentActivity.activity, ...activity },
     },
   };
+  return updateForm(newState);
 }
 
 function activityLogged(state, { activity }) {
-  let isFormDisabled = state.currentActivity.isFormDisabled;
-  if (state.countdown.isRunning) {
-    isFormDisabled = true;
-  }
-  return {
+  const newState = {
     ...state,
     currentActivity: {
       ...state.currentActivity,
       activity,
-      isFormDisabled,
     },
   };
+  return updateForm(newState);
 }
 
 function recentActivitiesSelected(state, { recentActivities }) {
@@ -79,26 +76,24 @@ function recentActivitiesSelected(state, { recentActivities }) {
   if (lastActivity != null) {
     currentActivity = { ...currentActivity, activity: lastActivity };
   }
-  return {
+  const newState = {
     ...state,
     currentActivity,
     recentActivities,
   };
+  return updateForm(newState);
 }
 
 function countdownStarted(state, { period }) {
-  return {
+  const newState = {
     ...state,
-    currentActivity: {
-      ...state.currentActivity,
-      isFormDisabled: true,
-    },
     countdown: {
       isRunning: true,
       period,
       remainingTime: new Duration(period),
     },
   };
+  return updateForm(newState);
 }
 
 function countdownProgressed(state, { timestamp, duration }) {
@@ -112,6 +107,7 @@ function countdownProgressed(state, { timestamp, duration }) {
   }
   let isFormDisabled = state.currentActivity.isFormDisabled;
   if (elapsed) {
+    // TODO enable submit
     isFormDisabled = false;
     duration = new Duration(state.countdown.period);
   } else {
@@ -136,16 +132,33 @@ function countdownProgressed(state, { timestamp, duration }) {
 }
 
 function countdownStopped(state) {
-  return {
+  const newState = {
     ...state,
-    currentActivity: {
-      ...state.currentActivity,
-      isFormDisabled: false,
-    },
     countdown: {
       ...state.countdown,
       isRunning: false,
       remainingTime: Duration.zero(),
+    },
+  };
+  return updateForm(newState);
+}
+
+function updateForm(state) {
+  const isFormDisabled = state.countdown.isRunning;
+
+  const activity = state.currentActivity.activity;
+  const isSubmitDisabled =
+    isFormDisabled ||
+    activity.client.trim().length === 0 ||
+    activity.project.trim().length === 0 ||
+    activity.task.trim().length === 0;
+
+  return {
+    ...state,
+    currentActivity: {
+      ...state.currentActivity,
+      isSubmitDisabled,
+      isFormDisabled,
     },
   };
 }
