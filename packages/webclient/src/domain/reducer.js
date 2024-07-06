@@ -68,19 +68,14 @@ function activityLogged(state, { activity }) {
 }
 
 function recentActivitiesSelected(state, { recentActivities }) {
-  let lastActivity = recentActivities.workingDays[0]?.activities[0];
-  if (!lastActivity) {
-    lastActivity = {
-      timestamp: undefined,
-      client: '',
-      project: '',
-      task: '',
-      notes: '',
-    };
+  let currentActivity = { ...initialState.currentActivity };
+  const lastActivity = recentActivities.workingDays[0]?.activities[0];
+  if (lastActivity != null) {
+    currentActivity = { ...currentActivity, ...lastActivity };
   }
   return {
     ...state,
-    currentActivity: lastActivity,
+    currentActivity,
     recentActivities,
   };
 }

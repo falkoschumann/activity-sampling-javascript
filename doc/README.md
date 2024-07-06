@@ -18,7 +18,7 @@ analysis.
 
 -   Groups activities by working days for the last 30 days.
 -   Summarizes houres worked today, yesterday, this week and this month.
--   Asumes last activity as current activity.
+-   Assumes last activity as current activity.
 
 ### Hours worked
 

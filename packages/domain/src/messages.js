@@ -192,7 +192,7 @@ export class Activity {
     client = 'Test client',
     project = 'Test project',
     task = 'Test task',
-    notes = 'Test notes',
+    notes = '',
   } = {}) {
     return Activity.create({
       timestamp,
@@ -246,7 +246,8 @@ export class Activity {
       'string',
     );
     const task = validateNotEmptyProperty(this, 'Activity', 'task', 'string');
-    const notes = validateOptionalProperty(this, 'Activity', 'notes', 'string');
+    const notes =
+      validateOptionalProperty(this, 'Activity', 'notes', 'string') ?? '';
     return Activity.create({
       timestamp,
       duration,

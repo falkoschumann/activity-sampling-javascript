@@ -1,5 +1,4 @@
 import { html } from 'lit-html';
-import { createRef, ref } from 'lit-html/directives/ref.js';
 
 import { Container } from '@activity-sampling/utils/src/browser.js';
 
@@ -15,7 +14,6 @@ import './time-summary.js';
 import { Services } from '../application/services.js';
 
 class ActivitySamplingComponent extends Container {
-  #currentActivityRef = createRef();
   #services = Services.getDefault();
 
   constructor() {
@@ -32,7 +30,6 @@ class ActivitySamplingComponent extends Container {
     return html`
       <aside class="space-y-100">
         <m-current-activity
-          ${ref(this.#currentActivityRef)}
           .activity=${this.state.currentActivity}
           .disabled=${this.state.isFormDisabled}
           @activitylogged=${this.#activityLogged.bind(this)}
@@ -53,17 +50,16 @@ class ActivitySamplingComponent extends Container {
     `;
   }
 
-  #refreshRequested() {
-    this.#services.selectRecentActivities();
+  async #refreshRequested() {
+    await this.#services.selectRecentActivities();
   }
 
-  #activityLogged(event) {
-    this.#services.logActivity(event.activity);
+  async #activityLogged(event) {
+    await this.#services.logActivity(event.activity);
   }
 
-  #activitySelected(activity) {
-    // FIXME this has no effect
-    this.#currentActivityRef.value.activity = activity;
+  async #activitySelected(event) {
+    await this.#services.activityUpdated(event.activity);
   }
 }
 

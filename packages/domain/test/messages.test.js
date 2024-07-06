@@ -1,6 +1,7 @@
 import { describe, expect, test } from '@jest/globals';
 
-import { ValidationError } from '@activity-sampling/utils';
+import { Duration, ValidationError } from '@activity-sampling/utils';
+
 import {
   Activity,
   LogActivity,
@@ -249,16 +250,7 @@ describe('Messages', () => {
           workingDays: [
             {
               date: '2024-06-20T00:00',
-              activities: [
-                {
-                  timestamp: '2024-06-20T12:30',
-                  duration: 'PT30M',
-                  client: 'Test client',
-                  project: 'Test project',
-                  task: 'Test task',
-                  notes: 'Test notes',
-                },
-              ],
+              activities: [Activity.createTestInstance()],
             },
           ],
           timeSummary: {
@@ -313,16 +305,7 @@ describe('Messages', () => {
         const dto = RecentActivities.create({
           workingDays: [
             {
-              activities: [
-                {
-                  timestamp: '2024-06-20T12:30',
-                  duration: 'PT30M',
-                  client: 'Test client',
-                  project: 'Test project',
-                  task: 'Test task',
-                  notes: 'Test notes',
-                },
-              ],
+              activities: [Activity.createTestInstance()],
             },
           ],
           timeSummary: {
@@ -343,16 +326,7 @@ describe('Messages', () => {
           workingDays: [
             {
               date: '2024-06-20T00:00',
-              activities: [
-                {
-                  timestamp: '2024-06-20T12:30',
-                  duration: 'PT30M',
-                  client: 'Test client',
-                  project: 'Test project',
-                  task: 'Test task',
-                  notes: 'Test notes',
-                },
-              ],
+              activities: [Activity.createTestInstance()],
             },
           ],
         });
@@ -369,16 +343,7 @@ describe('Messages', () => {
           workingDays: [
             {
               date: '2024-06-20T00:00',
-              activities: [
-                {
-                  timestamp: '2024-06-20T12:30',
-                  duration: 'PT30M',
-                  client: 'Test client',
-                  project: 'Test project',
-                  task: 'Test task',
-                  notes: 'Test notes',
-                },
-              ],
+              activities: [Activity.createTestInstance()],
             },
           ],
           timeSummary: {
@@ -400,16 +365,7 @@ describe('Messages', () => {
       test('Validates successfully', () => {
         const dto = WorkingDay.create({
           date: '2024-06-20T00:00',
-          activities: [
-            {
-              timestamp: '2024-06-20T12:30',
-              duration: 'PT30M',
-              client: 'Test client',
-              project: 'Test project',
-              task: 'Test task',
-              notes: 'Test notes',
-            },
-          ],
+          activities: [Activity.createTestInstance()],
         });
 
         const result = dto.validate();
@@ -419,16 +375,7 @@ describe('Messages', () => {
 
       test('Reports an error, if date is missing', () => {
         const dto = WorkingDay.create({
-          activities: [
-            {
-              timestamp: '2024-06-20T12:30',
-              duration: 'PT30M',
-              client: 'Test client',
-              project: 'Test project',
-              task: 'Test task',
-              notes: 'Test notes',
-            },
-          ],
+          activities: [Activity.createTestInstance()],
         });
 
         expect(() => dto.validate()).toThrow(
@@ -439,16 +386,7 @@ describe('Messages', () => {
       test('Reports an error, if date is invalid', () => {
         const dto = WorkingDay.create({
           date: '2024-13-20T00:00',
-          activities: [
-            {
-              timestamp: '2024-06-20T12:30',
-              duration: 'PT30M',
-              client: 'Test client',
-              project: 'Test project',
-              task: 'Test task',
-              notes: 'Test notes',
-            },
-          ],
+          activities: [Activity.createTestInstance()],
         });
 
         expect(() => dto.validate()).toThrow(
@@ -502,7 +440,21 @@ describe('Messages', () => {
 
   describe('Activity', () => {
     describe('Validate', () => {
-      test('Validates successfully', () => {
+      test('Validates successfully only with required properties', () => {
+        const dto = Activity.create({
+          timestamp: '2024-06-20T10:30Z',
+          duration: 'PT30M',
+          client: 'Test client',
+          project: 'Test project',
+          task: 'Test task',
+        });
+
+        const result = dto.validate();
+
+        expect(result).toEqual(Activity.createTestInstance());
+      });
+
+      test('Validates successfully with all properties', () => {
         const dto = Activity.create({
           timestamp: '2024-06-20T10:30Z',
           duration: 'PT30M',
@@ -514,7 +466,9 @@ describe('Messages', () => {
 
         const result = dto.validate();
 
-        expect(result).toEqual(Activity.createTestInstance());
+        expect(result).toEqual(
+          Activity.createTestInstance({ notes: 'Test notes' }),
+        );
       });
 
       test('Reports an error, if timestamp is missing', () => {
@@ -672,7 +626,7 @@ describe('Messages', () => {
         );
       });
 
-      test('Reports no error, if notes is missing', () => {
+      test('Assumes notes as empty string, if notes is missing', () => {
         const dto = Activity.create({
           timestamp: '2024-04-02T11:35Z',
           duration: 'PT30M',
@@ -681,7 +635,18 @@ describe('Messages', () => {
           task: 'Recent Activities',
         });
 
-        expect(() => dto.validate()).not.toThrow(ValidationError);
+        const result = dto.validate();
+
+        expect(result).toEqual(
+          Activity.create({
+            timestamp: new Date('2024-04-02T11:35Z'),
+            duration: new Duration('PT30M'),
+            client: 'Muspellheim',
+            project: 'Activity Sampling',
+            task: 'Recent Activities',
+            notes: '',
+          }),
+        );
       });
 
       test('Reports no error, if notes is empty', () => {
@@ -694,7 +659,18 @@ describe('Messages', () => {
           notes: '',
         });
 
-        expect(() => dto.validate()).not.toThrow(ValidationError);
+        const result = dto.validate();
+
+        expect(result).toEqual(
+          Activity.create({
+            timestamp: new Date('2024-04-02T11:35Z'),
+            duration: new Duration('PT30M'),
+            client: 'Muspellheim',
+            project: 'Activity Sampling',
+            task: 'Recent Activities',
+            notes: '',
+          }),
+        );
       });
     });
   });

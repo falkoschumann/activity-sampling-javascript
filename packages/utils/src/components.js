@@ -47,6 +47,10 @@ export class Container extends Component {
     this.#unsubscribeStore();
   }
 
+  extractState(state) {
+    return state;
+  }
+
   updateView({ force = false } = {}) {
     if (!this.isConnected) {
       return;
@@ -59,9 +63,5 @@ export class Container extends Component {
 
     super.updateView();
     this.oldState = this.state;
-  }
-
-  extractState(state) {
-    return state;
   }
 }

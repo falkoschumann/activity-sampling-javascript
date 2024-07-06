@@ -99,6 +99,7 @@ describe('Activity Sampling App', () => {
                 ...activity,
                 timestamp: activity.timestamp.toISOString(),
                 duration: 'PT30M',
+                notes: undefined,
               },
             ],
           },

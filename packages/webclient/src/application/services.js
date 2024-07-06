@@ -36,17 +36,20 @@ export class Services {
   }
 
   async activityUpdated(activity) {
+    console.debug('Activity updated:', activity);
     this.#store.dispatch({ type: 'activity-updated', activity });
   }
 
   async logActivity() {
     const activity = { ...this.#store.getState().currentActivity };
+    console.debug('Log activity:', activity);
     activity.timestamp = this.#clock.date();
     await this.#api.logActivity(activity);
     this.#store.dispatch({ type: 'activity-logged', activity });
   }
 
   async selectRecentActivities() {
+    console.debug('Select recent activities');
     const recentActivities = await this.#api.selectRecentActivities();
     this.#store.dispatch({
       type: 'recent-activities-selected',
@@ -55,6 +58,7 @@ export class Services {
   }
 
   async askPeriodically({ period }) {
+    console.debug('Ask periodically:', period);
     this.#timer.schedule(() => {
       const timestamp = this.#clock.date();
       const duration = new Duration('PT1S');
@@ -68,6 +72,7 @@ export class Services {
   }
 
   async stopAskingPeriodically() {
+    console.debug('Stop asking periodically');
     this.#timer.cancel();
     this.#store.dispatch({ type: 'countdown-stopped' });
   }

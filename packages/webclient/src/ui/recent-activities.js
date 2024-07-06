@@ -7,12 +7,9 @@ import './recent-activities.css';
 const ACTIVITY_SELECTED_EVENT = 'activityselected';
 
 class ActivitySelectedEvent extends Event {
-  constructor({ client, project, task, notes }) {
+  constructor(activity) {
     super(ACTIVITY_SELECTED_EVENT);
-    this.client = client;
-    this.project = project;
-    this.task = task;
-    this.notes = notes;
+    this.activity = activity;
   }
 }
 
