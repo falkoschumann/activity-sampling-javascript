@@ -207,7 +207,7 @@ describe('Services', () => {
 
         expect(activitiesLogged.data).toEqual([
           {
-            timestamp: new Date('2024-03-03T16:53Z'),
+            timestamp: new Date('2024-03-03T16:56Z'),
             duration: new Duration('PT1M'),
             client: 'c1',
             project: 'p1',
@@ -218,7 +218,7 @@ describe('Services', () => {
         expect(services.store.getState()).toEqual({
           ...initialState,
           currentActivity: {
-            timestamp: new Date('2024-03-03T16:53Z'),
+            timestamp: new Date('2024-03-03T16:56Z'),
             duration: new Duration('PT1M'),
             client: 'c1',
             project: 'p1',
