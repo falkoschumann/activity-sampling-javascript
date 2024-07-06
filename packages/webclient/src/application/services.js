@@ -41,9 +41,9 @@ export class Services {
   }
 
   async logActivity() {
-    const activity = { ...this.#store.getState().currentActivity };
+    let activity = this.#store.getState().currentActivity.activity;
+    activity = { ...activity, timestamp: this.#clock.date() };
     console.debug('Log activity:', activity);
-    activity.timestamp = this.#clock.date();
     await this.#api.logActivity(activity);
     this.#store.dispatch({ type: 'activity-logged', activity });
   }

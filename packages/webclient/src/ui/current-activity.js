@@ -16,10 +16,11 @@ class CurrentActivityComponent extends Container {
 
   updateView() {
     super.updateView();
-    this.#clientRef.value.value = this.state.client;
-    this.#projectRef.value.value = this.state.project;
-    this.#taskRef.value.value = this.state.task;
-    this.#notesRef.value.value = this.state.notes;
+    const { client, project, task, notes } = this.state.activity;
+    this.#clientRef.value.value = client;
+    this.#projectRef.value.value = project;
+    this.#taskRef.value.value = task;
+    this.#notesRef.value.value = notes;
   }
 
   getView() {
