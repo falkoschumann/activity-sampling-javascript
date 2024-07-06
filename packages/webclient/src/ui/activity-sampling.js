@@ -28,17 +28,6 @@ class ActivitySamplingComponent extends Container {
     this.#refreshRequested();
   }
 
-  extractState(state) {
-    // TODO simplify state extraction
-    return {
-      currentActivity: state.currentActivity,
-      isFormDisabled: state.isFormDisabled,
-      countdown: state.countdown,
-      workingDays: state.recentActivities.workingDays,
-      timeSummary: state.recentActivities.timeSummary,
-    };
-  }
-
   getView() {
     return html`
       <aside class="space-y-100">
@@ -52,12 +41,14 @@ class ActivitySamplingComponent extends Container {
       </aside>
       <main>
         <m-recent-activities
-          .workingDays=${this.state.workingDays}
+          .workingDays=${this.state.recentActivities.workingDays}
           @activityselected=${this.#activitySelected.bind(this)}
         ></m-recent-activities>
       </main>
       <footer>
-        <m-time-summary .hours=${this.state.timeSummary}></m-time-summary>
+        <m-time-summary
+          .hours=${this.state.recentActivities.timeSummary}
+        ></m-time-summary>
       </footer>
     `;
   }
