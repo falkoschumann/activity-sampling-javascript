@@ -35,8 +35,8 @@ export class Services {
     return this.#store;
   }
 
-  async activityUpdated({ name, value }) {
-    this.#store.dispatch({ type: 'activity-updated', name, value });
+  async activityUpdated(activity) {
+    this.#store.dispatch({ type: 'activity-updated', activity });
   }
 
   async logActivity() {
@@ -62,16 +62,6 @@ export class Services {
   async stopAskingPeriodically() {
     this.#timer.cancel();
     this.#store.dispatch({ type: 'countdown-stopped' });
-  }
-
-  async activitySelected({ client, project, task, notes }) {
-    this.#store.dispatch({
-      type: 'activity-selected',
-      client,
-      project,
-      task,
-      notes,
-    });
   }
 
   async selectRecentActivities() {

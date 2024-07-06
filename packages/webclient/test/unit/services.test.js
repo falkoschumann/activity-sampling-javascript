@@ -14,9 +14,11 @@ describe('Services', () => {
         const { services, api } = configure({ now: '2023-10-07T13:30Z' });
         const activitiesLogged = api.trackActivitiesLogged();
 
-        await services.activityUpdated({ name: 'client', value: 'c1' });
-        await services.activityUpdated({ name: 'project', value: 'p1' });
-        await services.activityUpdated({ name: 'task', value: 't1' });
+        await services.activityUpdated({
+          client: 'c1',
+          project: 'p1',
+          task: 't1',
+        });
         await services.logActivity();
 
         expect(services.store.getState().currentActivity).toEqual({
@@ -43,10 +45,12 @@ describe('Services', () => {
         const { services, api } = configure({ now: '2023-10-07T13:30Z' });
         const activitiesLogged = api.trackActivitiesLogged();
 
-        await services.activityUpdated({ name: 'client', value: 'c1' });
-        await services.activityUpdated({ name: 'project', value: 'p1' });
-        await services.activityUpdated({ name: 'task', value: 't1' });
-        await services.activityUpdated({ name: 'notes', value: 'n1' });
+        await services.activityUpdated({
+          client: 'c1',
+          project: 'p1',
+          task: 't1',
+          notes: 'n1',
+        });
         await services.logActivity();
 
         expect(services.store.getState().currentActivity).toEqual({
@@ -67,28 +71,6 @@ describe('Services', () => {
             notes: 'n1',
           },
         ]);
-      });
-    });
-
-    test('Selects an activity from recent activities', async () => {
-      const { services } = configure();
-
-      await services.activitySelected({
-        client: 'c1',
-        project: 'p1',
-        task: 't1',
-        notes: 'n1',
-      });
-
-      expect(services.store.getState()).toEqual({
-        ...initialState,
-        currentActivity: {
-          ...initialState.currentActivity,
-          client: 'c1',
-          project: 'p1',
-          task: 't1',
-          notes: 'n1',
-        },
       });
     });
 
@@ -199,9 +181,11 @@ describe('Services', () => {
         services.askPeriodically({ period: new Duration('PT1M') });
         timer.simulateTaskExecution({ times: 61 });
 
-        await services.activityUpdated({ name: 'client', value: 'c1' });
-        await services.activityUpdated({ name: 'project', value: 'p1' });
-        await services.activityUpdated({ name: 'task', value: 't1' });
+        await services.activityUpdated({
+          client: 'c1',
+          project: 'p1',
+          task: 't1',
+        });
         clock.add(new Duration('PT3M'));
         await services.logActivity();
 

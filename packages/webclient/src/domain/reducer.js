@@ -32,8 +32,6 @@ export function reducer(state = initialState, action) {
       return activityUpdated(state, action);
     case 'activity-logged':
       return activityLogged(state, action);
-    case 'activity-selected':
-      return activitySelected(state, action);
     case 'countdown-started':
       return countdownStarted(state, action);
     case 'countdown-progressed':
@@ -47,12 +45,12 @@ export function reducer(state = initialState, action) {
   }
 }
 
-function activityUpdated(state, { name, value }) {
+function activityUpdated(state, { activity }) {
   return {
     ...state,
     currentActivity: {
       ...state.currentActivity,
-      [name]: value,
+      ...activity,
     },
   };
 }
@@ -66,19 +64,6 @@ function activityLogged(state, { activity }) {
     ...state,
     currentActivity: activity,
     isFormDisabled,
-  };
-}
-
-function activitySelected(state, { client, project, task, notes }) {
-  return {
-    ...state,
-    currentActivity: {
-      ...state.currentActivity,
-      client,
-      project,
-      task,
-      notes,
-    },
   };
 }
 
