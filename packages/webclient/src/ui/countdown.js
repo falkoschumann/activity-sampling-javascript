@@ -1,63 +1,33 @@
 import { html } from 'lit-html';
 import { classMap } from 'lit-html/directives/class-map.js';
-import { ref } from 'lit-html/directives/ref.js';
+import { createRef, ref } from 'lit-html/directives/ref.js';
 
 import { Duration } from '@activity-sampling/utils';
-import { Component } from '@activity-sampling/utils/src/browser.js';
+import { Container } from '@activity-sampling/utils/src/browser.js';
 
 import './countdown.css';
+import { Services } from '../application/services.js';
 
-const COUNTDOWN_STARTED_EVENT = 'countdown-started';
-const COUNTDOWN_STOPPED_EVENT = 'countdown-stopped';
+export class CountdownComponent extends Container {
+  #periodRef = createRef();
 
-class CountdownStartedEvent extends Event {
-  constructor(period) {
-    super(COUNTDOWN_STARTED_EVENT);
-    this.period = period;
-  }
-}
-
-class CountdownStoppedEvent extends Event {
-  constructor() {
-    super(COUNTDOWN_STOPPED_EVENT);
-  }
-}
-
-export class CountdownComponent extends Component {
-  #periodRef;
-
-  #value = {
-    isRunning: false,
-    period: new Duration('PT30M'),
-    remainingTime: new Duration('PT30M'),
-  };
-
-  get value() {
-    return this.#value;
-  }
-
-  set value(value) {
-    if (this.#value === value) {
-      return;
-    }
-
-    this.#value = value;
-    this.updateView();
+  extractState({ countdown }) {
+    return countdown;
   }
 
   getView() {
-    const progress = 1 - this.#value.remainingTime / this.#value.period;
-    const title = this.#value.isRunning ? 'Stop countdown' : 'Start countdown';
+    const progress = 1 - this.state.remainingTime / this.state.period;
+    const title = this.state.isRunning ? 'Stop countdown' : 'Start countdown';
     return html`
       <div class="progress">
-        <span>${this.#value.remainingTime}</span>
+        <span>${this.state.remainingTime}</span>
         <progress max="1" value=${progress}></progress>
       </div>
       <button
-        class="icon-only switch ${classMap({ on: this.#value.isRunning })}"
+        class="icon-only switch ${classMap({ on: this.state.isRunning })}"
         title=${title}
         aria-label=${title}
-        @click=${this.#toggle}
+        @click=${() => this.#toggle()}
       >
         <span class="material-icons">punch_clock</span>
       </button>
@@ -82,12 +52,12 @@ export class CountdownComponent extends Component {
     `;
   }
 
-  #toggle() {
-    if (this.#value.isRunning) {
-      this.dispatchEvent(new CountdownStoppedEvent());
+  async #toggle() {
+    if (this.state.isRunning) {
+      await Services.get().stopAskingPeriodically();
     } else {
-      const period = new Duration(`PT${this.#periodRef.value}M`);
-      this.dispatchEvent(new CountdownStartedEvent(period));
+      const period = new Duration(`PT${this.#periodRef.value.value}M`);
+      await Services.get().activityUpdated({ period });
     }
   }
 }

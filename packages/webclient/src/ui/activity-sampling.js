@@ -1,6 +1,6 @@
 import { html } from 'lit-html';
 
-import { Container } from '@activity-sampling/utils/src/browser.js';
+import { Component, Container } from '@activity-sampling/utils/src/browser.js';
 
 import './reset.css';
 import './fragments.css';
@@ -13,7 +13,7 @@ import './recent-activities.js';
 import './time-summary.js';
 import { Services } from '../application/services.js';
 
-class ActivitySamplingComponent extends Container {
+class ActivitySamplingComponent extends Component {
   constructor() {
     super();
     Container.initStore(Services.get().store);
@@ -21,43 +21,22 @@ class ActivitySamplingComponent extends Container {
 
   connectedCallback() {
     super.connectedCallback();
-    this.#refreshRequested();
+    Services.get().selectRecentActivities();
   }
 
   getView() {
     return html`
       <aside class="space-y-100">
-        <m-current-activity
-          .activity=${this.state.currentActivity}
-          .disabled=${this.state.isFormDisabled}
-          @activitylogged=${this.#activityLogged.bind(this)}
-        ></m-current-activity>
-        <m-countdown .value=${this.state.countdown}></m-countdown>
+        <m-current-activity></m-current-activity>
+        <m-countdown></m-countdown>
       </aside>
       <main>
-        <m-recent-activities
-          .workingDays=${this.state.recentActivities.workingDays}
-          @activityselected=${this.#activitySelected.bind(this)}
-        ></m-recent-activities>
+        <m-recent-activities></m-recent-activities>
       </main>
       <footer>
-        <m-time-summary
-          .hours=${this.state.recentActivities.timeSummary}
-        ></m-time-summary>
+        <m-time-summary></m-time-summary>
       </footer>
     `;
-  }
-
-  async #refreshRequested() {
-    await Services.get().selectRecentActivities();
-  }
-
-  async #activityLogged() {
-    await Services.get().logActivity();
-  }
-
-  async #activitySelected(event) {
-    await Services.get().activityUpdated(event.activity);
   }
 }
 

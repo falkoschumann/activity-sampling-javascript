@@ -8,8 +8,9 @@ export const initialState = {
     project: '',
     task: '',
     notes: '',
+    // TODO add isSubmittable
   },
-  isFormDisabled: false,
+  isFormDisabled: false, // TODO move to currentActivity
   countdown: {
     isRunning: false,
     period: new Duration('PT30M'),

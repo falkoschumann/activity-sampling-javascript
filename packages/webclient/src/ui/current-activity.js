@@ -1,67 +1,25 @@
 import { html } from 'lit-html';
 import { createRef, ref } from 'lit-html/directives/ref.js';
 
-import { Component } from '@activity-sampling/utils/src/browser.js';
+import { Container } from '@activity-sampling/utils/src/browser.js';
+import { Services } from '../application/services.js';
 
-const ACTIVITY_LOGGED_EVENT = 'activitylogged';
-
-class ActivityLoggedEvent extends Event {
-  constructor(activity) {
-    super(ACTIVITY_LOGGED_EVENT);
-    this.activity = activity;
-  }
-}
-
-class CurrentActivityComponent extends Component {
-  static observedAttributes = ['disabled'];
-
+class CurrentActivityComponent extends Container {
   #clientRef = createRef();
   #projectRef = createRef();
   #taskRef = createRef();
   #notesRef = createRef();
 
-  #activity = {
-    client: '',
-    project: '',
-    task: '',
-    notes: '',
-  };
-
-  #disabled = false;
-
-  get activity() {
-    return this.#activity;
-  }
-
-  set activity(activity) {
-    if (this.#activity === activity) {
-      return;
-    }
-
-    this.#activity = { ...activity, timestamp: undefined };
-    this.updateView();
-  }
-
-  get disabled() {
-    return this.#disabled;
-  }
-
-  set disabled(disabled) {
-    if (this.#disabled === disabled) {
-      return;
-    }
-    this.#disabled = disabled;
-    this.updateView();
+  extractState({ currentActivity }) {
+    return currentActivity;
   }
 
   updateView() {
     super.updateView();
-    if (this.isConnected) {
-      this.#clientRef.value.value = this.#activity.client;
-      this.#projectRef.value.value = this.#activity.project;
-      this.#taskRef.value.value = this.#activity.task;
-      this.#notesRef.value.value = this.#activity.notes;
-    }
+    this.#clientRef.value.value = this.state.client;
+    this.#projectRef.value.value = this.state.project;
+    this.#taskRef.value.value = this.state.task;
+    this.#notesRef.value.value = this.state.notes;
   }
 
   getView() {
@@ -95,10 +53,11 @@ class CurrentActivityComponent extends Component {
     `;
   }
 
-  #formSubmitted(event) {
+  async #formSubmitted(event) {
     event.preventDefault();
     if (this.#validateForm(event.target)) {
-      this.dispatchEvent(new ActivityLoggedEvent(this.#activity));
+      await Services.get().logActivity();
+      await Services.get().selectRecentActivities();
     }
   }
 
@@ -107,8 +66,8 @@ class CurrentActivityComponent extends Component {
     return form.checkValidity();
   }
 
-  #inputChanged({ target: { name, value } }) {
-    this.#activity[`#${name}`] = value;
+  async #inputChanged({ target: { name, value } }) {
+    await Services.get().activityUpdated({ [name]: value });
   }
 }
 

@@ -1,37 +1,18 @@
 import { html } from 'lit-html';
 
-import { Component } from '@activity-sampling/utils/src/browser.js';
+import { Container } from '@activity-sampling/utils/src/browser.js';
 
 import './recent-activities.css';
+import { Services } from '../application/services.js';
 
-const ACTIVITY_SELECTED_EVENT = 'activityselected';
-
-class ActivitySelectedEvent extends Event {
-  constructor(activity) {
-    super(ACTIVITY_SELECTED_EVENT);
-    this.activity = activity;
-  }
-}
-
-class RecentActivitiesComponent extends Component {
-  #workingDays = [];
-
-  get workingDays() {
-    return this.#workingDays;
-  }
-
-  set workingDays(workingDays) {
-    if (this.#workingDays === workingDays) {
-      return;
-    }
-
-    this.#workingDays = workingDays;
-    this.updateView();
+class RecentActivitiesComponent extends Container {
+  extractState({ recentActivities }) {
+    return recentActivities.workingDays;
   }
 
   getView() {
     return html`
-      ${this.workingDays.map(({ date, activities }) =>
+      ${this.state.map(({ date, activities }) =>
         this.#workingDayTemplate({ date, activities }),
       )}
     `;
@@ -52,9 +33,7 @@ class RecentActivitiesComponent extends Component {
     return html`
       <li
         @dblclick=${() =>
-          this.dispatchEvent(
-            new ActivitySelectedEvent({ client, project, task, notes }),
-          )}
+          Services.get().activityUpdated({ client, project, task, notes })}
       >
         <div>
           <strong
