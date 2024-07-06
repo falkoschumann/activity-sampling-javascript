@@ -57,7 +57,7 @@ export class CountdownComponent extends Container {
       await Services.get().stopAskingPeriodically();
     } else {
       const period = new Duration(`PT${this.#periodRef.value.value}M`);
-      await Services.get().activityUpdated({ period });
+      await Services.get().askPeriodically({ period });
     }
   }
 }

@@ -33,8 +33,7 @@ describe('Services', () => {
         currentActivity: {
           ...initialState.currentActivity,
           activity: {
-            timestamp: undefined,
-            duration: new Duration('PT30M'),
+            ...initialState.currentActivity.activity,
             client: 'c2',
             project: 'p1',
             task: 't1',
@@ -60,8 +59,7 @@ describe('Services', () => {
         currentActivity: {
           ...initialState.currentActivity,
           activity: {
-            timestamp: undefined,
-            duration: new Duration('PT30M'),
+            ...initialState.currentActivity.activity,
             client: 'c1',
             project: 'p1',
             task: 't1',
@@ -86,8 +84,7 @@ describe('Services', () => {
         currentActivity: {
           ...initialState.currentActivity,
           activity: {
-            timestamp: undefined,
-            duration: new Duration('PT30M'),
+            ...initialState.currentActivity.activity,
             client: 'c1',
             project: 'p1',
             task: 't1',
@@ -108,8 +105,7 @@ describe('Services', () => {
         currentActivity: {
           ...initialState.currentActivity,
           activity: {
-            timestamp: undefined,
-            duration: new Duration('PT30M'),
+            ...initialState.currentActivity.activity,
             client: 'c1',
             project: '',
             task: '',
@@ -371,6 +367,7 @@ describe('Services', () => {
           },
           countdown: {
             isRunning: true,
+            isElapsed: false,
             period: new Duration('PT20M'),
             remainingTime: new Duration('PT20M'),
           },
@@ -395,6 +392,7 @@ describe('Services', () => {
           },
           countdown: {
             isRunning: true,
+            isElapsed: false,
             period: new Duration('PT1M'),
             remainingTime: new Duration('PT59S'),
           },
@@ -416,13 +414,14 @@ describe('Services', () => {
           },
           countdown: {
             isRunning: true,
+            isElapsed: false,
             period: new Duration('PT1M'),
             remainingTime: new Duration('PT1S'),
           },
         });
       });
 
-      test('Enables form when countdown has elapsed', () => {
+      test('Enables form when countdown is elapsed', () => {
         const { services, timer } = configure({ now: '2024-03-03T16:53Z' });
         services.askPeriodically({ period: new Duration('PT1M') });
 
@@ -441,13 +440,14 @@ describe('Services', () => {
           },
           countdown: {
             isRunning: true,
+            isElapsed: true,
             period: new Duration('PT1M'),
             remainingTime: new Duration('PT0S'),
           },
         });
       });
 
-      test('Restarts the countdown when the period has expired', () => {
+      test('Restarts the countdown when the countdown is elapsed', () => {
         const { services, timer } = configure({ now: '2024-03-03T16:53Z' });
         services.askPeriodically({ period: new Duration('PT1M') });
 
@@ -466,6 +466,7 @@ describe('Services', () => {
           },
           countdown: {
             isRunning: true,
+            isElapsed: true,
             period: new Duration('PT1M'),
             remainingTime: new Duration('PT59S'),
           },
@@ -515,6 +516,7 @@ describe('Services', () => {
           },
           countdown: {
             isRunning: true,
+            isElapsed: false,
             period: new Duration('PT1M'),
             remainingTime: new Duration('PT59S'),
           },
@@ -538,6 +540,7 @@ describe('Services', () => {
           },
           countdown: {
             isRunning: false,
+            isElapsed: false,
             period: new Duration('PT1M'),
             remainingTime: Duration.zero(),
           },

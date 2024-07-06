@@ -15,6 +15,7 @@ export const initialState = {
   },
   countdown: {
     isRunning: false,
+    isElapsed: false,
     period: new Duration('PT30M'),
     remainingTime: new Duration('PT30M'),
   },
@@ -66,6 +67,10 @@ function activityLogged(state, { activity }) {
       ...state.currentActivity,
       activity,
     },
+    countdown: {
+      ...state.countdown,
+      isElapsed: false,
+    },
   };
   return updateForm(newState);
 }
@@ -88,6 +93,7 @@ function countdownStarted(state, { period }) {
   const newState = {
     ...state,
     countdown: {
+      ...state.countdown,
       isRunning: true,
       period,
       remainingTime: new Duration(period),
@@ -99,21 +105,24 @@ function countdownStarted(state, { period }) {
 function countdownProgressed(state, { timestamp, duration }) {
   let remainingTime = new Duration(state.countdown.remainingTime);
   remainingTime.minus(duration);
-  const elapsed = remainingTime.isZero || remainingTime.isNegative;
+
+  const isElapsed =
+    state.countdown.isElapsed ||
+    remainingTime.isZero ||
+    remainingTime.isNegative;
+  if (isElapsed) {
+    duration = new Duration(state.countdown.period);
+  } else {
+    ({ timestamp, duration } = state.currentActivity.activity);
+  }
+
   if (remainingTime.isNegative) {
     remainingTime = new Duration(state.countdown.period).minus(
       remainingTime.absolutized(),
     );
   }
-  let isFormDisabled = state.currentActivity.isFormDisabled;
-  if (elapsed) {
-    // TODO enable submit
-    isFormDisabled = false;
-    duration = new Duration(state.countdown.period);
-  } else {
-    ({ timestamp, duration } = state.currentActivity.activity);
-  }
-  return {
+
+  const newState = {
     ...state,
     currentActivity: {
       ...state.currentActivity,
@@ -122,13 +131,14 @@ function countdownProgressed(state, { timestamp, duration }) {
         timestamp,
         duration,
       },
-      isFormDisabled,
     },
     countdown: {
       ...state.countdown,
+      isElapsed,
       remainingTime,
     },
   };
+  return updateForm(newState);
 }
 
 function countdownStopped(state) {
@@ -137,6 +147,7 @@ function countdownStopped(state) {
     countdown: {
       ...state.countdown,
       isRunning: false,
+      isElapsed: false,
       remainingTime: Duration.zero(),
     },
   };
@@ -144,7 +155,8 @@ function countdownStopped(state) {
 }
 
 function updateForm(state) {
-  const isFormDisabled = state.countdown.isRunning;
+  const isFormDisabled =
+    state.countdown.isRunning && !state.countdown.isElapsed;
 
   const activity = state.currentActivity.activity;
   const isSubmitDisabled =
