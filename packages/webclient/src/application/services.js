@@ -2,27 +2,16 @@ import { Clock, Duration, Timer, createStore } from '@activity-sampling/utils';
 import { reducer } from '../domain/reducer.js';
 import { Api } from '../infrastructure/api.js';
 
-/**
- * @import { Activity } from '@activity-sampling/domain';
- */
-
 export class Services {
-  static create() {
-    return new Services(
-      undefined,
-      Api.create(),
-      Timer.create(),
-      Clock.create(),
-    );
-  }
+  static #instance = new Services(
+    undefined,
+    Api.create(),
+    Timer.create(),
+    Clock.create(),
+  );
 
-  static createNull() {
-    return new Services(
-      undefined,
-      Api.createNull(),
-      Timer.createNull(),
-      Clock.createNull(),
-    );
+  static getDefault() {
+    return Services.#instance;
   }
 
   #api;

@@ -16,11 +16,11 @@ import { Services } from '../application/services.js';
 
 class ActivitySamplingComponent extends Container {
   #currentActivityRef = createRef();
+  #services = Services.getDefault();
 
   constructor() {
     super();
-    Container.services = Services.create();
-    Container.initStore(Container.services.store);
+    Container.initStore(this.#services.store);
   }
 
   connectedCallback() {
@@ -54,13 +54,11 @@ class ActivitySamplingComponent extends Container {
   }
 
   #refreshRequested() {
-    // TODO Rename to loadRecentActivities
-    Container.services.selectRecentActivities();
+    this.#services.selectRecentActivities();
   }
 
   #activityLogged(event) {
-    // FIXME activityLogged has no parameter
-    Container.services.activityLogged(event.activity);
+    this.#services.activityLogged(event.activity);
   }
 
   #activitySelected(activity) {
