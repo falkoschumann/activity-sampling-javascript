@@ -14,11 +14,9 @@ import './time-summary.js';
 import { Services } from '../application/services.js';
 
 class ActivitySamplingComponent extends Container {
-  #services = Services.getDefault();
-
   constructor() {
     super();
-    Container.initStore(this.#services.store);
+    Container.initStore(Services.get().store);
   }
 
   connectedCallback() {
@@ -51,15 +49,15 @@ class ActivitySamplingComponent extends Container {
   }
 
   async #refreshRequested() {
-    await this.#services.selectRecentActivities();
+    await Services.get().selectRecentActivities();
   }
 
-  async #activityLogged(event) {
-    await this.#services.logActivity(event.activity);
+  async #activityLogged() {
+    await Services.get().logActivity();
   }
 
   async #activitySelected(event) {
-    await this.#services.activityUpdated(event.activity);
+    await Services.get().activityUpdated(event.activity);
   }
 }
 

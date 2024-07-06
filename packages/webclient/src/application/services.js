@@ -10,7 +10,7 @@ export class Services {
     Clock.create(),
   );
 
-  static getDefault() {
+  static get() {
     return Services.#instance;
   }
 
