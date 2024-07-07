@@ -10,42 +10,7 @@ import { Api } from '../../src/infrastructure/api.js';
 describe('Services', () => {
   describe('Log activity', () => {
     describe('Activity updated', () => {
-      test('Updates a single property', async () => {
-        const { services } = configure({
-          state: {
-            ...initialState,
-            currentActivity: {
-              ...initialState.currentActivity,
-              activity: {
-                ...initialState.currentActivity.activity,
-                client: 'c1',
-                project: 'p1',
-                task: 't1',
-                notes: 'n1',
-              },
-            },
-          },
-        });
-
-        await services.activityUpdated({ client: 'c2' });
-
-        expect(services.store.getState()).toEqual({
-          ...initialState,
-          currentActivity: {
-            ...initialState.currentActivity,
-            activity: {
-              ...initialState.currentActivity.activity,
-              client: 'c2',
-              project: 'p1',
-              task: 't1',
-              notes: 'n1',
-            },
-            isSubmitDisabled: false,
-          },
-        });
-      });
-
-      test('Updates all properties', async () => {
+      test('Selects an activity from recent activities.', async () => {
         const { services } = configure();
 
         await services.activityUpdated({
@@ -62,6 +27,42 @@ describe('Services', () => {
             activity: {
               ...initialState.currentActivity.activity,
               client: 'c1',
+              project: 'p1',
+              task: 't1',
+              notes: 'n1',
+            },
+            isSubmitDisabled: false,
+          },
+        });
+      });
+
+      test('Updates a single property', async () => {
+        const { services } = configure({
+          state: {
+            ...initialState,
+            currentActivity: {
+              ...initialState.currentActivity,
+              activity: {
+                ...initialState.currentActivity.activity,
+                client: 'c1',
+                project: 'p1',
+                task: 't1',
+                notes: 'n1',
+              },
+              isSubmitDisabled: false,
+            },
+          },
+        });
+
+        await services.activityUpdated({ client: 'c2' });
+
+        expect(services.store.getState()).toEqual({
+          ...initialState,
+          currentActivity: {
+            ...initialState.currentActivity,
+            activity: {
+              ...initialState.currentActivity.activity,
+              client: 'c2',
               project: 'p1',
               task: 't1',
               notes: 'n1',
@@ -96,7 +97,7 @@ describe('Services', () => {
         });
       });
 
-      test('Disables submit unless all required properties are set', async () => {
+      test('Disables submit if not all required properties are set', async () => {
         const { services } = configure();
 
         await services.activityUpdated({ client: 'c1' });
@@ -282,6 +283,7 @@ describe('Services', () => {
               timestamp: new Date('2024-03-03T16:53Z'),
               duration: new Duration('PT1M'),
             },
+            isSubmitDisabled: true,
             isFormDisabled: false,
           },
           countdown: {
@@ -335,16 +337,6 @@ describe('Services', () => {
         clock.add(new Duration('PT3M'));
         await services.logActivity();
 
-        expect(activitiesLogged.data).toEqual([
-          {
-            timestamp: new Date('2024-03-03T16:56Z'),
-            duration: new Duration('PT1M'),
-            client: 'c1',
-            project: 'p1',
-            task: 't1',
-            notes: '',
-          },
-        ]);
         expect(services.store.getState()).toEqual({
           ...initialState,
           currentActivity: {
@@ -367,9 +359,19 @@ describe('Services', () => {
             remainingTime: new Duration('PT59S'),
           },
         });
+        expect(activitiesLogged.data).toEqual([
+          {
+            timestamp: new Date('2024-03-03T16:56Z'),
+            duration: new Duration('PT1M'),
+            client: 'c1',
+            project: 'p1',
+            task: 't1',
+            notes: '',
+          },
+        ]);
       });
 
-      test('Stops countdown and enable form', async () => {
+      test('Enables form if countdown is stopped', async () => {
         const { services, timer } = configure({ now: '2024-03-03T16:53Z' });
         const canceled = timer.trackCanceledTasks();
         services.askPeriodically({ period: new Duration('PT1M') });
@@ -377,7 +379,6 @@ describe('Services', () => {
 
         await services.stopAskingPeriodically();
 
-        expect(canceled.data).toHaveLength(1);
         expect(services.store.getState()).toEqual({
           ...initialState,
           currentActivity: {
@@ -391,6 +392,7 @@ describe('Services', () => {
             remainingTime: Duration.zero(),
           },
         });
+        expect(canceled.data).toHaveLength(1);
       });
     });
 
@@ -400,7 +402,7 @@ describe('Services', () => {
   });
 
   describe('Recent activities', () => {
-    test('Returns recent activities', async () => {
+    test('Assumes last activity as current activity.', async () => {
       const { services } = configure({
         response: {
           body: {
@@ -470,46 +472,45 @@ describe('Services', () => {
     });
 
     test('Resets if activity log is empty', async () => {
-      const state = {
-        ...initialState,
-        currentActivity: {
-          ...initialState.currentActivity,
-          activity: {
-            timestamp: new Date('2023-10-07T13:00Z'),
-            duration: new Duration('PT20M'),
-            client: 'c1',
-            project: 'p1',
-            task: 't1',
-            notes: 'n1',
-          },
-        },
-        recentActivities: {
-          workingDays: [
-            {
-              date: new Date('2023-10-07T00:00Z'),
-              activities: [
-                Activity.createTestInstance({
-                  timestamp: '2023-10-07T13:00Z',
-                }),
-                Activity.createTestInstance({
-                  timestamp: '2023-10-07T12:30Z',
-                }),
-                Activity.createTestInstance({
-                  timestamp: '2023-10-07T12:00Z',
-                }),
-              ],
-            },
-          ],
-          timeSummary: {
-            hoursToday: new Duration('PT1H30M'),
-            hoursYesterday: new Duration('PT0S'),
-            hoursThisWeek: new Duration('PT1H30M'),
-            hoursThisMonth: new Duration('PT1H30M'),
-          },
-        },
-      };
       const { services } = configure({
-        state,
+        state: {
+          ...initialState,
+          currentActivity: {
+            ...initialState.currentActivity,
+            activity: {
+              timestamp: new Date('2023-10-07T13:00Z'),
+              duration: new Duration('PT20M'),
+              client: 'c1',
+              project: 'p1',
+              task: 't1',
+              notes: 'n1',
+            },
+          },
+          recentActivities: {
+            workingDays: [
+              {
+                date: new Date('2023-10-07T00:00Z'),
+                activities: [
+                  Activity.createTestInstance({
+                    timestamp: '2023-10-07T13:00Z',
+                  }),
+                  Activity.createTestInstance({
+                    timestamp: '2023-10-07T12:30Z',
+                  }),
+                  Activity.createTestInstance({
+                    timestamp: '2023-10-07T12:00Z',
+                  }),
+                ],
+              },
+            ],
+            timeSummary: {
+              hoursToday: new Duration('PT1H30M'),
+              hoursYesterday: new Duration('PT0S'),
+              hoursThisWeek: new Duration('PT1H30M'),
+              hoursThisMonth: new Duration('PT1H30M'),
+            },
+          },
+        },
         response: {
           body: {
             workingDays: [],
@@ -526,7 +527,44 @@ describe('Services', () => {
       await services.selectRecentActivities();
 
       expect(services.store.getState()).toEqual({
-        ...state,
+        ...{
+          ...initialState,
+          currentActivity: {
+            ...initialState.currentActivity,
+            activity: {
+              timestamp: new Date('2023-10-07T13:00Z'),
+              duration: new Duration('PT20M'),
+              client: 'c1',
+              project: 'p1',
+              task: 't1',
+              notes: 'n1',
+            },
+          },
+          recentActivities: {
+            workingDays: [
+              {
+                date: new Date('2023-10-07T00:00Z'),
+                activities: [
+                  Activity.createTestInstance({
+                    timestamp: '2023-10-07T13:00Z',
+                  }),
+                  Activity.createTestInstance({
+                    timestamp: '2023-10-07T12:30Z',
+                  }),
+                  Activity.createTestInstance({
+                    timestamp: '2023-10-07T12:00Z',
+                  }),
+                ],
+              },
+            ],
+            timeSummary: {
+              hoursToday: new Duration('PT1H30M'),
+              hoursYesterday: new Duration('PT0S'),
+              hoursThisWeek: new Duration('PT1H30M'),
+              hoursThisMonth: new Duration('PT1H30M'),
+            },
+          },
+        },
         currentActivity: {
           ...initialState.currentActivity,
           activity: {

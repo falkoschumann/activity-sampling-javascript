@@ -76,14 +76,17 @@ function activityLogged(state, { activity }) {
 }
 
 function recentActivitiesSelected(state, { recentActivities }) {
-  let currentActivity = { ...initialState.currentActivity };
+  let activity = { ...initialState.currentActivity.activity };
   const lastActivity = recentActivities.workingDays[0]?.activities[0];
   if (lastActivity != null) {
-    currentActivity = { ...currentActivity, activity: lastActivity };
+    activity = lastActivity;
   }
   const newState = {
     ...state,
-    currentActivity,
+    currentActivity: {
+      ...state.currentActivity,
+      activity,
+    },
     recentActivities,
   };
   return updateForm(newState);

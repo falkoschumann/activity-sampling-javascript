@@ -1,6 +1,6 @@
 import { Duration } from '@activity-sampling/utils';
 
-// TODO Convert notifier into servie worker?
+// TODO Convert notifier into service worker?
 
 /**
  * @fires Notifier#notification-scheduled
