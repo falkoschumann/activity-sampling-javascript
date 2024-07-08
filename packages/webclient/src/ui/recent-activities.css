@@ -6,9 +6,6 @@ m-recent-activities h4 {
 }
 
 m-recent-activities li {
-  padding: 8px;
-  display: flex;
-
   border-bottom: 1px solid var(--gray-200);
 }
 

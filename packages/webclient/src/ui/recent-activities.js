@@ -32,6 +32,7 @@ class RecentActivitiesComponent extends Container {
   #activityTemplate({ timestamp, client, project, task, notes }) {
     return html`
       <li
+        class="h-stack p-50"
         @dblclick=${() =>
           Services.get().activityUpdated({ client, project, task, notes })}
       >

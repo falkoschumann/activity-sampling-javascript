@@ -11,6 +11,11 @@ import { Services } from '../application/services.js';
 export class CountdownComponent extends Container {
   #periodRef = createRef();
 
+  constructor() {
+    super();
+    this.classList.add('h-stack', 'gap-50');
+  }
+
   extractState({ countdown }) {
     return countdown;
   }
@@ -19,9 +24,9 @@ export class CountdownComponent extends Container {
     const progress = 1 - this.state.remainingTime / this.state.period;
     const title = this.state.isRunning ? 'Stop countdown' : 'Start countdown';
     return html`
-      <div class="progress">
+      <div class="progress v-stack flex-1 gap-50">
         <span>${this.state.remainingTime}</span>
-        <progress max="1" value=${progress}></progress>
+        <progress class="full-width" max="1" value=${progress}></progress>
       </div>
       <button
         class="icon-only switch ${classMap({ on: this.state.isRunning })}"

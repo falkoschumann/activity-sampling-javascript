@@ -1,15 +1,8 @@
 m-activity-sampling {
-  height: 100vh;
-  padding: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-
   background-color: var(--white);
 }
 
-m-activity-sampling > main {
+m-activity-sampling main {
   display: block;
-  flex: 1 1 1px;
   overflow-y: auto;
 }

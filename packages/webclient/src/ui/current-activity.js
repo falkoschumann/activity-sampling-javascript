@@ -25,7 +25,7 @@ class CurrentActivityComponent extends Container {
 
   getView() {
     return html`
-      <form class="v-stack gap-y-50" @submit=${(e) => this.#formSubmitted(e)}>
+      <form class="v-stack gap-50" @submit=${(e) => this.#formSubmitted(e)}>
         ${this.#textInputTemplate(this.#clientRef, 'client', 'Client', true)}
         ${this.#textInputTemplate(this.#projectRef, 'project', 'Project', true)}
         ${this.#textInputTemplate(this.#taskRef, 'task', 'Task', true)}
