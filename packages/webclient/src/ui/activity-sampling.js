@@ -31,7 +31,7 @@ class ActivitySamplingComponent extends Component {
         <m-current-activity></m-current-activity>
         <m-countdown></m-countdown>
       </aside>
-      <main class="flex-1">
+      <main class="expanded">
         <m-recent-activities></m-recent-activities>
       </main>
       <footer>

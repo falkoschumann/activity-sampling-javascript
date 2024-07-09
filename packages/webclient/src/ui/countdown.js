@@ -5,7 +5,6 @@ import { createRef, ref } from 'lit-html/directives/ref.js';
 import { Duration } from '@activity-sampling/utils';
 import { Container } from '@activity-sampling/utils/src/browser.js';
 
-import './countdown.css';
 import { Services } from '../application/services.js';
 
 export class CountdownComponent extends Container {
@@ -13,7 +12,7 @@ export class CountdownComponent extends Container {
 
   constructor() {
     super();
-    this.classList.add('h-stack', 'gap-50');
+    this.classList.add('h-stack', 'items-center', 'gap-50');
   }
 
   extractState({ countdown }) {
@@ -24,7 +23,7 @@ export class CountdownComponent extends Container {
     const progress = 1 - this.state.remainingTime / this.state.period;
     const title = this.state.isRunning ? 'Stop countdown' : 'Start countdown';
     return html`
-      <div class="progress v-stack flex-1 gap-50">
+      <div class="expanded v-stack items-center gap-50">
         <span>${this.state.remainingTime}</span>
         <progress class="full-width" max="1" value=${progress}></progress>
       </div>

@@ -164,12 +164,6 @@ p {
   justify-content: space-between;
 }
 
-.wrapped {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
 .h-stack {
   display: flex;
   flex-direction: row;
@@ -180,8 +174,66 @@ p {
   flex-direction: column;
 }
 
-.flex-1 {
+.h-stack > .expanded,
+.v-stack > .expanded {
   flex: 1 1 0%;
+}
+
+.h-stack.wrapped,
+.v-stack.wrapped {
+  flex-wrap: wrap;
+}
+
+.justify-normal {
+  justify-content: normal;
+}
+
+.justify-start {
+  justify-content: flex-start;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-around {
+  justify-content: space-around;
+}
+
+.justify-evenly {
+  justify-content: space-evenly;
+}
+
+.justify-stretch {
+  justify-content: stretch;
+}
+
+.items-start {
+  align-items: flex-start;
+}
+
+.items-end {
+  align-items: flex-end;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.items-baseline {
+  align-items: baseline;
+}
+
+.items-stretch {
+  align-items: stretch;
 }
 
 .gap-25 {

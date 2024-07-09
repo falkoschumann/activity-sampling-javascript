@@ -1,8 +1,3 @@
-m-time-summary {
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
 m-time-summary div.counter {
   width: 120px;
 
