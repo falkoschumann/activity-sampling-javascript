@@ -7,9 +7,6 @@ export class ValidationError extends Error {
   }
 }
 
-// TODO validateRequired(value, name, type)
-// TODO validateOptional(value, name, type)
-
 export function validateNotEmptyProperty(
   object,
   objectName,
@@ -193,12 +190,9 @@ function validateObjectTypeProperty(
     return value;
   }
 
-  if (
-    Object.getPrototypeOf(propertyType) === Enum &&
-    typeof value === 'string'
-  ) {
+  if (Object.getPrototypeOf(propertyType) === Enum) {
     try {
-      return propertyType.valueOf(value.toUpperCase());
+      return propertyType.valueOf(String(value).toUpperCase());
     } catch (error) {
       if (error.message?.startsWith('No enum constant')) {
         throw new ValidationError(

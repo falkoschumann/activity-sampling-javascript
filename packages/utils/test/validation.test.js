@@ -189,6 +189,18 @@ describe('Validation', () => {
       );
     });
 
+    test('Fails when property can not convert an expected enum constant', () => {
+      const user = { isMarried: 5 };
+
+      expect(() =>
+        validateRequiredProperty(user, 'user', 'isMarried', YesNo),
+      ).toThrow(
+        new Error(
+          'The property "isMarried" of user must be a valid YesNo constant name, found number: 5.',
+        ),
+      );
+    });
+
     test('Returns value when property is an object', () => {
       const user = { address: { street: 'Test street', city: 'Test city' } };
 
