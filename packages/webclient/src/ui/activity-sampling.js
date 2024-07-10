@@ -9,6 +9,7 @@ import './modules.css';
 import './activity-sampling.css';
 import './current-activity.js';
 import './countdown.js';
+import './main-menu.js';
 import './recent-activities.js';
 import './time-summary.js';
 import { Services } from '../application/services.js';
@@ -27,6 +28,9 @@ class ActivitySamplingComponent extends Component {
 
   getView() {
     return html`
+      <!--<header>
+        <m-main-menu></m-main-menu>
+      </header>-->
       <aside class="space-y-100">
         <m-current-activity></m-current-activity>
         <m-countdown></m-countdown>
