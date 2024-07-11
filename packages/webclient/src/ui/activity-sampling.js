@@ -28,9 +28,9 @@ class ActivitySamplingComponent extends Component {
 
   getView() {
     return html`
-      <!--<header>
+      <header>
         <m-main-menu></m-main-menu>
-      </header>-->
+      </header>
       <aside class="space-y-100">
         <m-current-activity></m-current-activity>
         <m-countdown></m-countdown>
