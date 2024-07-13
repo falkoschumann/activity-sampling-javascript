@@ -11,6 +11,12 @@ class MainMenuComponent extends Component {
 
   connectedCallback() {
     super.connectedCallback();
+    this.querySelectorAll('[role="menuitem"]').forEach((menuItem) => {
+      menuItem.addEventListener('click', this.#onMenuItemClick, {
+        capture: true,
+      });
+      menuItem.addEventListener('pointerover', this.#onMenuItemPointerOver);
+    });
     window.addEventListener('pointerdown', this.#onBackgroundClick, {
       capture: true,
     });
@@ -27,28 +33,12 @@ class MainMenuComponent extends Component {
       <nav>
         <ul role="menubar" class="h-stack gap-50">
           <li>
-            <a
-              role="menuitem"
-              aria-haspopup="menu"
-              aria-expanded="false"
-              @click=${{
-                handleEvent: (e) => this.#onMenuItemClick(e),
-                capture: true,
-              }}
-              @pointerover=${(e) => this.#onMenuItemPointerOver(e)}
+            <a role="menuitem" aria-haspopup="menu" aria-expanded="false"
               >Notifications</a
             >
             <ul role="menu">
               <li>
-                <a
-                  role="menuitem"
-                  aria-haspopup="menu"
-                  aria-expanded="false"
-                  @click=${{
-                    handleEvent: (e) => this.#onMenuItemClick(e),
-                    capture: true,
-                  }}
-                  @pointerover=${(e) => this.#onMenuItemPointerOver(e)}
+                <a role="menuitem" aria-haspopup="menu" aria-expanded="false"
                   >Start</a
                 >
                 <ul role="menu">
@@ -56,7 +46,10 @@ class MainMenuComponent extends Component {
                     <a
                       role="menuitem"
                       href="#5-min"
-                      @click=${() => this.#startCoundown(5)}
+                      @click=${{
+                        handleEvent: (e) => this.#startCoundown(e, 5),
+                        capture: true,
+                      }}
                       @pointerover=${(e) => this.#onMenuItemPointerOver(e)}
                       >5 min</a
                     >
@@ -65,8 +58,10 @@ class MainMenuComponent extends Component {
                     <a
                       role="menuitem"
                       href="#10-min"
-                      @click=${() => this.#startCoundown(10)}
-                      @pointerover=${(e) => this.#onMenuItemPointerOver(e)}
+                      @click=${{
+                        handleEvent: (e) => this.#startCoundown(e, 10),
+                        capture: true,
+                      }}
                       >10 min</a
                     >
                   </li>
@@ -74,8 +69,10 @@ class MainMenuComponent extends Component {
                     <a
                       role="menuitem"
                       href="#15-min"
-                      @click=${() => this.#startCoundown(15)}
-                      @pointerover=${(e) => this.#onMenuItemPointerOver(e)}
+                      @click=${{
+                        handleEvent: (e) => this.#startCoundown(e, 15),
+                        capture: true,
+                      }}
                       >15 min</a
                     >
                   </li>
@@ -83,8 +80,10 @@ class MainMenuComponent extends Component {
                     <a
                       role="menuitem"
                       href="#20-min"
-                      @click=${() => this.#startCoundown(20)}
-                      @pointerover=${(e) => this.#onMenuItemPointerOver(e)}
+                      @click=${{
+                        handleEvent: (e) => this.#startCoundown(e, 20),
+                        capture: true,
+                      }}
                       >20 min</a
                     >
                   </li>
@@ -92,8 +91,10 @@ class MainMenuComponent extends Component {
                     <a
                       role="menuitem"
                       href="#30-min"
-                      @click=${() => this.#startCoundown(30)}
-                      @pointerover=${(e) => this.#onMenuItemPointerOver(e)}
+                      @click=${{
+                        handleEvent: (e) => this.#startCoundown(e, 30),
+                        capture: true,
+                      }}
                       >30 min</a
                     >
                   </li>
@@ -101,8 +102,10 @@ class MainMenuComponent extends Component {
                     <a
                       role="menuitem"
                       href="#60-min"
-                      @click=${() => this.#startCoundown(60)}
-                      @pointerover=${(e) => this.#onMenuItemPointerOver(e)}
+                      @click=${{
+                        handleEvent: (e) => this.#startCoundown(e, 60),
+                        capture: true,
+                      }}
                       >60 min</a
                     >
                   </li>
@@ -110,8 +113,10 @@ class MainMenuComponent extends Component {
                     <a
                       role="menuitem"
                       href="#1-min"
-                      @click=${() => this.#startCoundown(1)}
-                      @pointerover=${(e) => this.#onMenuItemPointerOver(e)}
+                      @click=${{
+                        handleEvent: (e) => this.#startCoundown(e, 1),
+                        capture: true,
+                      }}
                       >1 min</a
                     >
                   </li>
@@ -121,23 +126,17 @@ class MainMenuComponent extends Component {
                 <a
                   role="menuitem"
                   href="#stop"
-                  @click=${() => this.#stopCoundown()}
-                  @pointerover=${(e) => this.#onMenuItemPointerOver(e)}
+                  @click=${{
+                    handleEvent: (e) => this.#stopCoundown(e),
+                    capture: true,
+                  }}
                   >Stop</a
                 >
               </li>
             </ul>
           </li>
           <li>
-            <a
-              role="menuitem"
-              aria-haspopup="menu"
-              aria-expanded="false"
-              @click=${{
-                handleEvent: (e) => this.#onMenuItemClick(e),
-                capture: true,
-              }}
-              @pointerover=${(e) => this.#onMenuItemPointerOver(e)}
+            <a role="menuitem" aria-haspopup="menu" aria-expanded="false"
               >Report</a
             >
             <ul role="menu">
@@ -147,15 +146,7 @@ class MainMenuComponent extends Component {
           </li>
           <li></li>
           <li>
-            <a
-              role="menuitem"
-              aria-haspopup="menu"
-              aria-expanded="false"
-              @click=${{
-                handleEvent: (e) => this.#onMenuItemClick(e),
-                capture: true,
-              }}
-              @pointerover=${(e) => this.#onMenuItemPointerOver(e)}
+            <a role="menuitem" aria-haspopup="menu" aria-expanded="false"
               >View</a
             >
             <ul role="menu">
@@ -163,8 +154,10 @@ class MainMenuComponent extends Component {
                 <a
                   role="menuitem"
                   href="#refresh"
-                  @click=${() => this.#refresh()}
-                  @pointerover=${(e) => this.#onMenuItemPointerOver(e)}
+                  @click=${{
+                    handleEvent: (e) => this.#refresh(e),
+                    capture: true,
+                  }}
                   >Refresh</a
                 >
               </li>
@@ -176,41 +169,41 @@ class MainMenuComponent extends Component {
     `;
   }
 
-  async #startCoundown(/** @type {number} */ minutes) {
-    // TODO call onMenuItemClick in all handlers
-    this.#closeAllPopup();
+  async #startCoundown(
+    /** @type {Event} */ event,
+    /** @type {number} */ minutes,
+  ) {
     await Services.get().askPeriodically({
       period: new Duration(`PT${minutes}M`),
     });
+    event.stopPropagation();
+    event.preventDefault();
   }
 
-  async #stopCoundown() {
-    this.#closeAllPopup();
+  async #stopCoundown(/** @type {Event} */ event) {
     await Services.get().stopAskingPeriodically();
+    event.stopPropagation();
+    event.preventDefault();
   }
 
-  async #refresh() {
-    this.#closeAllPopup();
+  async #refresh(/** @type {Event} */ event) {
     Services.get().selectRecentActivities();
+    event.stopPropagation();
+    event.preventDefault();
   }
 
   #onBackgroundClick = (/** @type {Event} */ event) => {
-    console.log('onBackgroundClick', event);
     if (!this.querySelector('[role="menubar"]').contains(event.target)) {
       this.#closeAllPopup();
     }
   };
 
-  #onMenuItemClick(/** @type {Event} */ event) {
-    console.log('handlePopup', event);
+  #onMenuItemClick = (/** @type {Event} */ event) => {
     const target = event.currentTarget;
     if (this.#hasPopup(target)) {
-      console.log('has popup');
       if (this.#isOpen(target)) {
-        console.log('is open');
         this.#closePopup(target);
       } else {
-        console.log('is not open');
         this.#closeAllPopup(target);
         this.#openPopup(target);
       }
@@ -219,10 +212,9 @@ class MainMenuComponent extends Component {
     }
     event.stopPropagation();
     event.preventDefault();
-  }
+  };
 
-  #onMenuItemPointerOver(/** @type {Event} */ event) {
-    console.log('onMenuItemPointerOver', event);
+  #onMenuItemPointerOver = (/** @type {Event} */ event) => {
     const target = event.currentTarget;
     if (this.#isAnyPopupOpen()) {
       this.#closeAllPopup(target);
@@ -230,7 +222,7 @@ class MainMenuComponent extends Component {
         this.#openPopup(target);
       }
     }
-  }
+  };
 
   #hasPopup(/** @type {HTMLElement} */ menuiItem) {
     return menuiItem.getAttribute('aria-haspopup') === 'menu';
@@ -271,18 +263,15 @@ class MainMenuComponent extends Component {
     if (this.#isOpen(menuItem)) {
       menuItem.setAttribute('aria-expanded', 'false');
       menuItem.nextElementSibling.style.display = 'none';
-      console.log('closed', menuItem);
     }
   }
 
   #closeAllPopup(/** @type {HTMLElement} */ menuItem) {
-    console.log('closing all', menuItem);
     if (!(menuItem instanceof Node)) {
       menuItem = false;
     }
     this.querySelectorAll('[aria-haspopup="menu"]').forEach((popup) => {
       if (this.#doesNotContain(popup, menuItem)) {
-        console.log('closing', popup);
         this.#closePopup(popup);
       }
     });
@@ -292,7 +281,6 @@ class MainMenuComponent extends Component {
     /** @type {HTMLElement} */ popup,
     /** @type {HTMLElement} */ menuItem,
   ) {
-    console.log('doesNotContain', popup, menuItem);
     if (menuItem) {
       return !popup.nextElementSibling.contains(menuItem);
     }
