@@ -163,7 +163,7 @@ class MainMenuComponent extends Component {
                 <a
                   role="menuitem"
                   href="#refresh"
-                  @click=${() => Services.get().selectRecentActivities()}
+                  @click=${() => this.#refresh()}
                   @pointerover=${(e) => this.#onMenuItemPointerOver(e)}
                   >Refresh</a
                 >
@@ -177,6 +177,7 @@ class MainMenuComponent extends Component {
   }
 
   async #startCoundown(/** @type {number} */ minutes) {
+    // TODO call onMenuItemClick in all handlers
     this.#closeAllPopup();
     await Services.get().askPeriodically({
       period: new Duration(`PT${minutes}M`),
@@ -188,9 +189,14 @@ class MainMenuComponent extends Component {
     await Services.get().stopAskingPeriodically();
   }
 
+  async #refresh() {
+    this.#closeAllPopup();
+    Services.get().selectRecentActivities();
+  }
+
   #onBackgroundClick = (/** @type {Event} */ event) => {
     console.log('onBackgroundClick', event);
-    if (!this.contains(event.target)) {
+    if (!this.querySelector('[role="menubar"]').contains(event.target)) {
       this.#closeAllPopup();
     }
   };
@@ -238,12 +244,27 @@ class MainMenuComponent extends Component {
     return this.querySelector('[aria-expanded="true"]');
   }
 
-  #openPopup(/** @type {HTMLElement} */ menuiItem) {
-    const popupMenu = menuiItem.nextElementSibling;
+  #openPopup(/** @type {HTMLElement} */ menuItem) {
+    const popupMenu = menuItem.nextElementSibling;
     if (popupMenu) {
+      const rect = menuItem.getBoundingClientRect();
+      if (this.#isPopup(menuItem)) {
+        popupMenu.style.top = rect.height + 'px';
+        popupMenu.style.left = 0;
+      } else {
+        popupMenu.style.top = 0;
+        popupMenu.style.left = rect.width + 'px';
+      }
+
       popupMenu.style.display = 'block';
-      menuiItem.setAttribute('aria-expanded', 'true');
+      menuItem.setAttribute('aria-expanded', 'true');
     }
+  }
+
+  #isPopup(/** @type {HTMLElement} */ menuItem) {
+    return !this.querySelector('[role="menubar"] > * > [role="menu"]').contains(
+      menuItem,
+    );
   }
 
   #closePopup(/** @type {HTMLElement} */ menuItem) {
