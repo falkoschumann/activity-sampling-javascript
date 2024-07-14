@@ -6,7 +6,10 @@ export class ConfigurableResponses {
   #description;
   #responses;
 
-  constructor(responses, /** @type {string} */ name) {
+  constructor(
+    /** @type {Object|Array} */ responses,
+    /** @type {string} */ name,
+  ) {
     this.#description = name == null ? '' : ` in ${name}`;
     this.#responses = Array.isArray(responses) ? [...responses] : responses;
   }
