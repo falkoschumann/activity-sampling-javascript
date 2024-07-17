@@ -44,6 +44,18 @@
   --green-900: #14402c;
   --green-950: #0a2419;
 
+  --purple-50: #fcf7fc;
+  --purple-100: #f7eff8;
+  --purple-200: #efdef0;
+  --purple-300: #e3c4e3;
+  --purple-400: #d1a1d0;
+  --purple-500: #bb7aba;
+  --purple-600: #9e5b9c;
+  --purple-700: #884d84; /* RAL 4008	Signalviolett */
+  --purple-800: #6b3d68;
+  --purple-900: #593656;
+  --purple-950: #371b34;
+
   --yellow-50: #fffdea;
   --yellow-100: #fff7c5;
   --yellow-200: #ffef85;
