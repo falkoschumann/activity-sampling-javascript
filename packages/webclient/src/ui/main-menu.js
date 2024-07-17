@@ -144,7 +144,6 @@ class MainMenuComponent extends Component {
               <li><a role="menuitem" href="#timesheet">Timesheet</a></li>
             </ul>
           </li>
-          <li></li>
           <li>
             <a role="menuitem" aria-haspopup="menu" aria-expanded="false"
               >View</a
@@ -163,7 +162,6 @@ class MainMenuComponent extends Component {
               </li>
             </ul>
           </li>
-          <li></li>
         </ul>
       </nav>
     `;
