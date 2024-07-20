@@ -6,9 +6,10 @@ export class Component extends HTMLElement {
   }
 
   updateView() {
-    if (!this.isConnected) {
-      return;
-    }
+    // TODO Is this test really necessary?
+    //if (!this.isConnected) {
+    //  return;
+    //}
 
     render(this.getView(), this.getRenderTarget());
   }
@@ -52,9 +53,10 @@ export class Container extends Component {
   }
 
   updateView({ force = false } = {}) {
-    if (!this.isConnected) {
-      return;
-    }
+    // TODO Is this test really necessary?
+    //if (!this.isConnected) {
+    //  return;
+    //}
 
     this.state = this.extractState(Container.#store.getState());
     if (!force && this.state === this.oldState) {
