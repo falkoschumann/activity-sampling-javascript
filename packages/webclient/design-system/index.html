@@ -277,5 +277,48 @@
         <input id="key1" name="key1" type="text" />
       </div>
     </section>
+
+    <section class="grid-6 space-y-100">
+      <h2>Menu</h2>
+      <div style="height: 120px">
+        <ul role="menubar" style="display: inline-block">
+          <li style="display: inline-block; position: relative">
+            <a style="display: block; padding: 8px 16px; text-wrap: nowrap" role="menuitem" aria-haspopup="menu" aria-expanded="true" href="#file">File</a>
+            <ul style="display: block; position: absolute; top: 36px; left: 0" role="menu">
+              <li>
+                <a style="display: block; padding: 8px 16px; text-wrap: nowrap" role="menuitem" aria-haspopup="menu" aria-expanded="true" href="#open-recent">Open recent</a>
+                <ul style="display: block; position: absolute; top: 0; left: 114px" role="menu">
+                  <li><a style="display: block; padding: 8px 16px; text-wrap: nowrap" role="menuitem" href="#file-1">File 1</a></li>
+                  <li><a style="display: block; padding: 8px 16px; text-wrap: nowrap" role="menuitem" href="#file-2">File 2</a></li>
+                </ul>
+              </li>
+              <li><hr style="margin: 4px 16px" /></li>
+              <li>
+                <a style="display: block; padding: 8px 16px; text-wrap: nowrap" role="menuitem" aria-haspopup="menu" aria-expanded="false" href="#exit">Exit</a>
+              </li>
+            </ul>
+          </li>
+          <li style="display: inline-block; position: relative">
+            <a style="display: block; padding: 8px 16px; text-wrap: nowrap" role="menuitem" aria-haspopup="menu" aria-expanded="false" href="#edit">Edit</a>
+            <ul style="display: none; position: absolute" role="menu">
+              <li><a style="display: block; padding: 8px 16px; text-wrap: nowrap" role="menuitem" href="#undo">Undo</a></li>
+              <li><a style="display: block; padding: 8px 16px; text-wrap: nowrap" role="menuitem" href="#redo">Redo</a></li>
+              <li><hr style="margin: 4px 16px" /></li>
+              <li><a style="display: block; padding: 8px 16px; text-wrap: nowrap" role="menuitem" href="#cut">Cut</a></li>
+              <li><a style="display: block; padding: 8px 16px; text-wrap: nowrap" role="menuitem" href="#copy">Copy</a></li>
+              <li><a style="display: block; padding: 8px 16px; text-wrap: nowrap" role="menuitem" href="#paste">Paste</a></li>
+            </ul>
+          </li>
+          <li style="display: inline-block; position: relative">
+            <a style="display: block; padding: 8px 16px; text-wrap: nowrap" role="menuitem" aria-haspopup="menu" aria-expanded="false" href="#help">Help</a>
+            <ul style="display: none; position: absolute" role="menu">
+              <li>
+                <a style="display: block; padding: 8px 16px; text-wrap: nowrap" role="menuitem" href="#about">About</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </section>
   </body>
 </html>
