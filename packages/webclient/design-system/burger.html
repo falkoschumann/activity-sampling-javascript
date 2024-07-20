@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Burger Menu</title>
+  </head>
+  <style>
+    #main-menu {
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+    }
+
+    #main-menu div {
+      position: relative;
+      transition: background-color 0.2s ease;
+    }
+
+    #main-menu div::before,
+    #main-menu div::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      transition:
+        transform 0.2s ease,
+        transform 0.2s ease;
+    }
+
+    #main-menu div,
+    #main-menu div::before,
+    #main-menu div::after {
+      width: 100%;
+      height: 4px;
+      background-color: #9ca3ac;
+      border-radius: 2px;
+    }
+
+    #main-menu div::before {
+      top: -6px;
+    }
+
+    #main-menu div::after {
+      top: 6px;
+    }
+
+    #main-menu.open div {
+      background-color: #9ca3ac00;
+    }
+
+    #main-menu.open div::before {
+      transform: translateY(6px) rotate(45deg);
+    }
+
+    #main-menu.open div::after {
+      transform: translateY(-6px) rotate(-45deg);
+    }
+  </style>
+  <body>
+    <button id="main-menu" onclick="document.querySelector('#main-menu').classList.toggle('open')">
+      <div></div>
+    </button>
+  </body>
+</html>
