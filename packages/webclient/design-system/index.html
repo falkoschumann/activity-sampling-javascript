@@ -204,7 +204,7 @@
     </section>
 
     <section class="grid-6 space-y-100">
-      <h2>Form</h2>
+      <h2>Form Controls</h2>
       <h3>Text Field</h3>
       <div class="h-stack wrapped items-center gap-100">
         <input type="text" />
@@ -271,7 +271,7 @@
       -->
 
     <section class="grid-6 space-y-100">
-      <h2>Modules</h2>
+      <h2>Form</h2>
       <div>
         <label for="key1">Caption</label>
         <input id="key1" name="key1" type="text" />
@@ -281,39 +281,41 @@
     <section class="grid-6 space-y-100">
       <h2>Menu</h2>
       <div style="height: 120px">
-        <ul role="menubar" style="display: inline-block">
-          <li style="display: inline-block; position: relative">
-            <a style="display: block; padding: 8px 16px; text-wrap: nowrap" role="menuitem" aria-haspopup="menu" aria-expanded="true" href="#file">File</a>
+        <!-- TODO Add JavaScript for open/close -->
+        <!-- TODO Use class for opened and closed -->
+        <ul role="menubar">
+          <li>
+            <a role="menuitem" aria-haspopup="menu" aria-expanded="true" href="#file">File</a>
             <ul style="display: block; position: absolute; top: 36px; left: 0" role="menu">
               <li>
-                <a style="display: block; padding: 8px 16px; text-wrap: nowrap" role="menuitem" aria-haspopup="menu" aria-expanded="true" href="#open-recent">Open recent</a>
-                <ul style="display: block; position: absolute; top: 0; left: 114px" role="menu">
-                  <li><a style="display: block; padding: 8px 16px; text-wrap: nowrap" role="menuitem" href="#file-1">File 1</a></li>
-                  <li><a style="display: block; padding: 8px 16px; text-wrap: nowrap" role="menuitem" href="#file-2">File 2</a></li>
+                <a class="hover" role="menuitem" aria-haspopup="menu" aria-expanded="true" href="#open-recent">Open recent <span class="material-icons">chevron_right</span></a>
+                <ul style="display: block; position: absolute; top: -1px; left: 148px" role="menu">
+                  <li><a role="menuitem" href="#file-1">File 1</a></li>
+                  <li><a role="menuitem" href="#file-2">File 2</a></li>
                 </ul>
               </li>
-              <li><hr style="margin: 4px 16px" /></li>
+              <li><hr /></li>
               <li>
-                <a style="display: block; padding: 8px 16px; text-wrap: nowrap" role="menuitem" aria-haspopup="menu" aria-expanded="false" href="#exit">Exit</a>
+                <a role="menuitem" aria-haspopup="menu" aria-expanded="false" href="#exit">Exit</a>
               </li>
             </ul>
           </li>
-          <li style="display: inline-block; position: relative">
-            <a style="display: block; padding: 8px 16px; text-wrap: nowrap" role="menuitem" aria-haspopup="menu" aria-expanded="false" href="#edit">Edit</a>
+          <li>
+            <a role="menuitem" aria-haspopup="menu" aria-expanded="false" href="#edit">Edit</a>
             <ul style="display: none; position: absolute" role="menu">
-              <li><a style="display: block; padding: 8px 16px; text-wrap: nowrap" role="menuitem" href="#undo">Undo</a></li>
-              <li><a style="display: block; padding: 8px 16px; text-wrap: nowrap" role="menuitem" href="#redo">Redo</a></li>
-              <li><hr style="margin: 4px 16px" /></li>
-              <li><a style="display: block; padding: 8px 16px; text-wrap: nowrap" role="menuitem" href="#cut">Cut</a></li>
-              <li><a style="display: block; padding: 8px 16px; text-wrap: nowrap" role="menuitem" href="#copy">Copy</a></li>
-              <li><a style="display: block; padding: 8px 16px; text-wrap: nowrap" role="menuitem" href="#paste">Paste</a></li>
+              <li><a role="menuitem" href="#undo">Undo</a></li>
+              <li><a role="menuitem" href="#redo">Redo</a></li>
+              <li><hr /></li>
+              <li><a role="menuitem" href="#cut">Cut</a></li>
+              <li><a role="menuitem" href="#copy">Copy</a></li>
+              <li><a role="menuitem" href="#paste">Paste</a></li>
             </ul>
           </li>
-          <li style="display: inline-block; position: relative">
-            <a style="display: block; padding: 8px 16px; text-wrap: nowrap" role="menuitem" aria-haspopup="menu" aria-expanded="false" href="#help">Help</a>
+          <li>
+            <a role="menuitem" aria-haspopup="menu" aria-expanded="false" href="#help">Help</a>
             <ul style="display: none; position: absolute" role="menu">
               <li>
-                <a style="display: block; padding: 8px 16px; text-wrap: nowrap" role="menuitem" href="#about">About</a>
+                <a role="menuitem" href="#about">About</a>
               </li>
             </ul>
           </li>

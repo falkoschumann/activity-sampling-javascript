@@ -1,0 +1,57 @@
+ul[role='menubar'] {
+  display: block;
+  width: 100%;
+
+  background-color: var(--gray-900);
+}
+
+ul[role='menu'] {
+  background-color: var(--gray-900);
+}
+
+ul[role='menu'] {
+  box-shadow: 4px 4px 4px var(--gray-300);
+  border: solid 1px var(--gray-500);
+  border-radius: 6px;
+}
+
+ul[role='menubar'] > li {
+  display: inline-block;
+  position: relative;
+}
+
+ul[role='menubar'] li {
+  padding: 4px;
+}
+
+/* TODO use <a> for navigation */
+/* TODO use <button> for action */
+ul[role='menubar'] a[role='menuitem'] {
+  align-items: center;
+  display: flex;
+  padding: 4px 12px;
+
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  text-align: center;
+  text-wrap: nowrap;
+
+  border-radius: 4px;
+  color: var(--white);
+}
+
+ul[role='menubar'] li a[role='menuitem']:hover,
+ul[role='menubar'] li a[role='menuitem'].hover {
+  background-color: var(--blue-600);
+  text-decoration: none;
+}
+
+ul[role='menubar'] li a[role='menuitem'] .material-icons {
+  margin-left: 16px;
+}
+
+ul[role='menubar'] li hr {
+  margin: 8px 16px;
+  border: solid 0.5px var(--white);
+}
