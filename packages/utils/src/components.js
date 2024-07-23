@@ -52,14 +52,15 @@ export class Container extends Component {
     return state;
   }
 
-  updateView({ force = false } = {}) {
+  updateView(/*{ force = false } = {}*/) {
+    // TODO Is force really necessary?
     // TODO Is this test really necessary?
     //if (!this.isConnected) {
     //  return;
     //}
 
     this.state = this.extractState(Container.#store.getState());
-    if (!force && this.state === this.oldState) {
+    if (/*!force &&*/ this.state === this.oldState) {
       return;
     }
 
