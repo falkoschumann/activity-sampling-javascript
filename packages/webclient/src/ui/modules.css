@@ -6,6 +6,7 @@ ul[role='menubar'] {
 }
 
 ul[role='menu'] {
+  position: absolute;
   background-color: var(--gray-900);
 }
 
@@ -13,6 +14,14 @@ ul[role='menu'] {
   box-shadow: 4px 4px 4px var(--gray-300);
   border: solid 1px var(--gray-500);
   border-radius: 6px;
+}
+
+[role='menuitem'][aria-expanded='false'] + [role='menu'] {
+  display: none;
+}
+
+[role='menuitem'][aria-expanded='true'] + [role='menu'] {
+  display: block;
 }
 
 ul[role='menubar'] > li {

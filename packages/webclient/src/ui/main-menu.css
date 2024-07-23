@@ -19,7 +19,14 @@ m-main-menu [role='menubar'] > li a {
 }
 
 m-main-menu [role='menu'] {
-  display: none;
   position: absolute;
   background-color: var(--gray-100);
+}
+
+m-main-menu [aria-expanded='false'] + [role='menu'] {
+  display: none;
+}
+
+m-main-menu [aria-expanded='true'] + [role='menu'] {
+  display: block;
 }

@@ -222,8 +222,8 @@ class MainMenuComponent extends Component {
     }
   };
 
-  #hasPopup(/** @type {HTMLElement} */ menuiItem) {
-    return menuiItem.getAttribute('aria-haspopup') === 'menu';
+  #hasPopup(/** @type {HTMLElement} */ menuItem) {
+    return menuItem.getAttribute('aria-haspopup') === 'menu';
   }
 
   #isOpen(/** @type {HTMLElement} */ menuItem) {
@@ -246,7 +246,6 @@ class MainMenuComponent extends Component {
         popupMenu.style.left = rect.width + 'px';
       }
 
-      popupMenu.style.display = 'block';
       menuItem.setAttribute('aria-expanded', 'true');
     }
   }
@@ -260,7 +259,6 @@ class MainMenuComponent extends Component {
   #closePopup(/** @type {HTMLElement} */ menuItem) {
     if (this.#isOpen(menuItem)) {
       menuItem.setAttribute('aria-expanded', 'false');
-      menuItem.nextElementSibling.style.display = 'none';
     }
   }
 
