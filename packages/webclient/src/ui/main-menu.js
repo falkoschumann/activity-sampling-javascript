@@ -2,7 +2,6 @@ import { html } from 'lit-html';
 
 import { Component } from '@activity-sampling/utils/src/components.js';
 
-import './main-menu.css';
 import { Services } from '../application/services.js';
 import { Duration } from '@activity-sampling/utils';
 
@@ -237,12 +236,12 @@ class MainMenuComponent extends Component {
   #openPopup(/** @type {HTMLElement} */ menuItem) {
     const popupMenu = menuItem.nextElementSibling;
     if (popupMenu) {
-      const rect = menuItem.getBoundingClientRect();
+      const rect = menuItem.parentElement.getBoundingClientRect();
       if (this.#isPopup(menuItem)) {
         popupMenu.style.top = rect.height + 'px';
         popupMenu.style.left = 0;
       } else {
-        popupMenu.style.top = 0;
+        popupMenu.style.top = '-1px';
         popupMenu.style.left = rect.width + 'px';
       }
 
