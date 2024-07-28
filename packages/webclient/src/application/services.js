@@ -3,14 +3,18 @@ import { reducer } from '../domain/reducer.js';
 import { Api } from '../infrastructure/api.js';
 
 export class Services {
-  static #instance = new Services(
-    undefined,
-    Api.create(),
-    Timer.create(),
-    Clock.create(),
-  );
+  /** @type {Services} */ static #instance;
 
   static get() {
+    if (Services.#instance == null) {
+      Services.#instance = new Services(
+        undefined,
+        Api.create(),
+        Timer.create(),
+        Clock.create(),
+      );
+    }
+
     return Services.#instance;
   }
 
