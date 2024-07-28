@@ -88,14 +88,14 @@
 body {
   font-family: OpenSans, Roboto, Verdana, Arial, sans-serif;
   font-size: 14px;
-  font-weight: 400;
+  font-weight: normal;
   line-height: 20px;
 
   color: var(--black);
 }
 
 h1 {
-  margin: 0.8em 0 0.4em 0;
+  margin-block: 0.8em 0.4em;
 
   font-size: 46px;
   font-weight: 300;
@@ -103,7 +103,7 @@ h1 {
 }
 
 h2 {
-  margin: 0.8em 0 0.4em 0;
+  margin-block: 0.8em 0.4em;
   padding-bottom: 8px;
 
   font-size: 34px;
@@ -115,7 +115,7 @@ h2 {
 }
 
 h3 {
-  margin: 0.8em 0 0.4em 0;
+  margin-block: 0.8em 0.4em;
 
   font-size: 24px;
   font-weight: 350;
@@ -123,15 +123,15 @@ h3 {
 }
 
 h4 {
-  margin: 0.8em 0 0.4em 0;
+  margin-block: 0.8em 0.4em;
 
   font-size: 20px;
-  font-weight: 400;
+  font-weight: normal;
   line-height: 24px;
 }
 
 p {
-  margin: 0.4em 0;
+  margin-block: 0.4em;
 }
 
 .base {
@@ -142,7 +142,7 @@ p {
 
 .caption {
   font-size: 12px;
-  font-weight: 400;
+  font-weight: normal;
   line-height: 14px;
 }
 

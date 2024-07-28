@@ -9,6 +9,11 @@
   box-sizing: border-box;
 }
 
+img {
+  max-width: 100%;
+  height: auto;
+}
+
 li {
   list-style: none;
 }
@@ -17,7 +22,5 @@ button,
 input,
 select,
 textarea {
-  font-family: inherit;
-  font-size: 100%;
-  line-height: inherit;
+  font: inherit;
 }
