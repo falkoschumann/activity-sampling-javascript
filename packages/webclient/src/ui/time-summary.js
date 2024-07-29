@@ -18,19 +18,27 @@ class TimeSummaryComponent extends Container {
     return html`
       <div class="counter">
         <div class="caption">Hours Today</div>
-        <div>${this.state.hoursToday.toString({ style: 'short' })}</div>
+        <div class="body">
+          ${this.state.hoursToday.toString({ style: 'short' })}
+        </div>
       </div>
       <div class="counter">
         <div class="caption">Hours Yesterday</div>
-        <div>${this.state.hoursYesterday.toString({ style: 'short' })}</div>
+        <div class="body">
+          ${this.state.hoursYesterday.toString({ style: 'short' })}
+        </div>
       </div>
       <div class="counter">
         <div class="caption">Hours this Week</div>
-        <div>${this.state.hoursThisWeek.toString({ style: 'short' })}</div>
+        <div class="body">
+          ${this.state.hoursThisWeek.toString({ style: 'short' })}
+        </div>
       </div>
       <div class="counter">
         <div class="caption">Hours this Month</div>
-        <div>${this.state.hoursThisMonth.toString({ style: 'short' })}</div>
+        <div class="body">
+          ${this.state.hoursThisMonth.toString({ style: 'short' })}
+        </div>
       </div>
     `;
   }

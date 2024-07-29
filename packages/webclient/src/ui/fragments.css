@@ -87,10 +87,6 @@
 
 body {
   font-family: OpenSans, Roboto, Verdana, Arial, sans-serif;
-  font-size: 14px;
-  font-weight: normal;
-  line-height: 1.429;
-
   color: var(--black);
 }
 
@@ -133,6 +129,12 @@ p {
 .base {
   font-size: 1rem;
   font-weight: 600;
+  line-height: 1.429;
+}
+
+.body {
+  font-size: 1rem;
+  font-weight: normal;
   line-height: 1.429;
 }
 

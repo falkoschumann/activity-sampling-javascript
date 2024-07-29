@@ -40,18 +40,14 @@ a[href^='https://']::after
 
 button {
   min-width: 150px;
-  padding: 8px 24px;
+  padding: 0.5rem 1.5rem;
 
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 20px;
   text-align: center;
-  text-transform: uppercase;
 
   color: var(--white);
   background-color: var(--blue-500);
   border-color: var(--blue-500);
-  border-radius: 8px;
+  border-radius: 0.5rem;
   border-style: solid;
   border-width: 0px;
 
@@ -109,7 +105,7 @@ button.icon-only {
 }
 
 button.icon-only span {
-  font-size: 24px;
+  font-size: 1.5rem;
   vertical-align: middle;
 }
 
@@ -194,9 +190,9 @@ label {
   margin-bottom: 4px;
   padding-left: 4px;
 
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 14px;
+  font-size: 0.857em;
+  font-weight: normal;
+  line-height: 1.333;
 
   color: var(--gray-600);
 }
