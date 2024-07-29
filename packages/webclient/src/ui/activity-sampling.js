@@ -17,7 +17,7 @@ import { Services } from '../application/services.js';
 class ActivitySamplingComponent extends Component {
   constructor() {
     super();
-    this.classList.add('screen-height', 'v-stack', 'p-50', 'gap-50');
+    this.classList.add('screen-height', 'v-stack', 'gap-50');
     Container.initStore(Services.get().store);
   }
 
@@ -31,11 +31,11 @@ class ActivitySamplingComponent extends Component {
       <header>
         <m-main-menu></m-main-menu>
       </header>
-      <aside class="space-y-100">
+      <aside class="p-50 space-y-100">
         <m-current-activity></m-current-activity>
         <m-countdown></m-countdown>
       </aside>
-      <main class="expanded">
+      <main class="p-50 expanded">
         <m-recent-activities></m-recent-activities>
       </main>
       <footer>

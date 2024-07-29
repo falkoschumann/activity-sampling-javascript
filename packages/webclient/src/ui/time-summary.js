@@ -7,7 +7,13 @@ import './time-summary.css';
 class TimeSummaryComponent extends Container {
   constructor() {
     super();
-    this.classList.add('h-stack', 'wrapped', 'justify-center', 'gap-25');
+    this.classList.add(
+      'h-stack',
+      'wrapped',
+      'justify-center',
+      'p-50',
+      'gap-25',
+    );
   }
 
   extractState({ recentActivities }) {
