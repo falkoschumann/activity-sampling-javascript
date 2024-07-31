@@ -24,25 +24,25 @@ class TimeSummaryComponent extends Container {
     return html`
       <div class="counter">
         <div class="caption">Hours Today</div>
-        <div class="body">
+        <div class="duration">
           ${this.state.hoursToday.toString({ style: 'short' })}
         </div>
       </div>
       <div class="counter">
         <div class="caption">Hours Yesterday</div>
-        <div class="body">
+        <div class="duration">
           ${this.state.hoursYesterday.toString({ style: 'short' })}
         </div>
       </div>
       <div class="counter">
         <div class="caption">Hours this Week</div>
-        <div class="body">
+        <div class="duration">
           ${this.state.hoursThisWeek.toString({ style: 'short' })}
         </div>
       </div>
       <div class="counter">
         <div class="caption">Hours this Month</div>
-        <div class="body">
+        <div class="duration">
           ${this.state.hoursThisMonth.toString({ style: 'short' })}
         </div>
       </div>

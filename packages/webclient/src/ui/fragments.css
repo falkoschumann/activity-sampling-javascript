@@ -85,41 +85,52 @@
  * Typography
  */
 
-body {
+html {
   font-family: OpenSans, Roboto, Verdana, Arial, sans-serif;
+  font-size: 14px; /* 1rem = 14px */
+  font-weight: normal;
+  line-height: 1.429; /* 20px */
   color: var(--black);
 }
 
-h1 {
-  margin-block: 0.67rem;
+h1,
+.header {
+  margin-block: 0.4em;
 
-  font-size: 2.5rem;
-  font-weight: 600;
-  line-height: 1;
+  font-size: 3.286rem; /* 46px */
+  font-weight: 300;
+  line-height: 1.217; /* 56px */
 }
 
-h2 {
-  margin-block: 0.83rem;
+h2,
+.subheader {
+  margin-block: 0.4em;
   padding-bottom: 0.5rem;
 
-  font-size: 2.2rem;
-  font-weight: normal;
-  line-height: 1;
+  font-size: 2.429rem; /* 34px */
+  font-weight: 300;
+  line-height: 1.176; /* 40px */
 
   color: var(--blue-700);
   border-bottom: 2px solid var(--blue-700);
 }
 
-h3 {
-  font-size: 2em;
-  font-weight: 600;
-  line-height: 1.75;
+h3,
+.title {
+  margin-block: 0.4em;
+
+  font-size: 1.714rem; /* 24px */
+  font-weight: 350;
+  line-height: 1.167; /* 28px */
 }
 
-h4 {
-  font-size: 1.5em;
-  font-weight: 600;
-  line-height: 1.75;
+h4,
+.subtitle {
+  margin-block: 0.4em;
+
+  font-size: 1.429rem; /* 20px */
+  font-weight: normal;
+  line-height: 1.2; /* 24px */
 }
 
 p {
@@ -127,21 +138,21 @@ p {
 }
 
 .base {
-  font-size: 1rem;
+  font-size: 1rem; /* 14px */
   font-weight: 600;
-  line-height: 1.429;
+  line-height: 1.429; /* 20px */
 }
 
 .body {
-  font-size: 1rem;
+  font-size: 1rem; /* 14px */
   font-weight: normal;
-  line-height: 1.429;
+  line-height: 1.429; /* 20px */
 }
 
 .caption {
-  font-size: 0.857em;
+  font-size: 0.857rem; /* 12px */
   font-weight: normal;
-  line-height: 1.333;
+  line-height: 1.167; /* 14px */
 }
 
 /*

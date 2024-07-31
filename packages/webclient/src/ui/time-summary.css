@@ -1,5 +1,9 @@
-m-time-summary div.counter {
+m-time-summary .counter {
   width: 120px;
 
   text-align: center;
+}
+
+m-time-summary .duration {
+  font-size: 1.429em;
 }
