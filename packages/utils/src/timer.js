@@ -54,9 +54,11 @@ export class Timer extends EventTarget {
     return new OutputTracker(this, TIMER_TASK_CANCELED_EVENT);
   }
 
-  simulateTaskExecution({ times = 1 } = {}) {
+  async simulateTaskExecution({ times = 1 } = {}) {
     for (let i = 0; i < times; i++) {
-      this.#interval.task?.();
+      for (const task of this.#intervalIds.values()) {
+        await task();
+      }
     }
   }
 }
@@ -64,8 +66,7 @@ export class Timer extends EventTarget {
 class IntervalStub {
   #lastIntervalId = 0;
 
-  setInterval(callback) {
-    this.task = callback;
+  setInterval() {
     return this.#lastIntervalId++;
   }
 

@@ -13,7 +13,7 @@ describe('Timer', () => {
     expect(scheduledTasks.data).toEqual([{ task, period: 1000 }]);
   });
 
-  test('Simulates task execution', () => {
+  test('Simulates task execution', async () => {
     const timer = Timer.createNull();
     let calls = 0;
     const task = () => {
@@ -21,7 +21,7 @@ describe('Timer', () => {
     };
     timer.schedule(task, 1000);
 
-    timer.simulateTaskExecution({ times: 3 });
+    await timer.simulateTaskExecution({ times: 3 });
 
     expect(calls).toBe(3);
   });
