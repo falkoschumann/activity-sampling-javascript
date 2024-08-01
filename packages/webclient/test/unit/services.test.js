@@ -224,11 +224,11 @@ describe('Services', () => {
         ]);
       });
 
-      test('Progresses countdown and update remaining time', () => {
+      test('Progresses countdown and update remaining time', async () => {
         const { services, timer } = configure({ now: '2024-03-03T16:53Z' });
         services.askPeriodically({ period: new Duration('PT1M') });
 
-        timer.simulateTaskExecution({ times: 1 });
+        await timer.simulateTaskExecution({ times: 1 });
 
         expect(services.store.getState()).toEqual({
           ...initialState,
@@ -246,11 +246,11 @@ describe('Services', () => {
         });
       });
 
-      test('Progresses countdown until end of the period', () => {
+      test('Progresses countdown until end of the period', async () => {
         const { services, timer } = configure({ now: '2024-03-03T16:53Z' });
         services.askPeriodically({ period: new Duration('PT1M') });
 
-        timer.simulateTaskExecution({ times: 59 });
+        await timer.simulateTaskExecution({ times: 59 });
 
         expect(services.store.getState()).toEqual({
           ...initialState,
@@ -268,11 +268,11 @@ describe('Services', () => {
         });
       });
 
-      test('Enables form when countdown is elapsed', () => {
+      test('Enables form when countdown is elapsed', async () => {
         const { services, timer } = configure({ now: '2024-03-03T16:53Z' });
         services.askPeriodically({ period: new Duration('PT1M') });
 
-        timer.simulateTaskExecution({ times: 60 });
+        await timer.simulateTaskExecution({ times: 60 });
 
         expect(services.store.getState()).toEqual({
           ...initialState,
@@ -295,11 +295,11 @@ describe('Services', () => {
         });
       });
 
-      test('Restarts the countdown when the countdown is elapsed', () => {
+      test('Restarts the countdown when the countdown is elapsed', async () => {
         const { services, timer } = configure({ now: '2024-03-03T16:53Z' });
         services.askPeriodically({ period: new Duration('PT1M') });
 
-        timer.simulateTaskExecution({ times: 61 });
+        await timer.simulateTaskExecution({ times: 61 });
 
         expect(services.store.getState()).toEqual({
           ...initialState,
@@ -327,7 +327,7 @@ describe('Services', () => {
         });
         const activitiesLogged = api.trackActivitiesLogged();
         services.askPeriodically({ period: new Duration('PT1M') });
-        timer.simulateTaskExecution({ times: 61 });
+        await timer.simulateTaskExecution({ times: 61 });
 
         await services.activityUpdated({
           client: 'c1',
@@ -375,7 +375,7 @@ describe('Services', () => {
         const { services, timer } = configure({ now: '2024-03-03T16:53Z' });
         const canceled = timer.trackCanceledTasks();
         services.askPeriodically({ period: new Duration('PT1M') });
-        timer.simulateTaskExecution({ times: 20 });
+        await timer.simulateTaskExecution({ times: 20 });
 
         await services.stopAskingPeriodically();
 
