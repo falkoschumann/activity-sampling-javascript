@@ -46,6 +46,9 @@ export class NotificationAdapter {
     if (this.#notificationConstructor == null) {
       return;
     }
+    if (this.#notification != null) {
+      await this.close();
+    }
 
     return new Promise((resolve, reject) => {
       this.#notification = new this.#notificationConstructor(title, options);
