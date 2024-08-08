@@ -38,7 +38,7 @@ class MainMenuComponent extends Component {
             <ul role="menu">
               <li>
                 <a role="menuitem" aria-haspopup="menu" aria-expanded="false"
-                  >Start</a
+                  >Start <span class="material-icons">chevron_right</span></a
                 >
                 <ul role="menu">
                   <li>
