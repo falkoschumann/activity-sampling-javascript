@@ -1,6 +1,7 @@
 import { Clock, Duration, Timer, createStore } from '@activity-sampling/utils';
 import { reducer } from '../domain/reducer.js';
 import { Api } from '../infrastructure/api.js';
+import { NotificationAdapter } from '../infrastructure/notification-adapter.js';
 
 export class Services {
   /** @type {Services} */ static #instance;
@@ -10,6 +11,7 @@ export class Services {
       Services.#instance = new Services(
         undefined,
         Api.create(),
+        NotificationAdapter.create(),
         Timer.create(),
         Clock.create(),
       );
@@ -19,6 +21,7 @@ export class Services {
   }
 
   #api;
+  #notificationAdapter;
   #timer;
   #store;
   #clock;
@@ -26,10 +29,12 @@ export class Services {
   constructor(
     preloadedState,
     /** @type {Api} */ api,
+    /** @type {NotificationAdapter} */ notificationAdapter,
     /** @type {Timer} */ timer,
     /** @type {Clock} */ clock,
   ) {
     this.#api = api;
+    this.#notificationAdapter = notificationAdapter;
     this.#timer = timer;
     this.#clock = clock;
     this.#store = createStore(reducer, preloadedState);
@@ -49,6 +54,7 @@ export class Services {
     activity = { ...activity, timestamp: this.#clock.date() };
     console.debug('Log activity:', activity);
     await this.#api.logActivity(activity);
+    await this.#notificationAdapter.close();
     this.#store.dispatch({ type: 'activity-logged', activity });
   }
 
@@ -63,7 +69,10 @@ export class Services {
 
   async askPeriodically({ period }) {
     console.debug('Ask periodically:', period);
-    this.#timer.schedule(() => {
+    this.#timer.schedule(async () => {
+      const previousRemainingTime =
+        this.#store.getState().countdown.remainingTime;
+
       const timestamp = this.#clock.date();
       const duration = new Duration('PT1S');
       this.#store.dispatch({
@@ -71,6 +80,15 @@ export class Services {
         timestamp,
         duration,
       });
+
+      const remainingTime = this.#store.getState().countdown.remainingTime;
+      if (remainingTime <= 0 && previousRemainingTime > 0) {
+        await this.#notificationAdapter.show('What are you working on?', {
+          icon: '/images/app-icon-256.png',
+          requireInteraction: true,
+          silent: false,
+        });
+      }
     }, 1000);
     this.#store.dispatch({ type: 'countdown-started', period });
   }

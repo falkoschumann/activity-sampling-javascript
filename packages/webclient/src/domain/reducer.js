@@ -109,10 +109,7 @@ function countdownProgressed(state, { timestamp, duration }) {
   let remainingTime = new Duration(state.countdown.remainingTime);
   remainingTime.minus(duration);
 
-  const isElapsed =
-    state.countdown.isElapsed ||
-    remainingTime.isZero ||
-    remainingTime.isNegative;
+  const isElapsed = state.countdown.isElapsed || remainingTime <= 0;
   if (isElapsed) {
     duration = new Duration(state.countdown.period);
   } else {
@@ -151,7 +148,6 @@ function countdownStopped(state) {
       ...state.countdown,
       isRunning: false,
       isElapsed: false,
-      remainingTime: Duration.zero(),
     },
   };
   return updateForm(newState);

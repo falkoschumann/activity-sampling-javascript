@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { describe, expect, test } from '@jest/globals';
 
 import { Clock, Duration, Timer } from '@activity-sampling/utils';
@@ -6,6 +10,7 @@ import { Activity } from '@activity-sampling/domain';
 import { Services } from '../../src/application/services.js';
 import { initialState } from '../../src/domain/reducer.js';
 import { Api } from '../../src/infrastructure/api.js';
+import { NotificationAdapter } from '../../src/infrastructure/notification-adapter.js';
 
 describe('Services', () => {
   describe('Log activity', () => {
@@ -199,11 +204,11 @@ describe('Services', () => {
     });
 
     describe('Asks periodically what I am working on', () => {
-      test('Starts countdown and disable form', () => {
+      test('Starts countdown and disable form', async () => {
         const { services, timer } = configure({ now: '2024-03-03T16:53Z' });
         const scheduledTasks = timer.trackScheduledTasks();
 
-        services.askPeriodically({ period: new Duration('PT20M') });
+        await services.askPeriodically({ period: new Duration('PT20M') });
 
         expect(services.store.getState()).toEqual({
           ...initialState,
@@ -226,7 +231,7 @@ describe('Services', () => {
 
       test('Progresses countdown and update remaining time', async () => {
         const { services, timer } = configure({ now: '2024-03-03T16:53Z' });
-        services.askPeriodically({ period: new Duration('PT1M') });
+        await services.askPeriodically({ period: new Duration('PT1M') });
 
         await timer.simulateTaskExecution({ times: 1 });
 
@@ -248,7 +253,7 @@ describe('Services', () => {
 
       test('Progresses countdown until end of the period', async () => {
         const { services, timer } = configure({ now: '2024-03-03T16:53Z' });
-        services.askPeriodically({ period: new Duration('PT1M') });
+        await services.askPeriodically({ period: new Duration('PT1M') });
 
         await timer.simulateTaskExecution({ times: 59 });
 
@@ -269,8 +274,11 @@ describe('Services', () => {
       });
 
       test('Enables form when countdown is elapsed', async () => {
-        const { services, timer } = configure({ now: '2024-03-03T16:53Z' });
-        services.askPeriodically({ period: new Duration('PT1M') });
+        const { services, notificationAdapter, timer } = configure({
+          now: '2024-03-03T16:53Z',
+        });
+        await services.askPeriodically({ period: new Duration('PT1M') });
+        const shown = notificationAdapter.trackShow();
 
         await timer.simulateTaskExecution({ times: 60 });
 
@@ -293,11 +301,12 @@ describe('Services', () => {
             remainingTime: new Duration('PT0S'),
           },
         });
+        expect(shown.data).toEqual([{ title: 'What are you working on?' }]);
       });
 
       test('Restarts the countdown when the countdown is elapsed', async () => {
         const { services, timer } = configure({ now: '2024-03-03T16:53Z' });
-        services.askPeriodically({ period: new Duration('PT1M') });
+        await services.askPeriodically({ period: new Duration('PT1M') });
 
         await timer.simulateTaskExecution({ times: 61 });
 
@@ -322,12 +331,13 @@ describe('Services', () => {
       });
 
       test('Disables form when activity is logged with last elapsed countdown', async () => {
-        const { services, api, timer, clock } = configure({
+        const { services, api, notificationAdapter, timer, clock } = configure({
           now: '2024-03-03T16:53Z',
         });
         const activitiesLogged = api.trackActivitiesLogged();
-        services.askPeriodically({ period: new Duration('PT1M') });
+        await services.askPeriodically({ period: new Duration('PT1M') });
         await timer.simulateTaskExecution({ times: 61 });
+        const closed = notificationAdapter.trackClose();
 
         await services.activityUpdated({
           client: 'c1',
@@ -369,12 +379,13 @@ describe('Services', () => {
             notes: '',
           },
         ]);
+        expect(closed.data).toEqual([{ title: 'What are you working on?' }]);
       });
 
       test('Enables form if countdown is stopped', async () => {
         const { services, timer } = configure({ now: '2024-03-03T16:53Z' });
         const canceled = timer.trackCanceledTasks();
-        services.askPeriodically({ period: new Duration('PT1M') });
+        await services.askPeriodically({ period: new Duration('PT1M') });
         await timer.simulateTaskExecution({ times: 20 });
 
         await services.stopAskingPeriodically();
@@ -389,7 +400,7 @@ describe('Services', () => {
             isRunning: false,
             isElapsed: false,
             period: new Duration('PT1M'),
-            remainingTime: Duration.zero(),
+            remainingTime: new Duration('PT40S'),
           },
         });
         expect(canceled.data).toHaveLength(1);
@@ -614,8 +625,9 @@ describe('Services', () => {
 
 function configure({ state, response, now } = {}) {
   const api = Api.createNull({ response });
+  const notificationAdapter = NotificationAdapter.createNull();
   const timer = Timer.createNull();
   const clock = Clock.createNull({ fixed: now });
-  const services = new Services(state, api, timer, clock);
-  return { services, api, timer, clock };
+  const services = new Services(state, api, notificationAdapter, timer, clock);
+  return { services, api, notificationAdapter, timer, clock };
 }
