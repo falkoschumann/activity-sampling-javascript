@@ -20,7 +20,7 @@ analysis.
 -   Summarizes houres worked today, yesterday, this week and this month.
 -   Assumes last activity as current activity.
 
-### Hours worked
+### Time Report
 
 -   Summarizes hours worked for clients.
 -   Summarizes hours worked on projects.
@@ -46,4 +46,4 @@ analysis.
 
 ## Architecture
 
-![Container Diagram](./container-diagram.png)
+[Architecture Communication Canvas](https://html-preview.github.io/?url=https://github.com/falkoschumann/activity-sampling-javascript/blob/main/doc/acc.html)
