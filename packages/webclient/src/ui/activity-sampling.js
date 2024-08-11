@@ -2,10 +2,10 @@ import { html } from 'lit-html';
 
 import { Component, Container } from '@activity-sampling/utils/src/browser.js';
 
-import './reset.css';
-import './fragments.css';
-import './components.css';
-import './modules.css';
+import './style/reset.css';
+import './style/fragments.css';
+import './style/components.css';
+import './style/modules.css';
 import './activity-sampling.css';
 import './current-activity.js';
 import './countdown.js';
