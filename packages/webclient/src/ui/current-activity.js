@@ -1,4 +1,5 @@
 import { html } from 'lit-html';
+import { classMap } from 'lit-html/directives/class-map.js';
 import { createRef, ref } from 'lit-html/directives/ref.js';
 
 import { Container } from '@activity-sampling/utils/src/browser.js';
@@ -26,25 +27,34 @@ class CurrentActivityComponent extends Container {
   getView() {
     return html`
       <form class="v-stack gap-50" @submit=${(e) => this.#formSubmitted(e)}>
-        ${this.#textInputTemplate(this.#clientRef, 'client', 'Client', true)}
-        ${this.#textInputTemplate(this.#projectRef, 'project', 'Project', true)}
-        ${this.#textInputTemplate(this.#taskRef, 'task', 'Task', true)}
-        ${this.#textInputTemplate(this.#notesRef, 'notes', 'Notes')}
-        <button
-          type="submit"
-          class="mt-75"
-          ?disabled="${this.state.isSubmitDisabled}"
-        >
-          Log
-        </button>
+        <ul class="form">
+          ${this.#textInputTemplate(this.#clientRef, 'client', 'Client', true)}
+          ${this.#textInputTemplate(
+            this.#projectRef,
+            'project',
+            'Project',
+            true,
+          )}
+          ${this.#textInputTemplate(this.#taskRef, 'task', 'Task', true)}
+          ${this.#textInputTemplate(this.#notesRef, 'notes', 'Notes')}
+          <li>
+            <button
+              type="submit"
+              class="mt-75"
+              ?disabled="${this.state.isSubmitDisabled}"
+            >
+              Log
+            </button>
+          </li>
+        </ul>
       </form>
     `;
   }
 
   #textInputTemplate(inputRef, name, title, required = false) {
     return html`
-      <div class="v-stack">
-        <label for="${name}">${title}${required ? '*' : ''}</label>
+      <li class=${classMap({ required: required })}>
+        <label for="${name}">${title}</label>
         <input
           ${ref(inputRef)}
           type="text"
@@ -53,7 +63,7 @@ class CurrentActivityComponent extends Container {
           name="${name}"
           @keyup=${(e) => this.#inputChanged(e)}
         />
-      </div>
+      </li>
     `;
   }
 

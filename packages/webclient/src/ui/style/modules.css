@@ -64,3 +64,71 @@ ul[role='menubar'] li hr {
   margin: 8px 16px;
   border: solid 0.5px var(--white);
 }
+
+.form li {
+  margin-bottom: 0.5rem;
+}
+
+.form li label {
+  display: block;
+  padding: 0.25rem 2rem 0.25rem 0;
+
+  font-size: 0.857em;
+  font-weight: normal;
+  line-height: 1.333;
+
+  color: var(--gray-600);
+}
+
+.form li.required label::after {
+  content: '*';
+}
+
+.form li button,
+.form li input,
+.form li select,
+.form li textarea {
+  width: 100%;
+}
+
+@media screen and (min-width: 40em) {
+  .form {
+    max-width: 50rem;
+  }
+
+  .form li {
+    display: flex;
+  }
+
+  .form li:has(input) {
+    align-items: center;
+  }
+
+  .form li label {
+    flex: 1 0 25%;
+
+    font-size: 1em;
+  }
+
+  .form li label::after {
+    content: ':';
+  }
+
+  .form li.required label::after {
+    content: '*:';
+  }
+
+  .form li button {
+    width: unset;
+  }
+
+  .form li input,
+  .form li select,
+  .form li textarea {
+    flex: 1 0 75%;
+  }
+
+  .form li button {
+    margin-left: auto;
+  }
+}

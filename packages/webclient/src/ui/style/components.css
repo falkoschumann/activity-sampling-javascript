@@ -185,18 +185,6 @@ input[type='text']:invalid {
   outline-width: 2px;
 }
 
-label {
-  display: block;
-  margin-bottom: 4px;
-  padding-left: 4px;
-
-  font-size: 0.857em;
-  font-weight: normal;
-  line-height: 1.333;
-
-  color: var(--gray-600);
-}
-
 .select-wrapper {
   display: inline-grid;
   position: relative;
