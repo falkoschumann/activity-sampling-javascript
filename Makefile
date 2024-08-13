@@ -17,6 +17,7 @@ distclean: clean
 	rm -rf packages/*/node_modules
 
 dist: build
+	npm run dist
 
 check: test e2e
 	npx prettier . --check
