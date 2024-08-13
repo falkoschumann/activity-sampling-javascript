@@ -30,6 +30,9 @@ format:
 start: build
 	npm start
 
+start-desktop:
+	npm run start --workspace @activity-sampling/desktop
+
 dev: build
 	npx concurrently "npm run dev --workspace @activity-sampling/webserver" "npm run dev --workspace @activity-sampling/webclient"
 
