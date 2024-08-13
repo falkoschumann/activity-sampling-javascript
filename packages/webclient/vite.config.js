@@ -7,6 +7,7 @@ export default defineConfig(({ mode }) => {
         input: {
           main: 'index.html',
         },
+        external: ['node:fs/promises'],
       },
     },
     server: {
