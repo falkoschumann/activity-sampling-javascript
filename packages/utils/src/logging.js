@@ -16,9 +16,14 @@ export class Level {
   static ALL = new Level('ALL', Number.MIN_SAFE_INTEGER);
 
   static parse(/** @type {string|number} */ name) {
-    return Level.#levels.find(
+    const level = Level.#levels.find(
       (level) => level.name === String(name) || level.value === Number(name),
     );
+    if (level == null) {
+      throw new Error(`Bad log level "${name}".`);
+    }
+
+    return level;
   }
 
   constructor(/** @type {string} */ name, /** @type {number} */ value) {
@@ -33,6 +38,10 @@ export class Level {
 
   valueOf() {
     return this.value;
+  }
+
+  toJSON() {
+    return this.name;
   }
 }
 

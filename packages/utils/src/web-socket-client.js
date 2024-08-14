@@ -7,8 +7,11 @@ export class WebSocketClient extends EventTarget {
     return new WebSocketClient(WebSocketStub);
   }
 
+  isHeartbeatEnabled = true;
+
   #webSocketConstructor;
   /** @type {WebSocket} */ #webSocket;
+  #heartbeatId;
 
   constructor(/** @type {typeof WebSocket} */ webSocketConstructor) {
     super();
@@ -25,12 +28,15 @@ export class WebSocketClient extends EventTarget {
         this.#webSocket = new this.#webSocketConstructor(url);
         this.#webSocket.onmessage = (event) =>
           this.dispatchEvent(new event.constructor(event.type, event));
-        this.#webSocket.onclose = (event) =>
+        this.#webSocket.onclose = (event) => {
           this.dispatchEvent(new event.constructor(event.type, event));
+          this.#stopHeartbeat();
+        };
         this.#webSocket.onerror = (event) =>
           this.dispatchEvent(new event.constructor(event.type, event));
         this.#webSocket.onopen = (event) => {
           this.dispatchEvent(new event.constructor(event.type, event));
+          this.#startHeartbeat();
           resolve();
         };
       } catch (error) {
@@ -55,6 +61,10 @@ export class WebSocketClient extends EventTarget {
     });
   }
 
+  send(message) {
+    this.#webSocket.send(JSON.stringify(message));
+  }
+
   simulateMessageReceived({ data }) {
     return new Promise((resolve) => {
       function messageHandler() {
@@ -63,7 +73,7 @@ export class WebSocketClient extends EventTarget {
       }
 
       this.addEventListener('message', messageHandler);
-      this.#webSocket.simulateMessage({ data });
+      this.#webSocket.simulateMessageReceived({ data });
     });
   }
 
@@ -75,8 +85,23 @@ export class WebSocketClient extends EventTarget {
       }
 
       this.addEventListener('error', errorHandler);
-      this.#webSocket.simulateError();
+      this.#webSocket.simulateErrorOccurred();
     });
+  }
+
+  #startHeartbeat() {
+    if (!this.isHeartbeatEnabled) {
+      return;
+    }
+
+    this.#heartbeatId = setInterval(
+      () => this.send({ type: 'heartbeat' }),
+      30000,
+    );
+  }
+
+  #stopHeartbeat() {
+    clearInterval(this.#heartbeatId);
   }
 }
 
@@ -112,7 +137,9 @@ class WebSocketStub {
     });
   }
 
-  simulateMessage({ data }) {
+  send() {}
+
+  simulateMessageReceived({ data }) {
     setTimeout(() => {
       let jsonString =
         typeof data === 'string' ||
@@ -124,7 +151,7 @@ class WebSocketStub {
     });
   }
 
-  simulateError() {
+  simulateErrorOccurred() {
     setTimeout(() => {
       this.readyState = WebSocketStub.CLOSED;
       this.onclose?.(new globalThis.CloseEvent('close', { wasClean: false }));

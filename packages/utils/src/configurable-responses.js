@@ -1,5 +1,8 @@
 export class ConfigurableResponses {
-  static create(responses, /** @type {string} */ name) {
+  static create(
+    /** @type {Object|Array} */ responses,
+    /** @type {string} */ name,
+  ) {
     return new ConfigurableResponses(responses, name);
   }
 
