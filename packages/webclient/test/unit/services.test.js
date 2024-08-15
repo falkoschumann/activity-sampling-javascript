@@ -4,11 +4,11 @@
 
 import { describe, expect, test } from '@jest/globals';
 
-import { Clock, Duration, Timer } from '@activity-sampling/utils';
-
+import { Clock, createStore, Duration, Timer } from '@activity-sampling/utils';
 import { Activity } from '@activity-sampling/domain';
+
 import { Services } from '../../src/application/services.js';
-import { initialState } from '../../src/domain/reducer.js';
+import { initialState, reducer } from '../../src/domain/reducer.js';
 import { Api } from '../../src/infrastructure/api.js';
 import { NotificationAdapter } from '../../src/infrastructure/notification-adapter.js';
 
@@ -16,7 +16,7 @@ describe('Services', () => {
   describe('Log activity', () => {
     describe('Activity updated', () => {
       test('Selects an activity from recent activities.', async () => {
-        const { services } = configure();
+        const { services, store } = configure();
 
         await services.activityUpdated({
           client: 'c1',
@@ -25,7 +25,7 @@ describe('Services', () => {
           notes: 'n1',
         });
 
-        expect(services.store.getState()).toEqual({
+        expect(store.getState()).toEqual({
           ...initialState,
           currentActivity: {
             ...initialState.currentActivity,
@@ -42,7 +42,7 @@ describe('Services', () => {
       });
 
       test('Updates a single property', async () => {
-        const { services } = configure({
+        const { services, store } = configure({
           state: {
             ...initialState,
             currentActivity: {
@@ -61,7 +61,7 @@ describe('Services', () => {
 
         await services.activityUpdated({ client: 'c2' });
 
-        expect(services.store.getState()).toEqual({
+        expect(store.getState()).toEqual({
           ...initialState,
           currentActivity: {
             ...initialState.currentActivity,
@@ -78,7 +78,7 @@ describe('Services', () => {
       });
 
       test('Enables submit if all required properties are set', async () => {
-        const { services } = configure();
+        const { services, store } = configure();
 
         await services.activityUpdated({
           client: 'c1',
@@ -86,7 +86,7 @@ describe('Services', () => {
           task: 't1',
         });
 
-        expect(services.store.getState()).toEqual({
+        expect(store.getState()).toEqual({
           ...initialState,
           currentActivity: {
             ...initialState.currentActivity,
@@ -103,11 +103,11 @@ describe('Services', () => {
       });
 
       test('Disables submit if not all required properties are set', async () => {
-        const { services } = configure();
+        const { services, store } = configure();
 
         await services.activityUpdated({ client: 'c1' });
 
-        expect(services.store.getState()).toEqual({
+        expect(store.getState()).toEqual({
           ...initialState,
           currentActivity: {
             ...initialState.currentActivity,
@@ -126,7 +126,9 @@ describe('Services', () => {
 
     describe('Logs the activity with client, project, task and optional notes', () => {
       test('Logs the activity without notes', async () => {
-        const { services, api } = configure({ now: '2023-10-07T13:30Z' });
+        const { services, store, api } = configure({
+          now: '2023-10-07T13:30Z',
+        });
         const activitiesLogged = api.trackActivitiesLogged();
 
         await services.activityUpdated({
@@ -136,7 +138,7 @@ describe('Services', () => {
         });
         await services.logActivity();
 
-        expect(services.store.getState()).toEqual({
+        expect(store.getState()).toEqual({
           ...initialState,
           currentActivity: {
             ...initialState.currentActivity,
@@ -164,7 +166,9 @@ describe('Services', () => {
       });
 
       test('Logs the activity with notes', async () => {
-        const { services, api } = configure({ now: '2023-10-07T13:30Z' });
+        const { services, store, api } = configure({
+          now: '2023-10-07T13:30Z',
+        });
         const activitiesLogged = api.trackActivitiesLogged();
 
         await services.activityUpdated({
@@ -175,7 +179,7 @@ describe('Services', () => {
         });
         await services.logActivity();
 
-        expect(services.store.getState()).toEqual({
+        expect(store.getState()).toEqual({
           ...initialState,
           currentActivity: {
             ...initialState.currentActivity,
@@ -205,12 +209,14 @@ describe('Services', () => {
 
     describe('Asks periodically what I am working on', () => {
       test('Starts countdown and disable form', async () => {
-        const { services, timer } = configure({ now: '2024-03-03T16:53Z' });
+        const { services, store, timer } = configure({
+          now: '2024-03-03T16:53Z',
+        });
         const scheduledTasks = timer.trackScheduledTasks();
 
         await services.askPeriodically({ period: new Duration('PT20M') });
 
-        expect(services.store.getState()).toEqual({
+        expect(store.getState()).toEqual({
           ...initialState,
           currentActivity: {
             ...initialState.currentActivity,
@@ -230,12 +236,14 @@ describe('Services', () => {
       });
 
       test('Progresses countdown and update remaining time', async () => {
-        const { services, timer } = configure({ now: '2024-03-03T16:53Z' });
+        const { services, store, timer } = configure({
+          now: '2024-03-03T16:53Z',
+        });
         await services.askPeriodically({ period: new Duration('PT1M') });
 
         await timer.simulateTaskExecution({ times: 1 });
 
-        expect(services.store.getState()).toEqual({
+        expect(store.getState()).toEqual({
           ...initialState,
           currentActivity: {
             ...initialState.currentActivity,
@@ -252,12 +260,14 @@ describe('Services', () => {
       });
 
       test('Progresses countdown until end of the period', async () => {
-        const { services, timer } = configure({ now: '2024-03-03T16:53Z' });
+        const { services, store, timer } = configure({
+          now: '2024-03-03T16:53Z',
+        });
         await services.askPeriodically({ period: new Duration('PT1M') });
 
         await timer.simulateTaskExecution({ times: 59 });
 
-        expect(services.store.getState()).toEqual({
+        expect(store.getState()).toEqual({
           ...initialState,
           currentActivity: {
             ...initialState.currentActivity,
@@ -274,7 +284,7 @@ describe('Services', () => {
       });
 
       test('Enables form when countdown is elapsed', async () => {
-        const { services, notificationAdapter, timer } = configure({
+        const { services, store, notificationAdapter, timer } = configure({
           now: '2024-03-03T16:53Z',
         });
         await services.askPeriodically({ period: new Duration('PT1M') });
@@ -282,7 +292,7 @@ describe('Services', () => {
 
         await timer.simulateTaskExecution({ times: 60 });
 
-        expect(services.store.getState()).toEqual({
+        expect(store.getState()).toEqual({
           ...initialState,
           currentActivity: {
             ...initialState.currentActivity,
@@ -305,12 +315,14 @@ describe('Services', () => {
       });
 
       test('Restarts the countdown when the countdown is elapsed', async () => {
-        const { services, timer } = configure({ now: '2024-03-03T16:53Z' });
+        const { services, store, timer } = configure({
+          now: '2024-03-03T16:53Z',
+        });
         await services.askPeriodically({ period: new Duration('PT1M') });
 
         await timer.simulateTaskExecution({ times: 61 });
 
-        expect(services.store.getState()).toEqual({
+        expect(store.getState()).toEqual({
           ...initialState,
           currentActivity: {
             ...initialState.currentActivity,
@@ -331,9 +343,10 @@ describe('Services', () => {
       });
 
       test('Disables form when activity is logged with last elapsed countdown', async () => {
-        const { services, api, notificationAdapter, timer, clock } = configure({
-          now: '2024-03-03T16:53Z',
-        });
+        const { services, store, api, notificationAdapter, timer, clock } =
+          configure({
+            now: '2024-03-03T16:53Z',
+          });
         const activitiesLogged = api.trackActivitiesLogged();
         await services.askPeriodically({ period: new Duration('PT1M') });
         await timer.simulateTaskExecution({ times: 61 });
@@ -347,7 +360,7 @@ describe('Services', () => {
         clock.add(new Duration('PT3M'));
         await services.logActivity();
 
-        expect(services.store.getState()).toEqual({
+        expect(store.getState()).toEqual({
           ...initialState,
           currentActivity: {
             ...initialState.currentActivity,
@@ -383,14 +396,16 @@ describe('Services', () => {
       });
 
       test('Enables form if countdown is stopped', async () => {
-        const { services, timer } = configure({ now: '2024-03-03T16:53Z' });
+        const { services, store, timer } = configure({
+          now: '2024-03-03T16:53Z',
+        });
         const canceled = timer.trackCanceledTasks();
         await services.askPeriodically({ period: new Duration('PT1M') });
         await timer.simulateTaskExecution({ times: 20 });
 
         await services.stopAskingPeriodically();
 
-        expect(services.store.getState()).toEqual({
+        expect(store.getState()).toEqual({
           ...initialState,
           currentActivity: {
             ...initialState.currentActivity,
@@ -414,7 +429,7 @@ describe('Services', () => {
 
   describe('Recent activities', () => {
     test('Assumes last activity as current activity.', async () => {
-      const { services } = configure({
+      const { services, store } = configure({
         response: {
           body: {
             workingDays: [
@@ -445,7 +460,7 @@ describe('Services', () => {
 
       await services.selectRecentActivities();
 
-      expect(services.store.getState()).toEqual({
+      expect(store.getState()).toEqual({
         ...initialState,
         currentActivity: {
           ...initialState.currentActivity,
@@ -483,7 +498,7 @@ describe('Services', () => {
     });
 
     test('Resets if activity log is empty', async () => {
-      const { services } = configure({
+      const { services, store } = configure({
         state: {
           ...initialState,
           currentActivity: {
@@ -537,7 +552,7 @@ describe('Services', () => {
 
       await services.selectRecentActivities();
 
-      expect(services.store.getState()).toEqual({
+      expect(store.getState()).toEqual({
         ...{
           ...initialState,
           currentActivity: {
@@ -628,6 +643,7 @@ function configure({ state, response, now } = {}) {
   const notificationAdapter = NotificationAdapter.createNull();
   const timer = Timer.createNull();
   const clock = Clock.createNull({ fixed: now });
-  const services = new Services(state, api, notificationAdapter, timer, clock);
-  return { services, api, notificationAdapter, timer, clock };
+  const store = createStore(reducer, state);
+  const services = new Services(store, api, notificationAdapter, timer, clock);
+  return { services, store, api, notificationAdapter, timer, clock };
 }

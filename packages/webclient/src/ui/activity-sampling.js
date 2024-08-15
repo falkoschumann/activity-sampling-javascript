@@ -2,6 +2,8 @@ import { html } from 'lit-html';
 
 import { Component, Container } from '@activity-sampling/utils/src/browser.js';
 
+import { Services } from '../application/services.js';
+import { store } from '../application/store.js';
 import './style/reset.css';
 import './style/fragments.css';
 import './style/components.css';
@@ -12,13 +14,12 @@ import './countdown.js';
 import './main-menu.js';
 import './recent-activities.js';
 import './time-summary.js';
-import { Services } from '../application/services.js';
 
 class ActivitySamplingComponent extends Component {
   constructor() {
     super();
     this.classList.add('screen-height', 'v-stack', 'gap-50');
-    Container.initStore(Services.get().store);
+    Container.initStore(store);
   }
 
   connectedCallback() {

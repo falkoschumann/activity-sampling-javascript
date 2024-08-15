@@ -1,7 +1,12 @@
-import { Clock, Duration, Timer, createStore } from '@activity-sampling/utils';
-import { reducer } from '../domain/reducer.js';
+/**
+ * @import {Store} from '@activity-sampling/utils';
+ */
+
+import { Clock, Duration, Timer } from '@activity-sampling/utils';
+
 import { Api } from '../infrastructure/api.js';
 import { NotificationAdapter } from '../infrastructure/notification-adapter.js';
+import { store } from './store.js';
 
 export class Services {
   /** @type {Services} */ static #instance;
@@ -9,7 +14,7 @@ export class Services {
   static get() {
     if (Services.#instance == null) {
       Services.#instance = new Services(
-        undefined,
+        store,
         Api.create(),
         NotificationAdapter.create(),
         Timer.create(),
@@ -27,7 +32,7 @@ export class Services {
   #clock;
 
   constructor(
-    preloadedState,
+    /** @type {Store} */ store,
     /** @type {Api} */ api,
     /** @type {NotificationAdapter} */ notificationAdapter,
     /** @type {Timer} */ timer,
@@ -37,11 +42,7 @@ export class Services {
     this.#notificationAdapter = notificationAdapter;
     this.#timer = timer;
     this.#clock = clock;
-    this.#store = createStore(reducer, preloadedState);
-  }
-
-  get store() {
-    return this.#store;
+    this.#store = store;
   }
 
   async activityUpdated(activity) {
