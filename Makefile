@@ -19,9 +19,9 @@ distclean: clean
 
 dist: build
 	npm run dist
-	npm run make --workspace=@activity-sampling/desktop -- --platform=darwin --arch=arm64,x64
 	npm run make --workspace=@activity-sampling/desktop -- --platform=linux --arch=x64
 	npm run make --workspace=@activity-sampling/desktop -- --platform=win32 --arch=x64
+	npm run make --workspace=@activity-sampling/desktop -- --platform=darwin --arch=arm64,x64
 
 check: test e2e
 	npx prettier . --check
