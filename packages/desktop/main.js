@@ -41,3 +41,13 @@ app.on('window-all-closed', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+/*
+// TODO Handle REST requests
+
+protocol.handle("file", async (request: Request) => {
+  const { pathname } = new URL(request.url);
+  ...
+  return net.fetch(request, { bypassCustomProtocolHandlers: true });
+});
+*/
