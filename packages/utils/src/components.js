@@ -1,3 +1,7 @@
+/**
+ * @import {Store} from './store.js';
+ */
+
 import { html, render } from 'lit-html';
 
 export class Component extends HTMLElement {
@@ -5,7 +9,14 @@ export class Component extends HTMLElement {
     this.updateView();
   }
 
+  disconnectedCallback() {}
+
   updateView() {
+    if (!this.isConnected) {
+      // Skip rendering, e.g. when setting properties before inserting into DOM.
+      return;
+    }
+
     render(this.getView(), this.getRenderTarget());
   }
 
@@ -19,28 +30,31 @@ export class Component extends HTMLElement {
 }
 
 export class Container extends Component {
-  static initStore(store) {
+  /** @type {Store} */ static #store;
+
+  static initStore(/** @type {Store} */ store) {
     Container.#store = store;
   }
 
-  static #store;
-
-  #unsubscribeStore;
+  /** @type {Function} */ #unsubscribeStore;
 
   constructor() {
     super();
     this.oldState = this.state = {};
   }
 
+  get store() {
+    return Container.#store;
+  }
+
   connectedCallback() {
-    this.#unsubscribeStore = Container.#store.subscribe(() =>
-      this.updateView(),
-    );
+    this.#unsubscribeStore = this.store.subscribe(() => this.updateView());
     super.connectedCallback();
   }
 
   disconnectedCallback() {
     this.#unsubscribeStore();
+    super.disconnectedCallback();
   }
 
   extractState(state) {
