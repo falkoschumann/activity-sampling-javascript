@@ -54,6 +54,24 @@ describe('Store', () => {
       expect(store.getState()).toEqual({ user: 'Bob' });
       expect(calls).toBe(0);
     });
+
+    test('Ignores unsubscribed listener', () => {
+      const { store } = configure();
+      let calls = 0;
+      let unsubscribe2;
+      const listener1 = () => {
+        calls++;
+        unsubscribe2();
+      };
+      const listener2 = () => calls++;
+      store.subscribe(listener1);
+      unsubscribe2 = store.subscribe(listener2);
+
+      store.dispatch({ type: 'user-changed', name: 'Bob' });
+
+      expect(store.getState()).toEqual({ user: 'Bob' });
+      expect(calls).toBe(1);
+    });
   });
 });
 

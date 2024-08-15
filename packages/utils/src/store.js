@@ -31,7 +31,13 @@ export class Store {
   }
 
   #emitChange() {
-    this.#listeners.forEach((l) => l());
+    this.#listeners.forEach((listener) => {
+      // Unsubscribe replace listeners array with a new array, so we must double
+      // check if listener is still subscribed.
+      if (this.#listeners.includes(listener)) {
+        listener();
+      }
+    });
   }
 
   #unsubscribe(listener) {
