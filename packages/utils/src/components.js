@@ -61,7 +61,11 @@ export class Container extends Component {
     return state;
   }
 
-  updateView() {
+  /**
+   * Call with `force: true` to update the view even if the status has not
+   * changed, e.g. if a property has been changed.
+   */
+  updateView({ force = false } = {}) {
     if (!this.isConnected) {
       // Skip rendering, e.g. when setting properties before inserting into DOM.
       return;
@@ -69,7 +73,7 @@ export class Container extends Component {
 
     this.state = this.extractState(this.store.getState());
     // TODO Track property changes and trigger update
-    if (this.state === this.oldState) {
+    if (!force && this.state === this.oldState) {
       return;
     }
 
