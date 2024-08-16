@@ -62,7 +62,13 @@ export class Container extends Component {
   }
 
   updateView() {
-    this.state = this.extractState(Container.#store.getState());
+    if (!this.isConnected) {
+      // Skip rendering, e.g. when setting properties before inserting into DOM.
+      return;
+    }
+
+    this.state = this.extractState(this.store.getState());
+    // TODO Track property changes and trigger update
     if (this.state === this.oldState) {
       return;
     }
