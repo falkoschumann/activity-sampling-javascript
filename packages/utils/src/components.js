@@ -40,7 +40,7 @@ export class Container extends Component {
 
   constructor() {
     super();
-    this.oldState = this.state = {};
+    this.state = {};
   }
 
   get store() {
@@ -61,23 +61,8 @@ export class Container extends Component {
     return state;
   }
 
-  /**
-   * Call with `force: true` to update the view even if the status has not
-   * changed, e.g. if a property has been changed.
-   */
-  updateView({ force = false } = {}) {
-    if (!this.isConnected) {
-      // Skip rendering, e.g. when setting properties before inserting into DOM.
-      return;
-    }
-
+  updateView() {
     this.state = this.extractState(this.store.getState());
-    // TODO Track property changes and trigger update
-    if (!force && this.state === this.oldState) {
-      return;
-    }
-
     super.updateView();
-    this.oldState = this.state;
   }
 }
