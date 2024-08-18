@@ -12,6 +12,7 @@ clean:
 	rm -rf coverage
 	rm -rf packages/*/dist
 	rm -rf packages/*/out
+	rm -rf packages/*/.vite
 
 distclean: clean
 	rm -rf node_modules
