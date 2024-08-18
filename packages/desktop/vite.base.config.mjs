@@ -81,9 +81,8 @@ export const pluginExposeRenderer = (name) => {
         /** @type {import('node:net').AddressInfo} */
         const addressInfo = server.httpServer?.address();
         // Expose env constant for main process use.
-        process.env[
-          VITE_DEV_SERVER_URL
-        ] = `http://localhost:${addressInfo?.port}`;
+        process.env[VITE_DEV_SERVER_URL] =
+          `http://localhost:${addressInfo?.port}`;
       });
     },
   };

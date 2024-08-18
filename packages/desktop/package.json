@@ -13,9 +13,6 @@
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.4.0",
-    "@electron-forge/maker-deb": "^7.4.0",
-    "@electron-forge/maker-rpm": "^7.4.0",
-    "@electron-forge/maker-squirrel": "^7.4.0",
     "@electron-forge/maker-zip": "^7.4.0",
     "@electron-forge/plugin-auto-unpack-natives": "^7.4.0",
     "@electron-forge/plugin-fuses": "^7.4.0",
@@ -30,7 +27,6 @@
     "email": "falko.schumann@muspellheim.de"
   },
   "license": "MIT",
-  "packageManager": "yarn@1.22.19+sha1.4ba7fc5c6e704fce2066ecbfb0b0d8976fe62447",
   "dependencies": {
     "electron-squirrel-startup": "^1.0.1"
   }
