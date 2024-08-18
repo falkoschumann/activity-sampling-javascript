@@ -1,6 +1,5 @@
 {
   "name": "@activity-sampling/desktop",
-  "productName": "Activity Sampling",
   "version": "0.1.0",
   "description": "Periodically asks the user about their current activity and logs it for analysis.",
   "main": ".vite/build/main.js",
