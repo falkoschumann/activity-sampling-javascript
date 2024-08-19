@@ -1,7 +1,7 @@
 /* global MAIN_WINDOW_VITE_DEV_SERVER_URL, MAIN_WINDOW_VITE_NAME */
 
-const { app, BrowserWindow } = require('electron');
-const path = require('node:path');
+import { app, BrowserWindow } from 'electron';
+import * as path from 'node:path';
 
 const createWindow = () => {
   // Create the browser window.
