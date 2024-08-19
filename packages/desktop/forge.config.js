@@ -6,6 +6,7 @@ module.exports = {
     asar: true,
     name: 'Activity Sampling',
     executableName: 'activity-sampling',
+    icon: 'images/app-icon',
   },
   rebuildConfig: {},
   makers: [
