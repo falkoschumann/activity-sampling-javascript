@@ -19,10 +19,6 @@ distclean: clean
 	rm -rf packages/*/node_modules
 
 dist: build
-	npm run dist
-	npm run make --workspace=@activity-sampling/desktop -- --platform=linux --arch=x64
-	npm run make --workspace=@activity-sampling/desktop -- --platform=win32 --arch=x64
-	npm run make --workspace=@activity-sampling/desktop -- --platform=darwin --arch=x64
 
 check: test e2e
 	npx prettier . --check
@@ -33,16 +29,16 @@ format:
 	npx eslint --fix packages/*/src packages/*/test
 
 start: build
-	npm start
+	npm run start --workspace @activity-sampling/webserver
 
 start-desktop:
 	npm run start --workspace @activity-sampling/desktop
 
 dev: build
-	npx concurrently "npm run dev --workspace @activity-sampling/webserver" "npm run dev --workspace @activity-sampling/webclient"
-
-dev-e2e: build
-	npx cypress open
+	npx concurrently \
+		"npm run dev --workspace @activity-sampling/webserver" \
+		"npm run dev --workspace @activity-sampling/webclient" \
+		"npm run dev --workspace @activity-sampling/desktop"
 
 test: build e2e
 	npm test
@@ -55,12 +51,6 @@ integration-tests: build
 
 e2e-tests: build e2e
 	npx jest --testPathPattern=".*\/e2e\/.*"
-
-e2e: build
-# Currently we don't run E2E tests through the GUI
-#	npm start --workspace activity-sampling-server &
-#	npx cypress run
-#	kill `lsof -t -i:3000`
 
 watch: build
 	npx jest --watch

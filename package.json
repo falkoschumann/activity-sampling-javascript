@@ -9,10 +9,8 @@
     "packages/*"
   ],
   "scripts": {
-    "start": "npm start --workspace --if-present",
     "test": "npx jest",
-    "build": "npm run build --workspaces --if-present",
-    "dist": "npm run dist --workspaces --if-present"
+    "build": "npm run build --workspaces --if-present"
   },
   "devDependencies": {
     "concurrently": "8.2.2",
