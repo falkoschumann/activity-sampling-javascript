@@ -1,7 +1,7 @@
 import express from 'express';
 
 import { LogActivity, RecentActivitiesQuery } from '@activity-sampling/domain';
-import { reply, runSafe } from './handler.js';
+import { reply, runSafe } from '@activity-sampling/utils/src/express.js';
 
 /**
  * @import { Services } from '../application/services.js'
@@ -38,6 +38,6 @@ export class ActivitiesController {
   ) {
     const { today } = RecentActivitiesQuery.create(request.query).validate();
     const body = await this.#services.selectRecentActivities({ today });
-    reply(response, { body });
+    reply(response, { headers: { 'Content-Type': 'application/json' }, body });
   }
 }

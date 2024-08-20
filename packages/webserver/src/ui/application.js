@@ -1,9 +1,10 @@
 import express from 'express';
 
 import { Logger, ValidationError } from '@activity-sampling/utils';
+import { reply } from '@activity-sampling/utils/src/express.js';
+
 import { Services } from '../application/services.js';
 import { ActivitiesController } from './activities-controller.js';
-import { reply } from './handler.js';
 
 export class Application {
   static create() {
@@ -57,7 +58,6 @@ export class Application {
     if (error instanceof ValidationError) {
       reply(response, {
         status: 400,
-        headers: { 'Content-Type': 'text/plain' },
         body: error.message,
       });
       return;

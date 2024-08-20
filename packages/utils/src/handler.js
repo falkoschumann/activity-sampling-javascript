@@ -3,7 +3,7 @@
  */
 
 export function runSafe(/** @type {Function} */ handler) {
-  // TODO handle exception is obsolete with with Express 5
+  // TODO runSafe is obsolete with with Express 5
   return async (request, response, next) => {
     try {
       await handler(request, response);
