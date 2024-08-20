@@ -1,13 +1,68 @@
 import { describe, expect, test } from '@jest/globals';
 
 import {
+  validateRequiredParameter,
   validateRequiredProperty,
   validateOptionalProperty,
-  validateNotEmptyProperty,
+  validateNotEmptyProperty as validateNonEmptyProperty,
 } from '../src/validation.js';
 import { Enum } from '../src/enum.js';
 
 describe('Validation', () => {
+  describe('Required parameter', () => {
+    test('Returns value when parameter is present', () => {
+      const result = validateRequiredParameter('John', 'name');
+
+      expect(result).toEqual('John');
+    });
+
+    test('Fails when parameter is undefined', () => {
+      expect(() => validateRequiredParameter(undefined, 'name')).toThrow(
+        new Error('The parameter "name" is required.'),
+      );
+    });
+
+    test('Fails when parameter is null', () => {
+      expect(() => validateRequiredParameter(null, 'name')).toThrow(
+        new Error('The parameter "name" is required.'),
+      );
+    });
+
+    test('Returns value when parameter is an expected primitive type', () => {
+      const result = validateRequiredParameter('John', 'name', 'string');
+
+      expect(result).toEqual('John');
+    });
+
+    test('Fails when parameter is not an expected primitive type', () => {
+      expect(() => validateRequiredParameter(123, 'name', 'string')).toThrow(
+        new Error('The parameter "name" must be a string, found number: 123.'),
+      );
+    });
+  });
+
+  describe('Non empty property', () => {
+    test('Fails when string property is an empty string', () => {
+      const user = { name: '' };
+
+      expect(() =>
+        validateNonEmptyProperty(user, 'user', 'name', 'string'),
+      ).toThrow(
+        new Error('The property "name" of user must not be an empty string.'),
+      );
+    });
+
+    test('Fails when array property is an empty array', () => {
+      const user = { roles: [] };
+
+      expect(() =>
+        validateNonEmptyProperty(user, 'user', 'roles', 'array'),
+      ).toThrow(
+        new Error('The property "roles" of user must not be an empty array.'),
+      );
+    });
+  });
+
   describe('Required property', () => {
     test('Returns value when property is present', () => {
       const user = { name: 'John' };
@@ -36,26 +91,6 @@ describe('Validation', () => {
 
       expect(() => validateRequiredProperty(user, 'user', 'name')).toThrow(
         new Error('The property "name" is required for user.'),
-      );
-    });
-
-    test('Fails when string property is an empty string', () => {
-      const user = { name: '' };
-
-      expect(() =>
-        validateNotEmptyProperty(user, 'user', 'name', 'string'),
-      ).toThrow(
-        new Error('The property "name" of user must not be an empty string.'),
-      );
-    });
-
-    test('Fails when array property is an empty array', () => {
-      const user = { roles: [] };
-
-      expect(() =>
-        validateNotEmptyProperty(user, 'user', 'roles', 'array'),
-      ).toThrow(
-        new Error('The property "roles" of user must not be an empty array.'),
       );
     });
   });

@@ -7,6 +7,23 @@ export class ValidationError extends Error {
   }
 }
 
+export function validateRequiredParameter(value, parameterName, valueType) {
+  requireNonNull(value, `The parameter "${parameterName}" is required.`);
+
+  if (valueType == null) {
+    return value;
+  }
+
+  const foundType = typeof value;
+  if (foundType !== valueType) {
+    throw new ValidationError(
+      `The parameter "${parameterName}" must be a ${valueType}, found ${foundType}: ${JSON.stringify(value)}.`,
+    );
+  }
+
+  return value;
+}
+
 export function validateNotEmptyProperty(
   object,
   objectName,
@@ -21,12 +38,10 @@ export function validateNotEmptyProperty(
     propertyType,
     itemType,
   );
-
-  if (propertyType === 'string' || propertyType === 'array') {
-    validateNotEmpty(object, objectName, propertyName);
-  }
-
-  return value;
+  return requireNonEmpty(
+    value,
+    `The property "${propertyName}" of ${objectName} must not be an empty ${propertyType}.`,
+  );
 }
 
 export function validateRequiredProperty(
@@ -36,16 +51,11 @@ export function validateRequiredProperty(
   propertyType,
   itemType,
 ) {
-  if (!isPresent(object)) {
-    throw new ValidationError(`The ${objectName} is required.`);
-  }
-
-  if (!isPresent(object[propertyName])) {
-    throw new ValidationError(
-      `The property "${propertyName}" is required for ${objectName}.`,
-    );
-  }
-
+  requireNonNull(object, `The ${objectName} is required.`);
+  requireNonNull(
+    object[propertyName],
+    `The property "${propertyName}" is required for ${objectName}.`,
+  );
   const value = validateTypedProperty(
     object,
     objectName,
@@ -64,15 +74,7 @@ export function validateOptionalProperty(
   propertyType,
   itemType,
 ) {
-  if (!isPresent(object)) {
-    throw new ValidationError(`The ${objectName} is required.`);
-  }
-
-  const value = object[propertyName];
-  if (!isPresent(value)) {
-    return value;
-  }
-
+  requireNonNull(object, `The ${objectName} is required.`);
   return validateTypedProperty(
     object,
     objectName,
@@ -80,25 +82,6 @@ export function validateOptionalProperty(
     propertyType,
     itemType,
   );
-}
-
-function validateNotEmpty(object, objectName, propertyName) {
-  const value = object[propertyName];
-  if (typeof value === 'string' && value === '') {
-    throw new ValidationError(
-      `The property "${propertyName}" of ${objectName} must not be an empty string.`,
-    );
-  }
-
-  if (Array.isArray(value) && value.length === 0) {
-    throw new ValidationError(
-      `The property "${propertyName}" of ${objectName} must not be an empty array.`,
-    );
-  }
-}
-
-function isPresent(value) {
-  return value !== null && value !== undefined;
 }
 
 function validateTypedProperty(
@@ -112,33 +95,40 @@ function validateTypedProperty(
     return object[propertyName];
   }
 
+  const value = object[propertyName];
+  const valueType = Array.isArray(value) ? 'array' : typeof value;
+
   if (propertyType === 'array') {
     return validateArrayProperty(object, objectName, propertyName, itemType);
-  }
-
-  if (propertyType === 'object') {
-    return validateObjectProperty(object, objectName, propertyName, itemType);
-  }
-
-  if (typeof propertyType === 'function') {
+  } else if (propertyType === 'object') {
+    return requireType(
+      value,
+      propertyType,
+      `The property "${propertyName}" of ${objectName} must be an object, found ${valueType}: ${JSON.stringify(value)}.`,
+    );
+  } else if (typeof propertyType === 'function') {
     return validateObjectTypeProperty(
       object,
       objectName,
       propertyName,
       propertyType,
     );
+  } else {
+    return requireType(
+      value,
+      propertyType,
+      `The property "${propertyName}" of ${objectName} must be a ${propertyType}, found ${valueType}: ${JSON.stringify(value)}.`,
+    );
   }
-
-  return validatePrimitiveTypeProperty(
-    object,
-    objectName,
-    propertyName,
-    propertyType,
-  );
 }
 
 function validateArrayProperty(object, objectName, propertyName, itemType) {
+  // TODO Join with requireType
   const value = object[propertyName];
+  if (value == null) {
+    return value;
+  }
+
   const valueType = typeof value;
   if (!Array.isArray(value)) {
     throw new ValidationError(
@@ -160,24 +150,6 @@ function validateArrayProperty(object, objectName, propertyName, itemType) {
   return value;
 }
 
-function validateObjectProperty(object, objectName, propertyName) {
-  const value = object[propertyName];
-  const valueType = typeof value;
-  if (valueType !== 'object') {
-    throw new ValidationError(
-      `The property "${propertyName}" of ${objectName} must be an object, found ${valueType}: ${JSON.stringify(value)}.`,
-    );
-  }
-
-  if (Array.isArray(value)) {
-    throw new ValidationError(
-      `The property "${propertyName}" of ${objectName} must be an object, found array: ${JSON.stringify(value)}.`,
-    );
-  }
-
-  return value;
-}
-
 function validateObjectTypeProperty(
   object,
   objectName,
@@ -185,6 +157,10 @@ function validateObjectTypeProperty(
   propertyType,
 ) {
   const value = object[propertyName];
+  if (value == null) {
+    return value;
+  }
+
   const valueType = typeof value;
   if (valueType === 'object' && value instanceof propertyType) {
     return value;
@@ -214,18 +190,39 @@ function validateObjectTypeProperty(
   return convertedValue;
 }
 
-function validatePrimitiveTypeProperty(
-  object,
-  objectName,
-  propertyName,
-  propertyType,
-) {
-  const value = object[propertyName];
+function requireNonNull(value, message) {
+  if (value == null) {
+    throw new ValidationError(message);
+  }
+
+  return value;
+}
+
+function requireNonEmpty(value, message) {
+  if (typeof value === 'string' && value === '') {
+    throw new ValidationError(message);
+  }
+
+  if (Array.isArray(value) && value.length === 0) {
+    throw new ValidationError(message);
+  }
+
+  return value;
+}
+
+function requireType(value, expectedType, message) {
+  if (value == null || expectedType == null) {
+    return value;
+  }
+
   const valueType = typeof value;
-  if (valueType !== propertyType) {
-    throw new ValidationError(
-      `The property "${propertyName}" of ${objectName} must be a ${propertyType}, found ${valueType}: ${JSON.stringify(value)}.`,
-    );
+  if (
+    expectedType === 'object' &&
+    (valueType !== 'object' || Array.isArray(value))
+  ) {
+    throw new ValidationError(message);
+  } else if (valueType !== expectedType) {
+    throw new ValidationError(message);
   }
 
   return value;
