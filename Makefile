@@ -31,16 +31,16 @@ format:
 start: build
 	npm run start --workspace @activity-sampling/webserver
 
-start-desktop:
+start-desktop: build
 	npm run start --workspace @activity-sampling/desktop
 
-dev: build
+dev:
 	npx concurrently \
 		"npm run dev --workspace @activity-sampling/webserver" \
 		"npm run dev --workspace @activity-sampling/webclient" \
 		"npm run dev --workspace @activity-sampling/desktop"
 
-test: build e2e
+test: build
 	npm test
 
 unit-tests: build
@@ -49,7 +49,7 @@ unit-tests: build
 integration-tests: build
 	npx jest --testPathPattern=".*\/integration\/.*"
 
-e2e-tests: build e2e
+e2e-tests: build
 	npx jest --testPathPattern=".*\/e2e\/.*"
 
 watch: build
@@ -71,6 +71,6 @@ version:
 	@echo "Use Node.js $(shell node --version)"
 	@echo "Use NPM $(shell npm --version)"
 
-.PHONY: all clean distclean dist check start dev \
-	test unit-tests integration-tests e2e-tests e2e watch coverage \
+.PHONY: all clean distclean dist check format start start-desktop dev \
+	test unit-tests integration-tests e2e-tests watch coverage \
 	build version
