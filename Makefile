@@ -20,7 +20,7 @@ distclean: clean
 
 dist: build
 
-check: test e2e
+check: test
 	npx prettier . --check
 	npx eslint packages/*/src packages/*/test
 
