@@ -1,5 +1,6 @@
 import { Enum } from './enum.js';
 
+// TODO Differentiate validation errors
 export class ValidationError extends Error {
   constructor(message) {
     super(message);
@@ -8,7 +9,7 @@ export class ValidationError extends Error {
 }
 
 export function validateRequiredParameter(value, parameterName, valueType) {
-  requireNonNull(value, `The parameter "${parameterName}" is required.`);
+  requireAnything(value, `The parameter "${parameterName}" is required.`);
 
   if (valueType == null) {
     return value;
@@ -51,8 +52,8 @@ export function validateRequiredProperty(
   propertyType,
   itemType,
 ) {
-  requireNonNull(object, `The ${objectName} is required.`);
-  requireNonNull(
+  requireAnything(object, `The ${objectName} is required.`);
+  requireAnything(
     object[propertyName],
     `The property "${propertyName}" is required for ${objectName}.`,
   );
@@ -74,7 +75,7 @@ export function validateOptionalProperty(
   propertyType,
   itemType,
 ) {
-  requireNonNull(object, `The ${objectName} is required.`);
+  requireAnything(object, `The ${objectName} is required.`);
   return validateTypedProperty(
     object,
     objectName,
@@ -96,6 +97,9 @@ function validateTypedProperty(
   }
 
   const value = object[propertyName];
+  if (value == null) {
+    return value;
+  }
   const valueType = Array.isArray(value) ? 'array' : typeof value;
 
   if (propertyType === 'array') {
@@ -190,8 +194,9 @@ function validateObjectTypeProperty(
   return convertedValue;
 }
 
-function requireNonNull(value, message) {
-  if (value == null) {
+function requireAnything(value, message) {
+  const valueType = getType(value);
+  if (valueType === null || valueType === undefined) {
     throw new ValidationError(message);
   }
 
@@ -199,11 +204,11 @@ function requireNonNull(value, message) {
 }
 
 function requireNonEmpty(value, message) {
-  if (typeof value === 'string' && value === '') {
-    throw new ValidationError(message);
-  }
-
-  if (Array.isArray(value) && value.length === 0) {
+  const valueType = getType(value);
+  if (
+    (valueType === String && value === '') ||
+    (valueType === Array && value.length === 0)
+  ) {
     throw new ValidationError(message);
   }
 
@@ -211,19 +216,41 @@ function requireNonEmpty(value, message) {
 }
 
 function requireType(value, expectedType, message) {
-  if (value == null || expectedType == null) {
-    return value;
-  }
-
-  const valueType = typeof value;
+  const valueType = getType(value);
   if (
-    expectedType === 'object' &&
-    (valueType !== 'object' || Array.isArray(value))
+    (expectedType === 'array' && valueType !== Array) ||
+    (expectedType === 'object' && valueType !== Object) ||
+    typeof value !== expectedType
   ) {
-    throw new ValidationError(message);
-  } else if (valueType !== expectedType) {
     throw new ValidationError(message);
   }
 
   return value;
+}
+
+function getType(value) {
+  if (value === null) return null;
+  if (Array.isArray(value)) return Array;
+  if (Number.isNaN(value)) return NaN;
+
+  switch (typeof value) {
+    case 'undefined':
+      return undefined;
+    case 'boolean':
+      return Boolean;
+    case 'number':
+      return Number;
+    case 'bigint':
+      return BigInt;
+    case 'string':
+      return String;
+    case 'symbol':
+      return Symbol;
+    case 'function':
+      return Function;
+    case 'object':
+      return Object;
+    default:
+      throw new Error('Unknown typeof value: ' + typeof variable);
+  }
 }
