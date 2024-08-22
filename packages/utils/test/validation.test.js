@@ -219,7 +219,7 @@ describe('Validation', () => {
         validateRequiredProperty(user, 'user', 'isMarried', YesNo),
       ).toThrow(
         new Error(
-          'The property "isMarried" of user must be a valid YesNo constant name, found string: "no-enum-name".',
+          'The property "isMarried" of user must be a valid YesNo, found string: "no-enum-name".',
         ),
       );
     });
@@ -231,7 +231,7 @@ describe('Validation', () => {
         validateRequiredProperty(user, 'user', 'isMarried', YesNo),
       ).toThrow(
         new Error(
-          'The property "isMarried" of user must be a valid YesNo constant name, found number: 5.',
+          'The property "isMarried" of user must be a valid YesNo, found number: 5.',
         ),
       );
     });
