@@ -1,28 +1,28 @@
 import { describe, expect, test } from '@jest/globals';
 
 import {
-  requireAnything,
-  requireNonEmpty,
-  requireType,
+  ensureAnything,
+  ensureNonEmpty,
+  ensureType,
   validateRequiredParameter,
   validateRequiredProperty,
   validateOptionalProperty,
   validateNonEmptyProperty,
   ValidationError,
-  ensureType,
+  ensureOptionalType,
 } from '../src/validation.js';
 import { Enum } from '../src/enum.js';
 
 describe('Validation', () => {
-  describe('Require anything', () => {
+  describe('Ensure anything', () => {
     test('Returns value when parameter is present', () => {
-      const result = requireAnything('John');
+      const result = ensureAnything('John');
 
       expect(result).toBe('John');
     });
 
     test('Fails when value is undefined', () => {
-      expect(() => requireAnything(undefined)).toThrow(ValidationError);
+      expect(() => ensureAnything(undefined)).toThrow(ValidationError);
     });
 
     test('Fails when value is null', () => {
@@ -30,98 +30,98 @@ describe('Validation', () => {
     });
   });
 
-  describe('Require non empty', () => {
+  describe('Ensure non empty', () => {
     test('Returns value when it is not empty', () => {
-      const result = requireNonEmpty('John');
+      const result = ensureNonEmpty('John');
 
       expect(result).toBe('John');
     });
 
     test('Fails when value is an empty string', () => {
-      expect(() => requireNonEmpty('')).toThrow(ValidationError);
+      expect(() => ensureNonEmpty('')).toThrow(ValidationError);
     });
 
     test('Fails when value is an empty array', () => {
-      expect(() => requireNonEmpty([])).toThrow(ValidationError);
+      expect(() => ensureNonEmpty([])).toThrow(ValidationError);
     });
 
     test('Fails when value is an empty object', () => {
-      expect(() => requireNonEmpty({})).toThrow(ValidationError);
+      expect(() => ensureNonEmpty({})).toThrow(ValidationError);
     });
   });
 
-  describe('Require type', () => {
+  describe('Ensure type', () => {
     describe('Built-in types', () => {
       describe('Undefined', () => {
         test('Returns value when it is the expected type', () => {
-          const result = requireType(undefined, undefined);
+          const result = ensureType(undefined, undefined);
 
           expect(result).toBe(undefined);
         });
 
         test('Fails when value is not the expected type', () => {
-          expect(() => requireType(null, undefined)).toThrow(ValidationError);
+          expect(() => ensureType(null, undefined)).toThrow(ValidationError);
         });
       });
 
       describe('Null', () => {
         test('Returns value when it is the expected type', () => {
-          const result = requireType(null, null);
+          const result = ensureType(null, null);
 
           expect(result).toBe(null);
         });
 
         test('Fails when value is not the expected type', () => {
-          expect(() => requireType(undefined, null)).toThrow(ValidationError);
+          expect(() => ensureType(undefined, null)).toThrow(ValidationError);
         });
       });
 
       describe('Boolean', () => {
         test('Returns value when it is the expected type', () => {
-          const result = requireType(true, Boolean);
+          const result = ensureType(true, Boolean);
 
           expect(result).toBe(true);
         });
 
         test('Fails when value is not the expected type', () => {
-          expect(() => requireType(1, Boolean)).toThrow(ValidationError);
+          expect(() => ensureType(1, Boolean)).toThrow(ValidationError);
         });
       });
 
       describe('Number', () => {
         test('Returns value when it is the expected type', () => {
-          const result = requireType(42, Number);
+          const result = ensureType(42, Number);
 
           expect(result).toBe(42);
         });
 
         test('Fails when value is not the expected type', () => {
-          expect(() => requireType('42', Number)).toThrow(ValidationError);
+          expect(() => ensureType('42', Number)).toThrow(ValidationError);
         });
       });
 
       describe('String', () => {
         test('Returns value when it is the expected type', () => {
-          const result = requireType('John', String);
+          const result = ensureType('John', String);
 
           expect(result).toBe('John');
         });
 
         test('Fails when value is not the expected type', () => {
-          expect(() => requireType(123, String)).toThrow(ValidationError);
+          expect(() => ensureType(123, String)).toThrow(ValidationError);
         });
       });
 
       describe('Object', () => {
         test('Returns value when it is the expected type', () => {
           const object = { name: 'John' };
-          const result = requireType(object, Object);
+          const result = ensureType(object, Object);
 
           expect(result).toBe(object);
         });
 
         test('Fails when value is not the expected type', () => {
-          expect(() => requireType('John', Object)).toThrow(ValidationError);
+          expect(() => ensureType('John', Object)).toThrow(ValidationError);
         });
       });
     });
@@ -129,24 +129,24 @@ describe('Validation', () => {
     describe('Array', () => {
       test('Returns value when it is the expected type', () => {
         const array = ['John', 'Smith'];
-        const result = requireType(array, Array);
+        const result = ensureType(array, Array);
 
         expect(result).toBe(array);
       });
 
       test('Fails when value is not the expected type', () => {
-        expect(() => requireType('John', Array)).toThrow(ValidationError);
+        expect(() => ensureType('John', Array)).toThrow(ValidationError);
       });
 
       test('Returns value when items has the expected type', () => {
         const array = ['John', 'Jane'];
-        const result = requireType(array, [String]);
+        const result = ensureType(array, [String]);
 
         expect(result).toBe(array);
       });
 
       test('Fails when items does not have the expected type', () => {
-        expect(() => requireType(['John', 123], [String])).toThrow(
+        expect(() => ensureType(['John', 123], [String])).toThrow(
           ValidationError,
         );
       });
@@ -155,13 +155,13 @@ describe('Validation', () => {
     describe('Object', () => {
       test('Returns value when it is the expected type', () => {
         const object = { name: 'John' };
-        const result = requireType(object, Object);
+        const result = ensureType(object, Object);
 
         expect(result).toBe(object);
       });
 
       test('Fails when value is not the expected type', () => {
-        expect(() => requireType('John', Object)).toThrow(ValidationError);
+        expect(() => ensureType('John', Object)).toThrow(ValidationError);
       });
     });
 
@@ -173,7 +173,7 @@ describe('Validation', () => {
           isMarried: false,
           children: ['Alice', 'Bob'],
         };
-        const result = requireType(struct, {
+        const result = ensureType(struct, {
           name: String,
           age: Number,
           isMarried: Boolean,
@@ -185,7 +185,7 @@ describe('Validation', () => {
 
       test('Fails when value is not the expected type', () => {
         expect(() =>
-          requireType(
+          ensureType(
             { name: 'John', age: '42' },
             { name: String, age: Number },
           ),
@@ -196,47 +196,47 @@ describe('Validation', () => {
     describe('Constructor types', () => {
       test('Returns value when it is the expected type', () => {
         const date = new Date('2024-08-23T14:18');
-        const result = requireType(date, Date);
+        const result = ensureType(date, Date);
 
         expect(result).toBe(date);
       });
 
       test('Fails when value is not the expected type', () => {
-        expect(() => requireType('no-date', Date)).toThrow(ValidationError);
+        expect(() => ensureType('no-date', Date)).toThrow(ValidationError);
       });
 
       test('Returns value when it can convert to the expected type', () => {
         const dateString = '2024-08-23T20:01';
-        const result = requireType(dateString, Date);
+        const result = ensureType(dateString, Date);
 
         expect(result).toEqual(new Date(dateString));
       });
 
       test('Fails when it can not convert to the expected type', () => {
-        expect(() => requireType('no-date', Date)).toThrow(ValidationError);
+        expect(() => ensureType('no-date', Date)).toThrow(ValidationError);
       });
     });
 
     describe('Enums', () => {
       test('Returns value when it is the expected type', () => {
         const constant = YesNo.YES;
-        const result = requireType(constant, YesNo);
+        const result = ensureType(constant, YesNo);
 
         expect(result).toBe(constant);
       });
 
       test('Fails when value is not the expected type', () => {
-        expect(() => requireType(42, YesNo)).toThrow(ValidationError);
+        expect(() => ensureType(42, YesNo)).toThrow(ValidationError);
       });
 
       test('Returns value when it can convert to the expected type', () => {
-        const result = requireType('no', YesNo);
+        const result = ensureType('no', YesNo);
 
         expect(result).toBe(YesNo.NO);
       });
 
       test('Fails when it can not convert to the expected type', () => {
-        expect(() => requireType('no-enum-constant', YesNo)).toThrow(
+        expect(() => ensureType('no-enum-constant', YesNo)).toThrow(
           ValidationError,
         );
       });
@@ -245,29 +245,29 @@ describe('Validation', () => {
 
   describe('Ensure type', () => {
     test('Returns value when parameter is present', () => {
-      const result = ensureType('John', String);
+      const result = ensureOptionalType('John', String);
 
       expect(result).toBe('John');
     });
 
     test('Returns value when parameter is undefined', () => {
-      const result = ensureType(undefined, String);
+      const result = ensureOptionalType(undefined, String);
 
       expect(result).toBeUndefined();
     });
 
     test('Returns value when parameter is null', () => {
-      const result = ensureType(null, String);
+      const result = ensureOptionalType(null, String);
 
       expect(result).toBeNull();
     });
 
     test('Fails when parameter is not the expected type', () => {
-      expect(() => ensureType(123, String)).toThrow(ValidationError);
+      expect(() => ensureOptionalType(123, String)).toThrow(ValidationError);
     });
   });
 
-  test.todo('Require signature');
+  test.todo('Ensure signature');
 
   describe('Required parameter', () => {
     test('Returns value when parameter is present', () => {

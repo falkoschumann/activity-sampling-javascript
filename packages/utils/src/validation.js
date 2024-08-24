@@ -1,7 +1,6 @@
 import { Enum } from './enum.js';
 
 // TODO Rename module to ensure.js
-// TODO Rename require... to ensure...
 // TODO Replace ValidationError with Error
 // TODO Build error messages
 
@@ -13,13 +12,13 @@ export class ValidationError extends Error {
 }
 
 export function validateRequiredParameter(value, parameterName, valueType) {
-  requireAnything(value, `The parameter "${parameterName}" is required.`);
+  ensureAnything(value, `The parameter "${parameterName}" is required.`);
 
   if (valueType == null) {
     return value;
   }
 
-  requireType2(
+  validateType(
     value,
     valueType,
     `The parameter "${parameterName}" must be a ${valueType}, found {{type}}: {{value}}.`,
@@ -41,7 +40,7 @@ export function validateNonEmptyProperty(
     propertyType,
     itemType,
   );
-  return requireNonEmpty(
+  return ensureNonEmpty(
     value,
     `The property "${propertyName}" of ${objectName} must not be an empty ${propertyType}.`,
   );
@@ -54,8 +53,8 @@ export function validateRequiredProperty(
   propertyType,
   itemType,
 ) {
-  requireAnything(object, `The ${objectName} is required.`);
-  requireAnything(
+  ensureAnything(object, `The ${objectName} is required.`);
+  ensureAnything(
     object[propertyName],
     `The property "${propertyName}" is required for ${objectName}.`,
   );
@@ -77,7 +76,7 @@ export function validateOptionalProperty(
   propertyType,
   itemType,
 ) {
-  requireAnything(object, `The ${objectName} is required.`);
+  ensureAnything(object, `The ${objectName} is required.`);
   if (propertyType == null) {
     return object[propertyName];
   }
@@ -88,13 +87,13 @@ export function validateOptionalProperty(
   }
 
   if (propertyType === 'array') {
-    requireType2(
+    validateType(
       value,
       propertyType,
       `The property "${propertyName}" of ${objectName} must be an ${propertyType}, found {{type}}: {{value}}.`,
     );
     if (itemType != null) {
-      requireItemType2(
+      validateItemType(
         value,
         itemType,
         `The property "${propertyName}" of ${objectName} must be an ${propertyType} of ${itemType}s, found {{type}} at #{{key}}: {{value}}.`,
@@ -103,19 +102,19 @@ export function validateOptionalProperty(
 
     return value;
   } else if (propertyType === 'object') {
-    return requireType2(
+    return validateType(
       value,
       propertyType,
       `The property "${propertyName}" of ${objectName} must be an ${propertyType}, found {{type}}: {{value}}.`,
     );
   } else if (typeof propertyType === 'function') {
-    return requireType2(
+    return validateType(
       value,
       propertyType,
       `The property "${propertyName}" of ${objectName} must be a valid ${propertyType.name}, found {{type}}: {{value}}.`,
     );
   } else {
-    return requireType2(
+    return validateType(
       value,
       propertyType,
       `The property "${propertyName}" of ${objectName} must be a ${propertyType}, found {{type}}: {{value}}.`,
@@ -123,7 +122,7 @@ export function validateOptionalProperty(
   }
 }
 
-export function requireAnything(value, message) {
+export function ensureAnything(value, message) {
   if (value == null) {
     throw new ValidationError(message);
   }
@@ -131,7 +130,7 @@ export function requireAnything(value, message) {
   return value;
 }
 
-export function requireNonEmpty(value, message) {
+export function ensureNonEmpty(value, message) {
   const valueType = getType(value);
   if (
     (valueType === String && value.length === 0) ||
@@ -144,15 +143,15 @@ export function requireNonEmpty(value, message) {
   return value;
 }
 
-export function ensureType(value, expectedType, message) {
+export function ensureOptionalType(value, expectedType, message) {
   if (value == null) {
     return value;
   }
 
-  return requireType(value, expectedType, message);
+  return ensureType(value, expectedType, message);
 }
 
-export function requireType(value, expectedType, message) {
+export function ensureType(value, expectedType, message) {
   const valueType = getType(value);
 
   // Check array
@@ -208,16 +207,16 @@ export function requireType(value, expectedType, message) {
 
   // Check array item types
   if (Array.isArray(expectedType) && expectedType.length === 1) {
-    requireType(value, Array, message);
+    ensureType(value, Array, message);
     value.forEach((item) => {
-      requireType(item, expectedType[0], message);
+      ensureType(item, expectedType[0], message);
     });
   }
 
   if (typeof expectedType === 'object') {
     // Check struct types
     for (const key in expectedType) {
-      requireType(value[key], expectedType[key], message);
+      ensureType(value[key], expectedType[key], message);
     }
 
     return value;
@@ -226,7 +225,7 @@ export function requireType(value, expectedType, message) {
   throw new Error('Unreachable code');
 }
 
-function requireType2(value, expectedType, message) {
+function validateType(value, expectedType, message) {
   const valueType = getType(value);
   if (expectedType === 'array') {
     if (valueType !== Array) {
@@ -271,12 +270,12 @@ function requireType2(value, expectedType, message) {
   }
 }
 
-function requireItemType2(collection, expectedType, message) {
+function validateItemType(collection, expectedType, message) {
   collection.forEach((item, key) => {
     if (Array.isArray(collection)) {
       key++;
     }
-    requireType2(item, expectedType, message?.replace('{{key}}', key));
+    validateType(item, expectedType, message?.replace('{{key}}', key));
   });
 }
 
