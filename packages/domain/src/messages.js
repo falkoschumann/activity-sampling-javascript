@@ -1,6 +1,6 @@
 import {
   Duration,
-  validateNotEmptyProperty,
+  validateNonEmptyProperty,
   validateOptionalProperty,
   validateRequiredProperty,
 } from '@activity-sampling/utils';
@@ -57,19 +57,19 @@ export class LogActivity {
       'duration',
       Duration,
     );
-    const client = validateNotEmptyProperty(
+    const client = validateNonEmptyProperty(
       this,
       'LogActivity',
       'client',
       'string',
     );
-    const project = validateNotEmptyProperty(
+    const project = validateNonEmptyProperty(
       this,
       'LogActivity',
       'project',
       'string',
     );
-    const task = validateNotEmptyProperty(
+    const task = validateNonEmptyProperty(
       this,
       'LogActivity',
       'task',
@@ -233,19 +233,19 @@ export class Activity {
       'duration',
       Duration,
     );
-    const client = validateNotEmptyProperty(
+    const client = validateNonEmptyProperty(
       this,
       'Activity',
       'client',
       'string',
     );
-    const project = validateNotEmptyProperty(
+    const project = validateNonEmptyProperty(
       this,
       'Activity',
       'project',
       'string',
     );
-    const task = validateNotEmptyProperty(this, 'Activity', 'task', 'string');
+    const task = validateNonEmptyProperty(this, 'Activity', 'task', 'string');
     const notes =
       validateOptionalProperty(this, 'Activity', 'notes', 'string') ?? '';
     return Activity.create({

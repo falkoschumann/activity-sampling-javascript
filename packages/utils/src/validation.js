@@ -1,5 +1,10 @@
 import { Enum } from './enum.js';
 
+// TODO Rename module to ensure.js
+// TODO Rename require... to ensure...
+// TODO Replace ValidationError with Error
+// TODO Build error messages
+
 export class ValidationError extends Error {
   constructor(message) {
     super(message);
@@ -22,7 +27,7 @@ export function validateRequiredParameter(value, parameterName, valueType) {
   return value;
 }
 
-export function validateNotEmptyProperty(
+export function validateNonEmptyProperty(
   object,
   objectName,
   propertyName,

@@ -5,7 +5,7 @@ import * as csv from 'csv';
 import {
   Duration,
   OutputTracker,
-  validateNotEmptyProperty,
+  validateNonEmptyProperty,
   validateOptionalProperty,
   validateRequiredProperty,
 } from '@activity-sampling/utils';
@@ -177,19 +177,19 @@ export class ActivityLoggedDto {
       'Duration',
       Duration,
     );
-    const client = validateNotEmptyProperty(
+    const client = validateNonEmptyProperty(
       this,
       'ActivityLogged',
       'Client',
       'string',
     );
-    const project = validateNotEmptyProperty(
+    const project = validateNonEmptyProperty(
       this,
       'ActivityLogged',
       'Project',
       'string',
     );
-    const task = validateNotEmptyProperty(
+    const task = validateNonEmptyProperty(
       this,
       'ActivityLogged',
       'Task',

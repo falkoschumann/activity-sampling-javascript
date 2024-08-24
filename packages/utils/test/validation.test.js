@@ -7,7 +7,7 @@ import {
   validateRequiredParameter,
   validateRequiredProperty,
   validateOptionalProperty,
-  validateNotEmptyProperty as validateNonEmptyProperty,
+  validateNonEmptyProperty,
   ValidationError,
   ensureType,
 } from '../src/validation.js';
@@ -266,6 +266,8 @@ describe('Validation', () => {
       expect(() => ensureType(123, String)).toThrow(ValidationError);
     });
   });
+
+  test.todo('Require signature');
 
   describe('Required parameter', () => {
     test('Returns value when parameter is present', () => {
