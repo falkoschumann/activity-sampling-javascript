@@ -139,6 +139,14 @@ export function requireNonEmpty(value, message) {
   return value;
 }
 
+export function ensureType(value, expectedType, message) {
+  if (value == null) {
+    return value;
+  }
+
+  return requireType(value, expectedType, message);
+}
+
 export function requireType(value, expectedType, message) {
   const valueType = getType(value);
 

@@ -9,6 +9,7 @@ import {
   validateOptionalProperty,
   validateNotEmptyProperty as validateNonEmptyProperty,
   ValidationError,
+  ensureType,
 } from '../src/validation.js';
 import { Enum } from '../src/enum.js';
 
@@ -239,6 +240,30 @@ describe('Validation', () => {
           ValidationError,
         );
       });
+    });
+  });
+
+  describe('Ensure type', () => {
+    test('Returns value when parameter is present', () => {
+      const result = ensureType('John', String);
+
+      expect(result).toBe('John');
+    });
+
+    test('Returns value when parameter is undefined', () => {
+      const result = ensureType(undefined, String);
+
+      expect(result).toBeUndefined();
+    });
+
+    test('Returns value when parameter is null', () => {
+      const result = ensureType(null, String);
+
+      expect(result).toBeNull();
+    });
+
+    test('Fails when parameter is not the expected type', () => {
+      expect(() => ensureType(123, String)).toThrow(ValidationError);
     });
   });
 
