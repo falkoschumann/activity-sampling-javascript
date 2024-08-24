@@ -1,6 +1,5 @@
 import { Enum } from './enum.js';
 
-// TODO Differentiate validation errors
 export class ValidationError extends Error {
   constructor(message) {
     super(message);
@@ -15,7 +14,7 @@ export function validateRequiredParameter(value, parameterName, valueType) {
     return value;
   }
 
-  requireType(
+  requireType2(
     value,
     valueType,
     `The parameter "${parameterName}" must be a ${valueType}, found {{type}}: {{value}}.`,
@@ -43,7 +42,6 @@ export function validateNotEmptyProperty(
   );
 }
 
-// TODO Replace string propertyType and itemType with constructor functions
 export function validateRequiredProperty(
   object,
   objectName,
@@ -85,13 +83,13 @@ export function validateOptionalProperty(
   }
 
   if (propertyType === 'array') {
-    requireType(
+    requireType2(
       value,
       propertyType,
       `The property "${propertyName}" of ${objectName} must be an ${propertyType}, found {{type}}: {{value}}.`,
     );
     if (itemType != null) {
-      requireItemType(
+      requireItemType2(
         value,
         itemType,
         `The property "${propertyName}" of ${objectName} must be an ${propertyType} of ${itemType}s, found {{type}} at #{{key}}: {{value}}.`,
@@ -100,19 +98,19 @@ export function validateOptionalProperty(
 
     return value;
   } else if (propertyType === 'object') {
-    return requireType(
+    return requireType2(
       value,
       propertyType,
       `The property "${propertyName}" of ${objectName} must be an ${propertyType}, found {{type}}: {{value}}.`,
     );
   } else if (typeof propertyType === 'function') {
-    return requireType(
+    return requireType2(
       value,
       propertyType,
       `The property "${propertyName}" of ${objectName} must be a valid ${propertyType.name}, found {{type}}: {{value}}.`,
     );
   } else {
-    return requireType(
+    return requireType2(
       value,
       propertyType,
       `The property "${propertyName}" of ${objectName} must be a ${propertyType}, found {{type}}: {{value}}.`,
@@ -120,20 +118,20 @@ export function validateOptionalProperty(
   }
 }
 
-function requireAnything(value, message) {
-  const valueType = getType(value);
-  if (valueType === null || valueType === undefined) {
+export function requireAnything(value, message) {
+  if (value == null) {
     throw new ValidationError(message);
   }
 
   return value;
 }
 
-function requireNonEmpty(value, message) {
+export function requireNonEmpty(value, message) {
   const valueType = getType(value);
   if (
-    (valueType === String && value === '') ||
-    (valueType === Array && value.length === 0)
+    (valueType === String && value.length === 0) ||
+    (valueType === Array && value.length === 0) ||
+    (valueType === Object && Object.keys(value).length === 0)
   ) {
     throw new ValidationError(message);
   }
@@ -141,7 +139,81 @@ function requireNonEmpty(value, message) {
   return value;
 }
 
-function requireType(value, expectedType, message) {
+export function requireType(value, expectedType, message) {
+  const valueType = getType(value);
+
+  // Check array
+  if (expectedType === Array) {
+    if (valueType !== Array) {
+      throw new ValidationError(message);
+    }
+
+    return value;
+  }
+
+  // Check built-in types
+  if (
+    expectedType === undefined ||
+    expectedType === null ||
+    expectedType === Boolean ||
+    expectedType === Number ||
+    expectedType === BigInt ||
+    expectedType === String ||
+    expectedType === Symbol ||
+    expectedType === Function ||
+    expectedType === Object
+  ) {
+    if (valueType === expectedType) {
+      return value;
+    }
+
+    throw new ValidationError(message);
+  }
+
+  // Check enum types
+  if (Object.getPrototypeOf(expectedType) === Enum) {
+    try {
+      return expectedType.valueOf(String(value).toUpperCase());
+    } catch {
+      throw new ValidationError(message);
+    }
+  }
+
+  // Check constructor types
+  if (typeof expectedType === 'function') {
+    if (value instanceof expectedType) {
+      return value;
+    } else {
+      const convertedValue = new expectedType(value);
+      if (String(convertedValue).toLowerCase().startsWith('invalid')) {
+        throw new ValidationError(message);
+      }
+
+      return convertedValue;
+    }
+  }
+
+  // Check array item types
+  if (Array.isArray(expectedType) && expectedType.length === 1) {
+    requireType(value, Array, message);
+    value.forEach((item) => {
+      requireType(item, expectedType[0], message);
+    });
+  }
+
+  if (typeof expectedType === 'object') {
+    // Check struct types
+    for (const key in expectedType) {
+      requireType(value[key], expectedType[key], message);
+    }
+
+    return value;
+  }
+
+  throw new Error('Unreachable code');
+}
+
+function requireType2(value, expectedType, message) {
   const valueType = getType(value);
   if (expectedType === 'array') {
     if (valueType !== Array) {
@@ -186,12 +258,12 @@ function requireType(value, expectedType, message) {
   }
 }
 
-function requireItemType(collection, expectedType, message) {
+function requireItemType2(collection, expectedType, message) {
   collection.forEach((item, key) => {
     if (Array.isArray(collection)) {
       key++;
     }
-    requireType(item, expectedType, message?.replace('{{key}}', key));
+    requireType2(item, expectedType, message?.replace('{{key}}', key));
   });
 }
 
