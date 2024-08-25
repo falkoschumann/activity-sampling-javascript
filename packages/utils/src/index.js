@@ -13,5 +13,5 @@ export * from './sse-client.js';
 export * from './stop-watch.js';
 export * from './store.js';
 export * from './timer.js';
-export * from './validation.js';
+export * from './ensuring.js';
 export * from './web-socket-client.js';

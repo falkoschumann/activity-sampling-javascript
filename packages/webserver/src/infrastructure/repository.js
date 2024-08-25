@@ -4,10 +4,9 @@ import * as csv from 'csv';
 
 import {
   Duration,
+  ensureNonEmpty,
+  ensureType,
   OutputTracker,
-  validateNonEmptyProperty,
-  validateOptionalProperty,
-  validateRequiredProperty,
 } from '@activity-sampling/utils';
 import { ActivityLogged } from '../domain/domain.js';
 
@@ -165,49 +164,29 @@ export class ActivityLoggedDto {
   }
 
   validate() {
-    const timestamp = validateRequiredProperty(
+    const dto = ensureType(
       this,
-      'ActivityLogged',
-      'Timestamp',
-      Date,
+      {
+        Timestamp: Date,
+        Duration: Duration,
+        Client: String,
+        Project: String,
+        Task: String,
+        Notes: String, // TODO ensure optional non-empty string
+      },
+      { name: 'ActivityLogged' },
     );
-    const duration = validateRequiredProperty(
-      this,
-      'ActivityLogged',
-      'Duration',
-      Duration,
-    );
-    const client = validateNonEmptyProperty(
-      this,
-      'ActivityLogged',
-      'Client',
-      'string',
-    );
-    const project = validateNonEmptyProperty(
-      this,
-      'ActivityLogged',
-      'Project',
-      'string',
-    );
-    const task = validateNonEmptyProperty(
-      this,
-      'ActivityLogged',
-      'Task',
-      'string',
-    );
-    const notes = validateOptionalProperty(
-      this,
-      'ActivityLogged',
-      'Notes',
-      'string',
-    );
+    ensureNonEmpty(this.Client, { name: 'ActivityLogged.Client' });
+    ensureNonEmpty(this.Project, { name: 'ActivityLogged.Project' });
+    ensureNonEmpty(this.Task, { name: 'ActivityLogged.Task' });
+    ensureNonEmpty(this.Notes, { name: 'ActivityLogged.Notes' });
     return ActivityLogged.create({
-      timestamp,
-      duration,
-      client,
-      project,
-      task,
-      notes,
+      timestamp: dto.Timestamp,
+      duration: dto.Duration,
+      client: dto.Client,
+      project: dto.Project,
+      task: dto.Task,
+      notes: dto.Notes,
     });
   }
 }

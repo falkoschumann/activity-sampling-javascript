@@ -8,6 +8,7 @@ export class Enum {
     if (value == null) {
       throw new Error(`No enum constant ${this.name}.${name} exists.`);
     }
+
     return value;
   }
 

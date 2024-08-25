@@ -1,9 +1,4 @@
-import {
-  Duration,
-  validateNonEmptyProperty,
-  validateOptionalProperty,
-  validateRequiredProperty,
-} from '@activity-sampling/utils';
+import { Duration, ensureNonEmpty, ensureType } from '@activity-sampling/utils';
 
 export class LogActivity {
   static create({ timestamp, duration, client, project, task, notes } = {}) {
@@ -45,50 +40,23 @@ export class LogActivity {
   }
 
   validate() {
-    const timestamp = validateRequiredProperty(
+    const dto = ensureType(
       this,
-      'LogActivity',
-      'timestamp',
-      Date,
+      {
+        timestamp: Date,
+        duration: Duration,
+        client: String,
+        project: String,
+        task: String,
+        notes: String, // TODO ensure optional non-empty string
+      },
+      { name: 'LogActivity' },
     );
-    const duration = validateRequiredProperty(
-      this,
-      'LogActivity',
-      'duration',
-      Duration,
-    );
-    const client = validateNonEmptyProperty(
-      this,
-      'LogActivity',
-      'client',
-      'string',
-    );
-    const project = validateNonEmptyProperty(
-      this,
-      'LogActivity',
-      'project',
-      'string',
-    );
-    const task = validateNonEmptyProperty(
-      this,
-      'LogActivity',
-      'task',
-      'string',
-    );
-    const notes = validateOptionalProperty(
-      this,
-      'LogActivity',
-      'notes',
-      'string',
-    );
-    return LogActivity.create({
-      timestamp,
-      duration,
-      client,
-      project,
-      task,
-      notes,
-    });
+    ensureNonEmpty(this.client, { name: 'LogActivity.client' });
+    ensureNonEmpty(this.project, { name: 'LogActivity.project' });
+    ensureNonEmpty(this.task, { name: 'LogActivity.task' });
+    ensureNonEmpty(this.notes, { name: 'LogActivity.notes' });
+    return LogActivity.create(dto);
   }
 }
 
@@ -108,13 +76,14 @@ export class RecentActivitiesQuery {
   }
 
   validate() {
-    const today = validateOptionalProperty(
+    const dto = ensureType(
       this,
-      'RecentActivitiesQuery',
-      'today',
-      Date,
+      {
+        today: Date,
+      },
+      { name: 'RecentActivitiesQuery' },
     );
-    return RecentActivitiesQuery.create({ today });
+    return RecentActivitiesQuery.create(dto);
   }
 }
 
@@ -139,16 +108,20 @@ export class RecentActivities {
   }
 
   validate() {
-    const workingDays = validateRequiredProperty(
+    const dto = ensureType(
       this,
-      'RecentActivities',
-      'workingDays',
-      'array',
-    ).map((workingDay) => WorkingDay.create(workingDay).validate());
-    const timeSummary = TimeSummary.create(
-      validateRequiredProperty(this, 'RecentActivities', 'timeSummary'),
-    ).validate();
-    return RecentActivities.create({ workingDays, timeSummary });
+      { workingDays: Array, timeSummary: Object },
+      { name: 'RecentActivities' },
+    );
+    dto.workingDays = dto.workingDays.map((workingDay, index) =>
+      WorkingDay.create(workingDay).validate({
+        name: `RecentActivities.workingDays.${index}`,
+      }),
+    );
+    dto.timeSummary = TimeSummary.create(dto.timeSummary).validate({
+      name: 'RecentActivities.timeSummary',
+    });
+    return RecentActivities.create(dto);
   }
 }
 
@@ -169,15 +142,14 @@ export class WorkingDay {
     this.activities = activities;
   }
 
-  validate() {
-    const date = validateRequiredProperty(this, 'WorkingDay', 'date', Date);
-    const activities = validateRequiredProperty(
-      this,
-      'WorkingDay',
-      'activities',
-      'array',
-    ).map((activity) => Activity.create(activity).validate());
-    return WorkingDay.create({ date, activities });
+  validate({ name = 'WorkingDay' } = {}) {
+    const dto = ensureType(this, { date: Date, activities: Array }, { name });
+    dto.activities = dto.activities.map((activity, index) =>
+      Activity.create(activity).validate({
+        name: `${name}.activities.${index}`,
+      }),
+    );
+    return WorkingDay.create(dto);
   }
 }
 
@@ -220,42 +192,23 @@ export class Activity {
     this.notes = notes;
   }
 
-  validate() {
-    const timestamp = validateRequiredProperty(
+  validate({ name = 'Activity' } = {}) {
+    const dto = ensureType(
       this,
-      'Activity',
-      'timestamp',
-      Date,
+      {
+        timestamp: Date,
+        duration: Duration,
+        client: String,
+        project: String,
+        task: String,
+        notes: String, // TODO ensure optional non-empty string
+      },
+      { name },
     );
-    const duration = validateRequiredProperty(
-      this,
-      'Activity',
-      'duration',
-      Duration,
-    );
-    const client = validateNonEmptyProperty(
-      this,
-      'Activity',
-      'client',
-      'string',
-    );
-    const project = validateNonEmptyProperty(
-      this,
-      'Activity',
-      'project',
-      'string',
-    );
-    const task = validateNonEmptyProperty(this, 'Activity', 'task', 'string');
-    const notes =
-      validateOptionalProperty(this, 'Activity', 'notes', 'string') ?? '';
-    return Activity.create({
-      timestamp,
-      duration,
-      client,
-      project,
-      task,
-      notes,
-    });
+    ensureNonEmpty(this.client, { name: `${name}.client` });
+    ensureNonEmpty(this.project, { name: `${name}.project` });
+    ensureNonEmpty(this.task, { name: `${name}.task` });
+    return Activity.create(dto);
   }
 }
 
@@ -300,36 +253,17 @@ export class TimeSummary {
     this.hoursThisMonth = hoursThisMonth;
   }
 
-  validate() {
-    const hoursToday = validateRequiredProperty(
+  validate({ name = 'TimeSummary' } = {}) {
+    const dto = ensureType(
       this,
-      'TimeSummary',
-      'hoursToday',
-      Duration,
+      {
+        hoursToday: Duration,
+        hoursYesterday: Duration,
+        hoursThisWeek: Duration,
+        hoursThisMonth: Duration,
+      },
+      { name },
     );
-    const hoursYesterday = validateRequiredProperty(
-      this,
-      'TimeSummary',
-      'hoursYesterday',
-      Duration,
-    );
-    const hoursThisWeek = validateRequiredProperty(
-      this,
-      'TimeSummary',
-      'hoursThisWeek',
-      Duration,
-    );
-    const hoursThisMonth = validateRequiredProperty(
-      this,
-      'TimeSummary',
-      'hoursThisMonth',
-      Duration,
-    );
-    return TimeSummary.create({
-      hoursToday,
-      hoursYesterday,
-      hoursThisWeek,
-      hoursThisMonth,
-    });
+    return TimeSummary.create(dto);
   }
 }
