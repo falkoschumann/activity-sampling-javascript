@@ -12,11 +12,18 @@ describe('Duration', () => {
         expect(duration.millis).toEqual(0);
       });
 
-      test('Creates without parameter', () => {
-        const duration = new Duration();
+      test('Creates with null', () => {
+        const duration = new Duration(null);
 
         expect(duration.isZero).toEqual(true);
         expect(duration.millis).toEqual(0);
+      });
+
+      test('Creates without parameter', () => {
+        const duration = new Duration();
+
+        expect(duration.toString()).toEqual('Invalid Duration');
+        expect(duration.valueOf()).toEqual(NaN);
       });
     });
 
