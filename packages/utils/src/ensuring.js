@@ -76,6 +76,13 @@ export function ensureItemType(array, expectedType, { name = 'value' } = {}) {
   return array;
 }
 
+export function ensureArguments(args, expectedTypes = [], names = []) {
+  expectedTypes.forEach((expectedType, index) => {
+    const name = names[index] ? names[index] : `Argument #${index + 1}`;
+    ensureType(args[index], expectedType, { name });
+  });
+}
+
 /** @returns {{value: ?any, error: ?string}}} */
 function checkType(value, expectedType, { name = 'value' } = {}) {
   const valueType = getType(value);

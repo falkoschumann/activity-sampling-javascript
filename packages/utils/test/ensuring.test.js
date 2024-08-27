@@ -2,6 +2,7 @@ import { describe, expect, test } from '@jest/globals';
 
 import {
   ensureAnything,
+  ensureArguments,
   ensureItemType,
   ensureNonEmpty,
   ensureThat,
@@ -515,7 +516,19 @@ describe('Ensuring', () => {
     });
   });
 
-  test.todo('Ensure signature');
+  describe('Ensure arguments', () => {
+    test('Does nothing when arguments matches', () => {
+      expect(() =>
+        ensureArguments([123, 'John'], [Number, String]),
+      ).not.toThrow();
+    });
+
+    test('Fails when an argument does not match', () => {
+      expect(() =>
+        ensureArguments(['123', 'John'], [Number, String], ['id', 'name']),
+      ).toThrow(/The id must be a number, but it was a string\./);
+    });
+  });
 });
 
 class YesNo extends Enum {

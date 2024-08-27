@@ -1,3 +1,5 @@
+import { ensureArguments } from './ensuring';
+
 export class Enum {
   static values() {
     return Object.values(this);
@@ -13,7 +15,7 @@ export class Enum {
   }
 
   constructor(ordinal, name) {
-    // TODO Validate ordinal and name are present
+    ensureArguments(arguments, [Number, String]);
     this.ordinal = ordinal;
     this.name = name;
   }
