@@ -374,13 +374,13 @@ describe('Validation', () => {
             { name: String, age: Number },
             { name: 'User' },
           ),
-        ).toThrow(/The User is required, but it was undefined\./);
+        ).toThrow(/The User must be an object, but it was undefined\./);
       });
 
       test('Fails when value is null', () => {
         expect(() =>
           ensureType(null, { name: String, age: Number }, { name: 'User' }),
-        ).toThrow(/The User is required, but it was null\./);
+        ).toThrow(/The User must be an object, but it was null\./);
       });
     });
 
@@ -407,14 +407,14 @@ describe('Validation', () => {
 
       test('Fails when it it is undefined', () => {
         expect(() => ensureType(undefined, Date)).toThrow(
-          /The value is required, but it was undefined\./,
+          /The value must be a valid Date, but it was undefined\./,
         );
       });
 
-      test('Fails when it it is null', () => {
-        expect(() => ensureType(null, Date)).toThrow(
-          /The value is required, but it was null\./,
-        );
+      test('Does not fails when it value is null', () => {
+        const result = ensureType(null, Date);
+
+        expect(result).toEqual(new Date(0));
       });
     });
 
@@ -440,15 +440,35 @@ describe('Validation', () => {
 
       test('Fails when it it is undefined', () => {
         expect(() => ensureType(undefined, YesNo)).toThrow(
-          /The value is required, but it was undefined\./,
+          /The value must be a YesNo, but it was undefined\./,
         );
       });
 
       test('Fails when it it is null', () => {
         expect(() => ensureType(null, YesNo)).toThrow(
-          /The value is required, but it was null\./,
+          /The value must be a YesNo, but it was null\./,
         );
       });
+    });
+  });
+
+  describe.skip('Multiple types', () => {
+    test('Returns value when it is one of the expected types', () => {
+      const result = ensureType('John', [String, Number]);
+
+      expect(result).toBe('John');
+    });
+
+    test('Returns value when it is another of the expected types', () => {
+      const result = ensureType(42, [String, Number]);
+
+      expect(result).toBe(42);
+    });
+
+    test('Does not fail when value is undefined', () => {
+      const result = ensureType(undefined, [String, undefined]);
+
+      expect(result).toBe(undefined);
     });
   });
 

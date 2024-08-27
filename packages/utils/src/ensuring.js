@@ -46,11 +46,28 @@ export function ensureOptionalType(
 }
 
 /*
- * type: undefined | null | Boolean | Number | BigInt | String | Symbol | Function | Object | Array | Enum | constructor | [ type ] | Record<string, type>
+ * type: undefined | null | Boolean | Number | BigInt | String | Symbol | Function | Object | Array | Enum | constructor | Record<string, type>
  * expectedType: type | [ type ]
  */
 
 export function ensureType(value, expectedType, { name = 'value' } = {}) {
+  // TODO Extract checkType() returning error or list of errors?!
+  const result = checkType(value, expectedType, { name });
+  if (result) {
+    if (result.error) {
+      throw new EnsuringError(result.error);
+    }
+    return result.value;
+  }
+
+  ensureAnything(value, { name });
+
+  throw new Error('Unreachable code');
+}
+
+function checkType(value, expectedType, { name = 'value' } = {}) {
+  // TODO return {value, error}
+
   const valueType = getType(value);
 
   // Check built-in types
@@ -67,69 +84,82 @@ export function ensureType(value, expectedType, { name = 'value' } = {}) {
     expectedType === Array
   ) {
     if (valueType === expectedType) {
-      return value;
+      return { value };
     }
 
-    throw new EnsuringError(
-      `The ${name} must be ${describe(expectedType, { articles: true })}, but it was ${describe(valueType, { articles: true })}.`,
-    );
+    return {
+      error: `The ${name} must be ${describe(expectedType, { articles: true })}, but it was ${describe(valueType, { articles: true })}.`,
+    };
   }
-
-  ensureAnything(value, { name });
 
   // Check enum types
   if (Object.getPrototypeOf(expectedType) === Enum) {
     try {
-      return expectedType.valueOf(String(value).toUpperCase());
+      return { value: expectedType.valueOf(String(value).toUpperCase()) };
     } catch {
-      throw new EnsuringError(
-        `The ${name} must be ${describe(expectedType, { articles: true })}, but it was ${describe(valueType, { articles: true })}.`,
-      );
+      return {
+        error: `The ${name} must be ${describe(expectedType, { articles: true })}, but it was ${describe(valueType, { articles: true })}.`,
+      };
     }
   }
 
   // Check constructor types
   if (typeof expectedType === 'function') {
     if (value instanceof expectedType) {
-      return value;
+      return { value };
     } else {
       const convertedValue = new expectedType(value);
       if (String(convertedValue).toLowerCase().startsWith('invalid')) {
-        let message = `The ${name} must be a valid ${describe(expectedType)}, but it was ${describe(valueType, { articles: true })}`;
+        let error = `The ${name} must be a valid ${describe(expectedType)}, but it was ${describe(valueType, { articles: true })}`;
         if (valueType != null) {
-          message += `: ${JSON.stringify(value, { articles: true })}`;
+          error += `: ${JSON.stringify(value, { articles: true })}`;
         }
-        message += '.';
-        throw new EnsuringError(message);
+        error += '.';
+        return { error };
       }
 
-      return convertedValue;
+      return { value: convertedValue };
     }
   }
 
   // Check array item types
-  // TODO Replace with options: { itemType: _expectedTypes_ }
   if (Array.isArray(expectedType) && expectedType.length === 1) {
-    ensureType(value, Array, { name });
-    value.forEach((item, key) => {
-      value[key] = ensureType(item, expectedType[0], {
-        name: `${name}.${key}`,
+    const result = checkType(value, Array, { name });
+    if (result.error) {
+      return result;
+    }
+
+    for (const [index, item] of value.entries()) {
+      const result = checkType(item, expectedType[0], {
+        name: `${name}.${index}`,
       });
-    });
+      if (result.error) {
+        return result;
+      }
+      value[index] = result.value;
+    }
+    return { value };
   }
 
   if (typeof expectedType === 'object') {
     // Check struct types
-    for (const key in expectedType) {
-      value[key] = ensureType(value[key], expectedType[key], {
-        name: `${name}.${key}`,
-      });
+    const result = checkType(value, Object, { name });
+    if (result.error) {
+      return result;
     }
 
-    return value;
-  }
+    for (const key in expectedType) {
+      const result = checkType(value[key], expectedType[key], {
+        name: `${name}.${key}`,
+      });
+      if (result.error) {
+        return result;
+      }
+      value[key] = result.value;
+    }
 
-  throw new Error('Unreachable code');
+    return { value };
+  }
 }
 
 function getType(value) {

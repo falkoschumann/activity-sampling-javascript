@@ -1,6 +1,6 @@
 export class Duration {
   static zero() {
-    return new Duration(0);
+    return new Duration();
   }
 
   /** Parse a ISO 8601 string like `[-]P[dD]T[hH][mM][s[.f]S]`. */
@@ -32,7 +32,7 @@ export class Duration {
    * @param {number|string|Duration} [value=0] - The duration in millis or an ISO 8601 string.
    */
   constructor(value) {
-    if (value === null) {
+    if (value === null || arguments.length === 0) {
       this.millis = 0;
     } else if (typeof value === 'string') {
       this.millis = Duration.parse(value).millis;

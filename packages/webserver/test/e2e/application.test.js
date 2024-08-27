@@ -68,7 +68,7 @@ describe('Activity Sampling App', () => {
       expect(response.status).toBe(400);
       expect(response.get('Content-Type')).toMatch(/text\/plain/);
       expect(response.text).toEqual(
-        'The LogActivity.timestamp is required, but it was undefined.',
+        'The LogActivity.timestamp must be a valid Date, but it was undefined.',
       );
     });
   });

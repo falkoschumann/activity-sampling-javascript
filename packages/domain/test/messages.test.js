@@ -39,7 +39,7 @@ describe('Messages', () => {
         });
 
         expect(() => dto.validate()).toThrow(
-          /The LogActivity\.timestamp is required, but it was undefined\./,
+          /The LogActivity\.timestamp must be a valid Date, but it was undefined\./,
         );
       });
 
@@ -68,7 +68,7 @@ describe('Messages', () => {
         });
 
         expect(() => dto.validate()).toThrow(
-          /The LogActivity\.duration is required, but it was undefined\./,
+          /The LogActivity\.duration must be a valid Duration, but it was undefined\./,
         );
       });
 
@@ -303,7 +303,7 @@ describe('Messages', () => {
         });
 
         expect(() => dto.validate()).toThrow(
-          /The RecentActivities\.workingDays.0.date is required, but it was undefined\./,
+          /The RecentActivities\.workingDays.0.date must be a valid Date, but it was undefined\./,
         );
       });
 
@@ -338,7 +338,7 @@ describe('Messages', () => {
         });
 
         expect(() => dto.validate()).toThrow(
-          /The RecentActivities.timeSummary.hoursToday is required, but it was undefined\./,
+          /The RecentActivities\.timeSummary.hoursToday must be a valid Duration, but it was undefined\./,
         );
       });
     });
@@ -363,7 +363,7 @@ describe('Messages', () => {
         });
 
         expect(() => dto.validate()).toThrow(
-          /The WorkingDay\.date is required, but it was undefined\./,
+          /The WorkingDay\.date must be a valid Date, but it was undefined\./,
         );
       });
 
@@ -412,7 +412,7 @@ describe('Messages', () => {
         });
 
         expect(() => dto.validate()).toThrow(
-          /The WorkingDay\.activities\.0\.timestamp is required, but it was undefined\./,
+          /The WorkingDay\.activities\.0\.timestamp must be a valid Date, but it was undefined\./,
         );
       });
     });
@@ -461,7 +461,7 @@ describe('Messages', () => {
         });
 
         expect(() => dto.validate()).toThrow(
-          /The Activity\.timestamp is required, but it was undefined\./,
+          /The Activity\.timestamp must be a valid Date, but it was undefined\./,
         );
       });
 
@@ -490,7 +490,7 @@ describe('Messages', () => {
         });
 
         expect(() => dto.validate()).toThrow(
-          /The Activity\.duration is required, but it was undefined\./,
+          /The Activity\.duration must be a valid Duration, but it was undefined\./,
         );
       });
 
@@ -668,7 +668,7 @@ describe('Messages', () => {
         });
 
         expect(() => dto.validate()).toThrow(
-          /The TimeSummary\.hoursToday is required, but it was undefined\./,
+          /The TimeSummary\.hoursToday must be a valid Duration, but it was undefined\./,
         );
       });
 
@@ -693,7 +693,7 @@ describe('Messages', () => {
         });
 
         expect(() => dto.validate()).toThrow(
-          /The TimeSummary\.hoursYesterday is required, but it was undefined\./,
+          /The TimeSummary\.hoursYesterday must be a valid Duration, but it was undefined\./,
         );
       });
 
@@ -718,7 +718,7 @@ describe('Messages', () => {
         });
 
         expect(() => dto.validate()).toThrow(
-          /The TimeSummary\.hoursThisWeek is required, but it was undefined\./,
+          /The TimeSummary\.hoursThisWeek must be a valid Duration, but it was undefined\./,
         );
       });
 
@@ -743,7 +743,7 @@ describe('Messages', () => {
         });
 
         expect(() => dto.validate()).toThrow(
-          /The TimeSummary\.hoursThisMonth is required, but it was undefined\./,
+          /The TimeSummary\.hoursThisMonth must be a valid Duration, but it was undefined\./,
         );
       });
 

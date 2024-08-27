@@ -58,7 +58,7 @@ describe('Repository', () => {
         });
 
         expect(() => dto.validate()).toThrow(
-          /The ActivityLogged\.Timestamp is required, but it was undefined\./,
+          /The ActivityLogged\.Timestamp must be a valid Date, but it was undefined\./,
         );
       });
 
@@ -87,7 +87,7 @@ describe('Repository', () => {
         });
 
         expect(() => dto.validate()).toThrow(
-          /The ActivityLogged\.Duration is required, but it was undefined\./,
+          /The ActivityLogged\.Duration must be a valid Duration, but it was undefined\./,
         );
       });
 
