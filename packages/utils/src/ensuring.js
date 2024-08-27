@@ -9,6 +9,19 @@ export class EnsuringError extends Error {
   }
 }
 
+export function ensureThat(
+  value,
+  predicate,
+  message = 'Expected predicate is not true.',
+) {
+  const condition = predicate(value);
+  if (!condition) {
+    throw new EnsuringError(message);
+  }
+
+  return value;
+}
+
 export function ensureAnything(value, { name = 'value' } = {}) {
   if (value == null) {
     throw new EnsuringError(`The ${name} is required, but it was ${value}.`);
@@ -32,42 +45,39 @@ export function ensureNonEmpty(value, { name = 'value' } = {}) {
   return value;
 }
 
-// TODO Replace ensureOptionalType with ensureType(value, _expectedTypes_)
-export function ensureOptionalType(
-  value,
-  expectedType,
-  { name = 'value' } = {},
-) {
-  if (value == null) {
-    return value;
-  }
-
-  return ensureType(value, expectedType, { name });
-}
-
 /*
  * type: undefined | null | Boolean | Number | BigInt | String | Symbol | Function | Object | Array | Enum | constructor | Record<string, type>
  * expectedType: type | [ type ]
  */
 
 export function ensureType(value, expectedType, { name = 'value' } = {}) {
-  // TODO Extract checkType() returning error or list of errors?!
   const result = checkType(value, expectedType, { name });
-  if (result) {
+  if (result.error) {
+    throw new EnsuringError(result.error);
+  }
+  return result.value;
+}
+
+export function ensureItemType(array, expectedType, { name = 'value' } = {}) {
+  const result = checkType(array, Array, { name });
+  if (result.error) {
+    throw new EnsuringError(result.error);
+  }
+
+  array.forEach((item, index) => {
+    const result = checkType(item, expectedType, {
+      name: `${name}.${index}`,
+    });
     if (result.error) {
       throw new EnsuringError(result.error);
     }
-    return result.value;
-  }
-
-  ensureAnything(value, { name });
-
-  throw new Error('Unreachable code');
+    array[index] = result.value;
+  });
+  return array;
 }
 
+/** @returns {{value: ?any, error: ?string}}} */
 function checkType(value, expectedType, { name = 'value' } = {}) {
-  // TODO return {value, error}
-
   const valueType = getType(value);
 
   // Check built-in types
@@ -122,23 +132,18 @@ function checkType(value, expectedType, { name = 'value' } = {}) {
     }
   }
 
-  // Check array item types
-  if (Array.isArray(expectedType) && expectedType.length === 1) {
-    const result = checkType(value, Array, { name });
-    if (result.error) {
-      return result;
+  // Check one of multiple types
+  if (Array.isArray(expectedType)) {
+    for (const type of expectedType) {
+      const result = checkType(value, type, { name });
+      if (!result.error) {
+        return { value };
+      }
     }
 
-    for (const [index, item] of value.entries()) {
-      const result = checkType(item, expectedType[0], {
-        name: `${name}.${index}`,
-      });
-      if (result.error) {
-        return result;
-      }
-      value[index] = result.value;
-    }
-    return { value };
+    return {
+      error: `The ${name} must be ${describe(expectedType, { articles: true })}, but it was ${describe(valueType, { articles: true })}.`,
+    };
   }
 
   if (typeof expectedType === 'object') {
@@ -196,6 +201,17 @@ function getType(value) {
 }
 
 function describe(type, { articles = false } = {}) {
+  if (Array.isArray(type)) {
+    const types = type.map((t) => describe(t));
+    if (types.length <= 2) {
+      return types.join(' or ');
+    } else {
+      const allButLast = types.slice(0, -1);
+      const last = types.at(-1);
+      return allButLast.join(', ') + ', or ' + last;
+    }
+  }
+
   if (Number.isNaN(type)) {
     return 'NaN';
   }

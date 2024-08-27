@@ -2,13 +2,28 @@ import { describe, expect, test } from '@jest/globals';
 
 import {
   ensureAnything,
+  ensureItemType,
   ensureNonEmpty,
+  ensureThat,
   ensureType,
-  ensureOptionalType,
 } from '../src/ensuring.js';
 import { Enum } from '../src/enum.js';
 
-describe('Validation', () => {
+describe('Ensuring', () => {
+  describe('Ensure that', () => {
+    test('Returns value when predicate is successful', () => {
+      const result = ensureThat(1, (v) => v > 0);
+
+      expect(result).toBe(1);
+    });
+
+    test('Returns value when predicate is successful', () => {
+      expect(() =>
+        ensureThat(0, (v) => v > 0, 'Value must be greater than 0.'),
+      ).toThrow(/Value must be greater than 0\./);
+    });
+  });
+
   describe('Ensure anything', () => {
     test('Returns value when parameter is present', () => {
       const result = ensureAnything('John');
@@ -313,19 +328,6 @@ describe('Validation', () => {
             /The value must be an array, but it was null\./,
           );
         });
-
-        test('Returns value when items has the expected type', () => {
-          const names = ['John', 'Jane'];
-          const result = ensureType(names, [String]);
-
-          expect(result).toBe(names);
-        });
-
-        test('Fails when items does not have the expected type', () => {
-          expect(() =>
-            ensureType(['John', 123], [String], { name: 'names' }),
-          ).toThrow(/The names.1 must be a string, but it was a number\./);
-        });
       });
     });
 
@@ -344,7 +346,7 @@ describe('Validation', () => {
             birthDate: Date,
             age: Number,
             isMarried: Boolean,
-            children: [String],
+            children: Array,
           },
         );
 
@@ -450,51 +452,66 @@ describe('Validation', () => {
         );
       });
     });
+
+    describe('Multiple types', () => {
+      test('Returns value when it is one of the expected types', () => {
+        const result = ensureType('John', [String, Number]);
+
+        expect(result).toBe('John');
+      });
+
+      test('Returns value when it is another of the expected types', () => {
+        const result = ensureType(42, [String, Number]);
+
+        expect(result).toBe(42);
+      });
+
+      test('Fails when value is not one of the expected types', () => {
+        expect(() => ensureType(true, [String, Number])).toThrow(
+          /The value must be string or number, but it was a boolean\./,
+        );
+      });
+    });
+
+    describe('Optional type', () => {
+      test('Returns value when it is present', () => {
+        const result = ensureType('John', [String, undefined]);
+
+        expect(result).toBe('John');
+      });
+
+      test('Returns value when it is undefined', () => {
+        const result = ensureType(undefined, [String, undefined]);
+
+        expect(result).toBeUndefined();
+      });
+
+      test('Fails when parameter is not the expected type', () => {
+        expect(() => ensureType(123, [String, undefined])).toThrow(
+          /The value must be string or undefined, but it was a number\./,
+        );
+      });
+
+      test('Fails when parameter is null', () => {
+        expect(() => ensureType(null, [String, undefined])).toThrow(
+          /The value must be string or undefined, but it was null\./,
+        );
+      });
+    });
   });
 
-  describe.skip('Multiple types', () => {
-    test('Returns value when it is one of the expected types', () => {
-      const result = ensureType('John', [String, Number]);
+  describe('Ensure item type', () => {
+    test('Returns value when items has the expected type', () => {
+      const names = ['John', 'Jane'];
+      const result = ensureItemType(names, String);
 
-      expect(result).toBe('John');
+      expect(result).toBe(names);
     });
 
-    test('Returns value when it is another of the expected types', () => {
-      const result = ensureType(42, [String, Number]);
-
-      expect(result).toBe(42);
-    });
-
-    test('Does not fail when value is undefined', () => {
-      const result = ensureType(undefined, [String, undefined]);
-
-      expect(result).toBe(undefined);
-    });
-  });
-
-  describe('Ensure optional type', () => {
-    test('Returns value when parameter is present', () => {
-      const result = ensureOptionalType('John', String);
-
-      expect(result).toBe('John');
-    });
-
-    test('Returns value when parameter is undefined', () => {
-      const result = ensureOptionalType(undefined, String);
-
-      expect(result).toBeUndefined();
-    });
-
-    test('Returns value when parameter is null', () => {
-      const result = ensureOptionalType(null, String);
-
-      expect(result).toBeNull();
-    });
-
-    test('Fails when parameter is not the expected type', () => {
-      expect(() => ensureOptionalType(123, String)).toThrow(
-        /The value must be a string, but it was a number\./,
-      );
+    test('Fails when items does not have the expected type', () => {
+      expect(() =>
+        ensureItemType(['John', 123], String, { name: 'names' }),
+      ).toThrow(/The names.1 must be a string, but it was a number\./);
     });
   });
 
