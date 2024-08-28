@@ -1,4 +1,4 @@
-import { ensureArguments } from './ensuring';
+import { ensureArguments } from './validation';
 
 export class Enum {
   static values() {

@@ -7,10 +7,10 @@ import {
   ensureNonEmpty,
   ensureThat,
   ensureType,
-} from '../src/ensuring.js';
+} from '../src/validation.js';
 import { Enum } from '../src/enum.js';
 
-describe('Ensuring', () => {
+describe('Validation', () => {
   describe('Ensure that', () => {
     test('Returns value when predicate is successful', () => {
       const result = ensureThat(1, (v) => v > 0);

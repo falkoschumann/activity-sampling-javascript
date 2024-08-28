@@ -1,11 +1,9 @@
 import { Enum } from './enum.js';
 
-// TODO Differentiate errors by type
-
-export class EnsuringError extends Error {
+export class ValidationError extends Error {
   constructor(message) {
     super(message);
-    this.name = 'EnsuringError';
+    this.name = 'ValidationError';
   }
 }
 
@@ -16,7 +14,7 @@ export function ensureThat(
 ) {
   const condition = predicate(value);
   if (!condition) {
-    throw new EnsuringError(message);
+    throw new ValidationError(message);
   }
 
   return value;
@@ -24,7 +22,7 @@ export function ensureThat(
 
 export function ensureAnything(value, { name = 'value' } = {}) {
   if (value == null) {
-    throw new EnsuringError(`The ${name} is required, but it was ${value}.`);
+    throw new ValidationError(`The ${name} is required, but it was ${value}.`);
   }
 
   return value;
@@ -37,7 +35,7 @@ export function ensureNonEmpty(value, { name = 'value' } = {}) {
     (valueType === Array && value.length === 0) ||
     (valueType === Object && Object.keys(value).length === 0)
   ) {
-    throw new EnsuringError(
+    throw new ValidationError(
       `The ${name} must not be empty, but it was ${JSON.stringify(value)}.`,
     );
   }
@@ -53,7 +51,7 @@ export function ensureNonEmpty(value, { name = 'value' } = {}) {
 export function ensureType(value, expectedType, { name = 'value' } = {}) {
   const result = checkType(value, expectedType, { name });
   if (result.error) {
-    throw new EnsuringError(result.error);
+    throw new ValidationError(result.error);
   }
   return result.value;
 }
@@ -61,7 +59,7 @@ export function ensureType(value, expectedType, { name = 'value' } = {}) {
 export function ensureItemType(array, expectedType, { name = 'value' } = {}) {
   const result = checkType(array, Array, { name });
   if (result.error) {
-    throw new EnsuringError(result.error);
+    throw new ValidationError(result.error);
   }
 
   array.forEach((item, index) => {
@@ -69,7 +67,7 @@ export function ensureItemType(array, expectedType, { name = 'value' } = {}) {
       name: `${name}.${index}`,
     });
     if (result.error) {
-      throw new EnsuringError(result.error);
+      throw new ValidationError(result.error);
     }
     array[index] = result.value;
   });

@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { Logger, EnsuringError } from '@activity-sampling/utils';
+import { Logger, ValidationError } from '@activity-sampling/utils';
 import { reply } from '@activity-sampling/utils/src/express.js';
 
 import { Services } from '../application/services.js';
@@ -55,7 +55,7 @@ export class Application {
 
   // eslint-disable-next-line no-unused-vars
   #errorHandler(error, request, response, next) {
-    if (error instanceof EnsuringError) {
+    if (error instanceof ValidationError) {
       reply(response, {
         status: 400,
         body: error.message,
