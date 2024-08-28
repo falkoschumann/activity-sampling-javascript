@@ -193,7 +193,7 @@ describe('Repository', () => {
         );
       });
 
-      test.skip('Does not fail when notes is missing', () => {
+      test('Does not fail when notes is missing', () => {
         const dto = ActivityLoggedDto.create({
           Timestamp: '2024-04-02T11:35Z',
           Duration: 'PT30M',

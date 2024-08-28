@@ -172,7 +172,7 @@ export class ActivityLoggedDto {
         Client: String,
         Project: String,
         Task: String,
-        Notes: String, // TODO ensure optional non-empty(?) string
+        Notes: [String, undefined],
       },
       { name: 'ActivityLogged' },
     );

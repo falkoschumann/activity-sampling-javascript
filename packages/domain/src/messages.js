@@ -48,7 +48,7 @@ export class LogActivity {
         client: String,
         project: String,
         task: String,
-        notes: String, // TODO ensure optional non-empty string
+        notes: [String, undefined],
       },
       { name: 'LogActivity' },
     );
@@ -201,13 +201,16 @@ export class Activity {
         client: String,
         project: String,
         task: String,
-        notes: String, // TODO ensure optional non-empty string
+        notes: [String, undefined],
       },
       { name },
     );
     ensureNonEmpty(this.client, { name: `${name}.client` });
     ensureNonEmpty(this.project, { name: `${name}.project` });
     ensureNonEmpty(this.task, { name: `${name}.task` });
+    if (dto.notes == null) {
+      dto.notes = '';
+    }
     return Activity.create(dto);
   }
 }

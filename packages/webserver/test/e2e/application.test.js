@@ -74,7 +74,7 @@ describe('Activity Sampling App', () => {
   });
 
   describe('Recent activities', () => {
-    test.skip('Runs happy path', async () => {
+    test('Runs happy path', async () => {
       const { app, repository } = await configure();
       const activity = Activity.createTestInstance({
         timestamp: new Date(),

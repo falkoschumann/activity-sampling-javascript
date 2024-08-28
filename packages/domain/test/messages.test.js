@@ -174,7 +174,7 @@ describe('Messages', () => {
         );
       });
 
-      test.skip('Does not fail when notes is missing', () => {
+      test('Does not fail when notes is missing', () => {
         const dto = LogActivity.create({
           timestamp: '2024-04-02T11:35Z',
           duration: 'PT30M',
@@ -420,7 +420,7 @@ describe('Messages', () => {
 
   describe('Activity', () => {
     describe('Validate', () => {
-      test.skip('Validates successfully only with required properties', () => {
+      test('Validates successfully only with required properties', () => {
         const dto = Activity.create({
           timestamp: '2024-06-20T10:30Z',
           duration: 'PT30M',
@@ -596,7 +596,7 @@ describe('Messages', () => {
         );
       });
 
-      test.skip('Assumes notes as empty string, if notes is missing', () => {
+      test('Assumes notes as empty string, if notes is missing', () => {
         const dto = Activity.create({
           timestamp: '2024-04-02T11:35Z',
           duration: 'PT30M',
