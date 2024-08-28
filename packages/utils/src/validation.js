@@ -7,6 +7,11 @@ export class ValidationError extends Error {
   }
 }
 
+/** @returns {never} */
+export function ensureUnreachable(message = 'Unreachable code executed.') {
+  throw new Error(message);
+}
+
 export function ensureThat(
   value,
   predicate,
@@ -75,8 +80,19 @@ export function ensureItemType(array, expectedType, { name = 'value' } = {}) {
 }
 
 export function ensureArguments(args, expectedTypes = [], names = []) {
+  ensureThat(
+    expectedTypes,
+    Array.isArray,
+    'The expectedTypes must be an array.',
+  );
+  ensureThat(names, Array.isArray, 'The names must be an array.');
+  if (args.length > expectedTypes.length) {
+    throw new ValidationError(
+      `Too many arguments: expected ${expectedTypes.length}, but got ${args.length}.`,
+    );
+  }
   expectedTypes.forEach((expectedType, index) => {
-    const name = names[index] ? names[index] : `Argument #${index + 1}`;
+    const name = names[index] ? names[index] : `argument #${index + 1}`;
     ensureType(args[index], expectedType, { name });
   });
 }
@@ -170,6 +186,8 @@ function checkType(value, expectedType, { name = 'value' } = {}) {
 
     return { value };
   }
+
+  ensureUnreachable();
 }
 
 function getType(value) {
@@ -201,13 +219,13 @@ function getType(value) {
     case 'object':
       return Object;
     default:
-      throw new Error('Unknown typeof value: ' + typeof value);
+      ensureUnreachable(`Unknown typeof value: ${typeof value}.`);
   }
 }
 
 function describe(type, { articles = false } = {}) {
   if (Array.isArray(type)) {
-    const types = type.map((t) => describe(t));
+    const types = type.map((t) => describe(t, { articles }));
     if (types.length <= 2) {
       return types.join(' or ');
     } else {

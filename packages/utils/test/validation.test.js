@@ -7,10 +7,19 @@ import {
   ensureNonEmpty,
   ensureThat,
   ensureType,
+  ensureUnreachable,
 } from '../src/validation.js';
 import { Enum } from '../src/enum.js';
 
 describe('Validation', () => {
+  describe('Ensure unreachable', () => {
+    test('Fails always', () => {
+      expect(() => {
+        ensureUnreachable();
+      }).toThrow(/Unreachable code executed\./);
+    });
+  });
+
   describe('Ensure that', () => {
     test('Returns value when predicate is successful', () => {
       const result = ensureThat(1, (v) => v > 0);
@@ -467,9 +476,15 @@ describe('Validation', () => {
         expect(result).toBe(42);
       });
 
-      test('Fails when value is not one of the expected types', () => {
+      test('Fails when value is not one of the expected 2 types', () => {
         expect(() => ensureType(true, [String, Number])).toThrow(
-          /The value must be string or number, but it was a boolean\./,
+          /The value must be a string or a number, but it was a boolean\./,
+        );
+      });
+
+      test('Fails when value is not one of the expected 3 types', () => {
+        expect(() => ensureType(true, [String, Number, undefined])).toThrow(
+          /The value must be a string, a number, or undefined, but it was a boolean\./,
         );
       });
     });
@@ -489,13 +504,13 @@ describe('Validation', () => {
 
       test('Fails when parameter is not the expected type', () => {
         expect(() => ensureType(123, [String, undefined])).toThrow(
-          /The value must be string or undefined, but it was a number\./,
+          /The value must be a string or undefined, but it was a number\./,
         );
       });
 
       test('Fails when parameter is null', () => {
         expect(() => ensureType(null, [String, undefined])).toThrow(
-          /The value must be string or undefined, but it was null\./,
+          /The value must be a string or undefined, but it was null\./,
         );
       });
     });
@@ -507,6 +522,12 @@ describe('Validation', () => {
       const result = ensureItemType(names, String);
 
       expect(result).toBe(names);
+    });
+
+    test('Fails when value is not an array', () => {
+      expect(() => ensureItemType('John', String, { name: 'names' })).toThrow(
+        /The names must be an array, but it was a string\./,
+      );
     });
 
     test('Fails when items does not have the expected type', () => {
@@ -523,10 +544,34 @@ describe('Validation', () => {
       ).not.toThrow();
     });
 
-    test('Fails when an argument does not match', () => {
+    test('Fails when too few arguments', () => {
+      expect(() => ensureArguments(['John'])).toThrow(
+        /Too many arguments: expected 0, but got 1./,
+      );
+    });
+
+    test('Fails when expected types is not an array', () => {
+      expect(() => ensureArguments(['John'], {})).toThrow(
+        /The expectedTypes must be an array./,
+      );
+    });
+
+    test('Fails when names is not an array', () => {
+      expect(() => ensureArguments(['John'], [], '')).toThrow(
+        /The names must be an array./,
+      );
+    });
+
+    test('Fails with argument name when an argument does not match', () => {
       expect(() =>
         ensureArguments(['123', 'John'], [Number, String], ['id', 'name']),
       ).toThrow(/The id must be a number, but it was a string\./);
+    });
+
+    test('Fails with argument number when an argument does not match', () => {
+      expect(() => ensureArguments([123, 456], [Number, String])).toThrow(
+        /The argument #2 must be a string, but it was a number\./,
+      );
     });
   });
 });
