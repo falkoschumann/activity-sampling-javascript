@@ -1,5 +1,6 @@
 import { Duration } from '@activity-sampling/utils';
 import { RecentActivities, TimeSummary } from '@activity-sampling/domain';
+import { ensureNonEmpty, ensureType } from '../../../utils/src/validation.js';
 
 export function determineRecentActivities(activities, today = new Date()) {
   const workingDays = determineWorkingDays(activities, today);
@@ -168,5 +169,25 @@ export class ActivityLogged {
     this.project = project;
     this.task = task;
     this.notes = notes;
+  }
+
+  validate() {
+    const dto = ensureType(
+      this,
+      {
+        timestamp: Date,
+        duration: Duration,
+        client: String,
+        project: String,
+        task: String,
+        notes: [String, undefined],
+      },
+      { name: 'ActivityLogged' },
+    );
+    ensureNonEmpty(this.client, { name: 'ActivityLogged.client' });
+    ensureNonEmpty(this.project, { name: 'ActivityLogged.project' });
+    ensureNonEmpty(this.task, { name: 'ActivityLogged.task' });
+    ensureNonEmpty(this.notes, { name: 'ActivityLogged.notes' });
+    return ActivityLogged.create(dto);
   }
 }

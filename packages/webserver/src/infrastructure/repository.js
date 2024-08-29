@@ -3,12 +3,7 @@ import path from 'node:path';
 import stream from 'node:stream';
 import * as csv from 'csv';
 
-import {
-  Duration,
-  ensureNonEmpty,
-  ensureType,
-  OutputTracker,
-} from '@activity-sampling/utils';
+import { Duration, OutputTracker } from '@activity-sampling/utils';
 
 import { ActivityLogged } from '../domain/domain.js';
 
@@ -62,7 +57,14 @@ export class Repository extends EventTarget {
         .createReadStream({ encoding: 'utf-8' })
         .pipe(csv.parse({ ...RFC4180, columns: true }));
       for await (const record of parser) {
-        var dto = ActivityLoggedDto.create(record);
+        var dto = ActivityLogged.create({
+          timestamp: record.Timestamp,
+          duration: record.Duration,
+          client: record.Client,
+          project: record.Project,
+          task: record.Task,
+          notes: record.Notes,
+        });
         var event = dto.validate();
         yield event;
       }
@@ -76,7 +78,14 @@ export class Repository extends EventTarget {
   }
 
   async record(/** @type {ActivityLogged} */ event) {
-    const dto = ActivityLoggedDto.fromDomain(event);
+    const dto = {
+      Timestamp: event.timestamp.toJSON(),
+      Duration: event.duration.toJSON(),
+      Client: event.client,
+      Project: event.project,
+      Task: event.task,
+      Notes: event.notes,
+    };
     const csv = await this.#stringifyCsv(dto);
     await this.#writeFile(csv);
     this.dispatchEvent(
@@ -110,73 +119,6 @@ export class Repository extends EventTarget {
     await this.#fs.writeFile(this.#filename, string, {
       encoding: 'utf-8',
       flag: 'a',
-    });
-  }
-}
-
-export class ActivityLoggedDto {
-  static create({ Timestamp, Duration, Client, Project, Task, Notes }) {
-    return new ActivityLoggedDto(
-      Timestamp,
-      Duration,
-      Client,
-      Project,
-      Task,
-      Notes,
-    );
-  }
-
-  static fromDomain(/** @type {ActivityLogged} */ event) {
-    return ActivityLoggedDto.create({
-      Timestamp: event.timestamp.toISOString(),
-      Duration: event.duration.toISOString(),
-      Client: event.client,
-      Project: event.project,
-      Task: event.task,
-      Notes: event.notes,
-    });
-  }
-
-  constructor(
-    /** @type {string} */ Timestamp,
-    /** @type {string} */ Duration,
-    /** @type {string} */ Client,
-    /** @type {string} */ Project,
-    /** @type {string} */ Task,
-    /** @type {string?} */ Notes,
-  ) {
-    this.Timestamp = Timestamp;
-    this.Duration = Duration;
-    this.Client = Client;
-    this.Project = Project;
-    this.Task = Task;
-    this.Notes = Notes;
-  }
-
-  validate() {
-    const dto = ensureType(
-      this,
-      {
-        Timestamp: Date,
-        Duration: Duration,
-        Client: String,
-        Project: String,
-        Task: String,
-        Notes: [String, undefined],
-      },
-      { name: 'ActivityLogged' },
-    );
-    ensureNonEmpty(this.Client, { name: 'ActivityLogged.Client' });
-    ensureNonEmpty(this.Project, { name: 'ActivityLogged.Project' });
-    ensureNonEmpty(this.Task, { name: 'ActivityLogged.Task' });
-    ensureNonEmpty(this.Notes, { name: 'ActivityLogged.Notes' });
-    return ActivityLogged.create({
-      timestamp: dto.Timestamp,
-      duration: dto.Duration,
-      client: dto.Client,
-      project: dto.Project,
-      task: dto.Task,
-      notes: dto.Notes,
     });
   }
 }

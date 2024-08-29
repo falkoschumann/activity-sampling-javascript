@@ -5,9 +5,186 @@ import { Activity } from '@activity-sampling/domain';
 import {
   determineTimeSummary,
   determineWorkingDays,
+  ActivityLogged,
 } from '../../src/domain/domain.js';
 
 describe('Domain', () => {
+  describe('Activity logged', () => {
+    describe('Validate', () => {
+      test('Fails when timestamp is missing', () => {
+        const dto = ActivityLogged.create({
+          duration: 'PT30M',
+          client: 'Muspellheim',
+          project: 'Activity Sampling',
+          task: 'Recent Activities',
+          notes: 'Show my recent activities',
+        });
+
+        expect(() => dto.validate()).toThrow(
+          /The ActivityLogged\.timestamp must be a valid Date, but it was undefined\./,
+        );
+      });
+
+      test('Fails when timestamp is invalid', () => {
+        const dto = ActivityLogged.create({
+          timestamp: '2024-13-02T11:35Z',
+          duration: 'PT30M',
+          client: 'Muspellheim',
+          project: 'Activity Sampling',
+          task: 'Recent Activities',
+          notes: 'Show my recent activities',
+        });
+
+        expect(() => dto.validate()).toThrow(
+          /The ActivityLogged\.timestamp must be a valid Date, but it was a string: "2024-13-02T11:35Z"\./,
+        );
+      });
+
+      test('Fails when duration is missing', () => {
+        const dto = ActivityLogged.create({
+          timestamp: '2024-04-02T11:35Z',
+          client: 'Muspellheim',
+          project: 'Activity Sampling',
+          task: 'Recent Activities',
+          notes: 'Show my recent activities',
+        });
+
+        expect(() => dto.validate()).toThrow(
+          /The ActivityLogged\.duration must be a valid Duration, but it was undefined\./,
+        );
+      });
+
+      test('Fails when duration is invalid', () => {
+        const dto = ActivityLogged.create({
+          timestamp: '2024-04-02T11:35Z',
+          duration: '30m',
+          client: 'Muspellheim',
+          project: 'Activity Sampling',
+          task: 'Recent Activities',
+          notes: 'Show my recent activities',
+        });
+
+        expect(() => dto.validate()).toThrow(
+          /The ActivityLogged\.duration must be a valid Duration, but it was a string: "30m"\./,
+        );
+      });
+
+      test('Fails when client is missing', () => {
+        const dto = ActivityLogged.create({
+          timestamp: '2024-04-02T11:35Z',
+          duration: 'PT30M',
+          project: 'Activity Sampling',
+          task: 'Recent Activities',
+          notes: 'Show my recent activities',
+        });
+
+        expect(() => dto.validate()).toThrow(
+          /The ActivityLogged\.client must be a string, but it was undefined\./,
+        );
+      });
+
+      test('Fails when client is empty', () => {
+        const dto = ActivityLogged.create({
+          timestamp: '2024-04-02T11:35Z',
+          duration: 'PT30M',
+          client: '',
+          project: 'Activity Sampling',
+          task: 'Recent Activities',
+          notes: 'Show my recent activities',
+        });
+
+        expect(() => dto.validate()).toThrow(
+          /The ActivityLogged\.client must not be empty, but it was ""\./,
+        );
+      });
+
+      test('Fails when project is missing', () => {
+        const dto = ActivityLogged.create({
+          timestamp: '2024-04-02T11:35Z',
+          duration: 'PT30M',
+          client: 'Muspellheim',
+          task: 'Recent Activities',
+          notes: 'Show my recent activities',
+        });
+
+        expect(() => dto.validate()).toThrow(
+          /The ActivityLogged\.project must be a string, but it was undefined\./,
+        );
+      });
+
+      test('Fails when project is empty', () => {
+        const dto = ActivityLogged.create({
+          timestamp: '2024-04-02T11:35Z',
+          duration: 'PT30M',
+          client: 'Muspellheim',
+          project: '',
+          task: 'Recent Activities',
+          notes: 'Show my recent activities',
+        });
+
+        expect(() => dto.validate()).toThrow(
+          /The ActivityLogged\.project must not be empty, but it was ""\./,
+        );
+      });
+
+      test('Fails when task is missing', () => {
+        const dto = ActivityLogged.create({
+          timestamp: '2024-04-02T11:35Z',
+          duration: 'PT30M',
+          client: 'Muspellheim',
+          project: 'Activity Sampling',
+          notes: 'Show my recent activities',
+        });
+
+        expect(() => dto.validate()).toThrow(
+          /The ActivityLogged\.task must be a string, but it was undefined\./,
+        );
+      });
+
+      test('Fails when task is empty', () => {
+        const dto = ActivityLogged.create({
+          timestamp: '2024-04-02T11:35Z',
+          duration: 'PT30M',
+          client: 'Muspellheim',
+          project: 'Activity Sampling',
+          task: '',
+          notes: 'Show my recent activities',
+        });
+
+        expect(() => dto.validate()).toThrow(
+          /The ActivityLogged\.task must not be empty, but it was ""\./,
+        );
+      });
+
+      test('Does not fail when notes is missing', () => {
+        const dto = ActivityLogged.create({
+          timestamp: '2024-04-02T11:35Z',
+          duration: 'PT30M',
+          client: 'Muspellheim',
+          project: 'Activity Sampling',
+          task: 'Recent Activities',
+        });
+
+        expect(() => dto.validate()).not.toThrow();
+      });
+
+      test('Fails when notes is empty', () => {
+        const dto = ActivityLogged.create({
+          timestamp: '2024-04-02T11:35Z',
+          duration: 'PT30M',
+          client: 'Muspellheim',
+          project: 'Activity Sampling',
+          task: 'Recent Activities',
+          notes: '',
+        });
+
+        expect(() => dto.validate()).toThrow(
+          /The ActivityLogged\.notes must not be empty, but it was ""\./,
+        );
+      });
+    });
+  });
+
   describe('Recent activities', () => {
     describe('Working days', () => {
       test('Returns empty list', () => {
