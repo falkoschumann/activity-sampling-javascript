@@ -10,6 +10,7 @@
   "main": ".vite/build/main.js",
   "scripts": {
     "start": "electron-forge start",
+    "test": "NODE_OPTIONS=\"--experimental-global-customevent --experimental-vm-modules\" npx jest",
     "build": "npm run build-darwin && npm run build-linux && npm run build-win32",
     "build-darwin": "electron-forge make --platform=darwin --arch=x64",
     "build-linux": "electron-forge make --platform=linux --arch=x64",

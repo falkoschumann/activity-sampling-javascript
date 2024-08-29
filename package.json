@@ -9,7 +9,7 @@
     "packages/*"
   ],
   "scripts": {
-    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest",
+    "test": "NODE_OPTIONS=\"--experimental-global-customevent --experimental-vm-modules\" npx jest",
     "build": "npm run build --workspaces --if-present"
   },
   "devDependencies": {
