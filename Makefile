@@ -31,41 +31,44 @@ format:
 start: build
 	npm run start --workspace @activity-sampling/webserver
 
-start-desktop:
+start-desktop: prepare
 	npm run start --workspace @activity-sampling/desktop
 
-dev:
+dev: prepare
 	npx concurrently \
 		"npm run dev --workspace @activity-sampling/webserver" \
 		"npm run dev --workspace @activity-sampling/webclient" \
 		"npm run dev --workspace @activity-sampling/desktop"
 
-test:
+test: prepare
 	npm test
 
-unit-tests:
+unit-tests: prepare
 	npx jest --testPathPattern=".*\/unit\/.*"
 
 integration-tests:
 	npx jest --testPathPattern=".*\/integration\/.*"
 
-e2e-tests:
+e2e-tests: prepare
 	npx jest --testPathPattern=".*\/e2e\/.*"
 
-watch:
+watch: prepare
 	npx jest --watch
 
-coverage:
+coverage: prepare
 	npx jest --coverage
 
-build: version
+build: prepare
+	npm run build
+
+prepare: version
 	@if [ -n "$(CI)" ] ; then \
 		echo "CI detected, run npm ci"; \
 		npm ci; \
 	else \
 		npm install; \
 	fi
-	npm run build
+
 
 version:
 	@echo "Use Node.js $(shell node --version)"
@@ -73,4 +76,4 @@ version:
 
 .PHONY: all clean distclean dist check format start start-desktop dev \
 	test unit-tests integration-tests e2e-tests watch coverage \
-	build version
+	build prepare version
