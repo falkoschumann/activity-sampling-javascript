@@ -56,11 +56,9 @@ export class NotificationAdapter extends EventTarget {
       await this.close();
     }
 
-    console.log('NotificationAdapter.show');
     await new Promise((resolve, reject) => {
       this.#notification = new this.#notificationConstructor(title, options);
       this.#notification.addEventListener('show', () => {
-        console.log('NotificationAdapter.shown');
         this.#isVisible = true;
         resolve();
       });
@@ -69,7 +67,6 @@ export class NotificationAdapter extends EventTarget {
         this.#notification.close();
       });
       this.#notification.addEventListener('close', () => {
-        console.log('NotificationAdapter.closed 1');
         this.#isVisible = false;
         this.#notification = null;
       });
@@ -90,11 +87,9 @@ export class NotificationAdapter extends EventTarget {
       return;
     }
 
-    console.log('NotificationAdapter.close');
     const title = this.#notification.title;
     await new Promise((resolve) => {
       this.#notification.addEventListener('close', () => {
-        console.log('NotificationAdapter.closed 2');
         this.#isVisible = false;
         this.#notification = null;
         resolve();
@@ -128,12 +123,10 @@ class NotificationStub extends EventTarget {
   constructor(title) {
     super();
     this.title = title;
-    console.log('NotificationStub created:', title);
     setTimeout(() => this.dispatchEvent(new Event('show')));
   }
 
   close() {
-    console.log('NotificationStub closed:', this.title);
     setTimeout(() => this.dispatchEvent(new Event('close')));
   }
 }
