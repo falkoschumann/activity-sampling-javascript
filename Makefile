@@ -3,7 +3,7 @@ export DEV_PORT=8080
 
 # TODO remove --experimental-global-customevent when Node.js 18 must not be supported anymore
 # TODO remove --experimental-vm-modules when Jest supports ESM
-export NODE_OPTIONS=--experimental-global-customevent --experimental-vm-modules --no-warnings=ExperimentalWarning
+export NODE_OPTIONS=--experimental-global-customevent --experimental-vm-modules
 export NPM_CONFIG_YES=true
 
 all: dist check
@@ -31,7 +31,7 @@ format:
 start: build
 	npm run start --workspace @activity-sampling/webserver
 
-start-desktop: build
+start-desktop:
 	npm run start --workspace @activity-sampling/desktop
 
 dev:
@@ -40,22 +40,22 @@ dev:
 		"npm run dev --workspace @activity-sampling/webclient" \
 		"npm run dev --workspace @activity-sampling/desktop"
 
-test: build
+test:
 	npm test
 
-unit-tests: build
+unit-tests:
 	npx jest --testPathPattern=".*\/unit\/.*"
 
-integration-tests: build
+integration-tests:
 	npx jest --testPathPattern=".*\/integration\/.*"
 
-e2e-tests: build
+e2e-tests:
 	npx jest --testPathPattern=".*\/e2e\/.*"
 
-watch: build
+watch:
 	npx jest --watch
 
-coverage: build
+coverage:
 	npx jest --coverage
 
 build: version

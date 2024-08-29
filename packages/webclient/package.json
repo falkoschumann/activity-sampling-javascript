@@ -9,7 +9,7 @@
   "type": "module",
   "scripts": {
     "start": "vite preview",
-    "test": "npx jest",
+    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest",
     "build": "vite build",
     "dev": "vite"
   },
