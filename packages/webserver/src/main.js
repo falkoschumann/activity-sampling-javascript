@@ -1,3 +1,4 @@
+import './polyfills.js';
 import { Application } from './ui/application.js';
 
 // TODO Configure repositpory's filename

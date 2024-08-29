@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import { describe, expect, test } from '@jest/globals';
 
 import { Duration } from '@activity-sampling/utils';
+
 import { ActivityLogged } from '../../src/domain/domain.js';
 import {
   ActivityLoggedDto,

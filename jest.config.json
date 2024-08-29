@@ -1,7 +1,0 @@
-{
-  "globalSetup": "./jest.global-setup.js",
-  "projects": ["<rootDir>/packages/*"],
-  "transform": {},
-  "verbose": true,
-  "watchPathIgnorePatterns": ["<rootDir>/packages/*/data/"]
-}
