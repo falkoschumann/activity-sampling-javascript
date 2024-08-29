@@ -1,1 +1,1 @@
-import './ui/activity-sampling.js';
+import '@activity-sampling/webcomponents';

@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Design System</title>
-    <link rel="stylesheet" href="../fonts/all.css" />
+    <link rel="stylesheet" href="../src/ui/style/fonts/all.css" />
     <link rel="stylesheet" href="../src/ui/style/reset.css" />
     <link rel="stylesheet" href="../src/ui/style/fragments.css" />
     <link rel="stylesheet" href="../src/ui/style/components.css" />
@@ -207,17 +207,17 @@
       <h2>Form Controls</h2>
       <h3>Text Field</h3>
       <div class="h-stack wrapped items-center gap-100">
-        <input type="text" />
-        <input type="text" placeholder="Placeholder" />
-        <input type="text" value="Value" />
-        <input type="text" value="Focused" class="focused" />
-        <input type="text" disabled value="Disabled" />
-        <input type="text" value="Invalid" pattern="[0-9]+" />
+        <input id="text-default" type="text" />
+        <input id="text-placeholder" type="text" placeholder="Placeholder" />
+        <input id="text-value" type="text" value="Value" />
+        <input id="text-focused" type="text" value="Focused" class="focused" />
+        <input id="text-disabled" type="text" disabled value="Disabled" />
+        <input id="text-invalid" type="text" value="Invalid" pattern="[0-9]+" />
       </div>
       <h3>Dropdown</h3>
       <div class="h-stack wrapped items-center gap-100">
         <div class="select-wrapper">
-          <select>
+          <select id="select-default">
             <optgroup label="Group">
               <option selected>Value 1</option>
               <option>Value 2</option>
@@ -227,7 +227,7 @@
           <span class="focus"></span>
         </div>
         <div class="select-wrapper">
-          <select class="focused">
+          <select id="select-focused" class="focused">
             <optgroup label="Group">
               <option selected>Focused 1</option>
               <option>Focused 2</option>
@@ -237,7 +237,7 @@
           <span class="focus"></span>
         </div>
         <div class="select-wrapper select-disabled">
-          <select disabled>
+          <select id="select-disabled" disabled>
             <optgroup label="Group">
               <option selected>Disabled 1</option>
               <option>Disabled 2</option>
@@ -247,7 +247,7 @@
           <span class="focus"></span>
         </div>
         <div class="select-wrapper icon-only">
-          <select>
+          <select id="select-icon">
             <optgroup label="Group">
               <option selected>Value 1</option>
               <option>Value 2</option>
@@ -278,8 +278,8 @@
           <input id="key1" name="key1" type="text" />
         </li>
         <li>
-          <label for="key1">Optional</label>
-          <input id="key1" name="key1" type="text" />
+          <label for="key2">Optional</label>
+          <input id="key2" name="key1" type="text" />
         </li>
       </ul>
     </section>

@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(() => {
   const config = {
     build: {
       rollupOptions: {
@@ -19,10 +19,6 @@ export default defineConfig(({ mode }) => {
       },
     },
   };
-
-  if (mode === 'development') {
-    config.build.rollupOptions.input.designsystem = 'design-system/index.html';
-  }
 
   return config;
 });

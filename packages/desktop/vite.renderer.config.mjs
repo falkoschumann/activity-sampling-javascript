@@ -21,5 +21,12 @@ export default defineConfig((env) => {
       preserveSymlinks: true,
     },
     clearScreen: false,
+    server: {
+      proxy: {
+        '/api': {
+          target: `http://localhost:${process.env.PORT ?? 3000}`,
+        },
+      },
+    },
   };
 });

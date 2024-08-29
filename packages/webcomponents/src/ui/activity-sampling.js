@@ -4,6 +4,7 @@ import { Component, Container } from '@activity-sampling/utils/src/browser.js';
 
 import { Services } from '../application/services.js';
 import { store } from '../application/store.js';
+import './style/fonts/all.css';
 import './style/reset.css';
 import './style/fragments.css';
 import './style/components.css';

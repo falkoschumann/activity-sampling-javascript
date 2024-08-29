@@ -1,5 +1,5 @@
 {
-  "name": "@activity-sampling/utils",
+  "name": "@activity-sampling/webcomponents",
   "version": "0.1.0",
   "author": "Falko Schumann",
   "license": "MIT",
@@ -11,8 +11,10 @@
   "scripts": {
     "test": "NODE_OPTIONS=--experimental-vm-modules npx jest"
   },
-  "peerDependencies": {
-    "lit-html": "^3.2.0"
+  "dependencies": {
+    "@activity-sampling/domain": "0.1.0",
+    "@activity-sampling/utils": "0.1.0",
+    "lit-html": "3.2.0"
   },
   "devDependencies": {
     "@jest/globals": "29.7.0",
