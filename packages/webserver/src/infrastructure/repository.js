@@ -1,5 +1,6 @@
 import fsPromises from 'node:fs/promises';
 import path from 'node:path';
+import stream from 'node:stream';
 import * as csv from 'csv';
 
 import {
@@ -8,15 +9,13 @@ import {
   ensureType,
   OutputTracker,
 } from '@activity-sampling/utils';
+
 import { ActivityLogged } from '../domain/domain.js';
 
 const RFC4180 = {
   delimiter: ',',
   quote: '"',
   record_delimiter: '\r\n',
-  comment: '#',
-  comment_no_infix: true,
-  skip_empty_lines: true,
   eof: true,
   cast: (value, { quoting }) => (value === '' && !quoting ? undefined : value),
 };
@@ -57,8 +56,7 @@ export class Repository extends EventTarget {
 
   async replay() {
     // TODO Return generator instead of array
-    const string = await this.#readFile();
-    return this.#parseCsv(string);
+    return Array.fromAsync(this.#parseCsv());
   }
 
   async record(/** @type {ActivityLogged} */ event) {
@@ -74,28 +72,25 @@ export class Repository extends EventTarget {
     return new OutputTracker(this, EVENT_RECORDED_EVENT);
   }
 
-  async #readFile() {
+  async *#parseCsv() {
+    let parser;
     try {
-      return await this.#fs.readFile(this.#filename, { encoding: 'utf-8' });
-    } catch (error) {
-      if (error.code === 'ENOENT') {
-        // file does not exist
-        return '';
+      const fileHandle = await this.#fs.open(this.#filename, 'r');
+      parser = fileHandle
+        .createReadStream({ encoding: 'utf-8' })
+        .pipe(csv.parse({ ...RFC4180, columns: true }));
+      for await (const record of parser) {
+        var dto = ActivityLoggedDto.create(record);
+        var event = dto.validate();
+        yield event;
       }
-
-      throw error;
+    } catch (error) {
+      if (error.code !== 'ENOENT') {
+        throw error;
+      }
+    } finally {
+      parser?.end();
     }
-  }
-
-  async #parseCsv(string) {
-    const parser = csv.parse(string, { ...RFC4180, columns: true });
-    const events = [];
-    for await (const record of parser) {
-      var dto = ActivityLoggedDto.create(record);
-      var event = dto.validate();
-      events.push(event);
-    }
-    return events;
   }
 
   async #stringifyCsv(dto) {
@@ -212,28 +207,37 @@ function createFsStub(events) {
       return Promise.resolve();
     },
 
-    async readFile() {
-      const stream = csv.stringify(dtos, {
-        ...RFC4180,
-        header: true,
-        columns: [
-          'Timestamp',
-          'Duration',
-          'Client',
-          'Project',
-          'Task',
-          'Notes',
-        ],
-      });
-      let data = '';
-      for await (const chunk of stream) {
-        data += chunk;
-      }
-      return data;
+    async open() {
+      return new FileHandleStub(dtos);
     },
 
     writeFile() {
       return Promise.resolve();
     },
   };
+}
+
+class FileHandleStub {
+  #dtos;
+
+  constructor(dtos) {
+    this.#dtos = dtos;
+  }
+
+  createReadStream() {
+    const data = csv.stringify(this.#dtos, { ...RFC4180, header: true });
+    return stream.Readable.from(data, { encoding: 'utf-8' });
+  }
+
+  createWriteStream() {
+    return new stream.Writable({
+      write(chunk, encoding, callback) {
+        callback();
+      },
+    });
+  }
+
+  close() {
+    return Promise.resolve();
+  }
 }
