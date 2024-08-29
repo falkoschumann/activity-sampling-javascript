@@ -54,25 +54,7 @@ export class Repository extends EventTarget {
     this.#fs = fs;
   }
 
-  async replay() {
-    // TODO Return generator instead of array
-    return Array.fromAsync(this.#parseCsv());
-  }
-
-  async record(/** @type {ActivityLogged} */ event) {
-    const dto = ActivityLoggedDto.fromDomain(event);
-    const csv = await this.#stringifyCsv(dto);
-    await this.#writeFile(csv);
-    this.dispatchEvent(
-      new CustomEvent(EVENT_RECORDED_EVENT, { detail: event }),
-    );
-  }
-
-  trackEventsRecorded() {
-    return new OutputTracker(this, EVENT_RECORDED_EVENT);
-  }
-
-  async *#parseCsv() {
+  async *replay() {
     let parser;
     try {
       const fileHandle = await this.#fs.open(this.#filename, 'r');
@@ -91,6 +73,19 @@ export class Repository extends EventTarget {
     } finally {
       parser?.end();
     }
+  }
+
+  async record(/** @type {ActivityLogged} */ event) {
+    const dto = ActivityLoggedDto.fromDomain(event);
+    const csv = await this.#stringifyCsv(dto);
+    await this.#writeFile(csv);
+    this.dispatchEvent(
+      new CustomEvent(EVENT_RECORDED_EVENT, { detail: event }),
+    );
+  }
+
+  trackEventsRecorded() {
+    return new OutputTracker(this, EVENT_RECORDED_EVENT);
   }
 
   async #stringifyCsv(dto) {

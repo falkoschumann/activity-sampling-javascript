@@ -1,14 +1,13 @@
 import js from '@eslint/js';
 import globals from 'globals';
 
-/** @type { import("eslint").Linter.FlatConfig[] } */
+/** @type { import("eslint").Linter.Config[] } */
 export default [
   js.configs.recommended,
   {
     languageOptions: {
-      ecmaVersion: 2022,
+      ecmaVersion: 2024,
       globals: {
-        ...globals.es2017,
         ...globals.node,
         ...globals.browser,
         //...globals.serviceworker,

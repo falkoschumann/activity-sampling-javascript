@@ -47,7 +47,7 @@ describe('Activity Sampling App', () => {
         .send(LogActivity.createTestInstance());
 
       expect(response.status).toBe(204);
-      const activities = await repository.replay();
+      const activities = await Array.fromAsync(repository.replay());
       expect(activities).toEqual([LogActivity.createTestInstance()]);
     });
 

@@ -25,7 +25,7 @@ export class Services {
   }
 
   async selectRecentActivities(/** @type {RecentActivitiesQuery} */ query) {
-    const activities = await this.repository.replay();
+    const activities = await Array.fromAsync(this.repository.replay());
     return determineRecentActivities(activities, query.today);
   }
 }

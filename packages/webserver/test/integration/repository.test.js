@@ -14,7 +14,7 @@ describe('Repository', () => {
     test('Returns list of events', async () => {
       const { repository } = await configure();
 
-      const events = await repository.replay();
+      const events = await Array.fromAsync(repository.replay());
 
       expect(events).toEqual([
         {
@@ -33,7 +33,7 @@ describe('Repository', () => {
         filename: '../data/non-existent.csv',
       });
 
-      const events = await repository.replay();
+      const events = await Array.fromAsync(repository.replay());
 
       expect(events).toEqual([]);
     });
@@ -43,7 +43,7 @@ describe('Repository', () => {
         filename: '../data/corrupt.csv',
       });
 
-      const events = repository.replay();
+      const events = Array.fromAsync(repository.replay());
 
       await expect(events).rejects.toThrow();
     });
@@ -232,7 +232,7 @@ describe('Repository', () => {
 
       await repository.record(ActivityLogged.createTestInstance());
 
-      const events = await repository.replay();
+      const events = await Array.fromAsync(repository.replay());
       expect(events).toEqual([ActivityLogged.createTestInstance()]);
     });
 
@@ -251,7 +251,7 @@ describe('Repository', () => {
       });
       await repository.record(event2);
 
-      const events = await repository.replay();
+      const events = await Array.fromAsync(repository.replay());
       expect(events).toEqual([event1, event2]);
     });
   });
@@ -260,7 +260,7 @@ describe('Repository', () => {
     test('Replays events', async () => {
       const repository = Repository.createNull();
 
-      const events = await repository.replay();
+      const events = await Array.fromAsync(repository.replay());
 
       expect(events).toEqual([
         ActivityLogged.create({
