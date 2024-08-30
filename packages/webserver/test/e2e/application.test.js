@@ -5,8 +5,8 @@ import request from 'supertest';
 
 import { Duration, Level, Logger } from '@activity-sampling/utils';
 import { Activity, LogActivity } from '@activity-sampling/domain';
-import { Services } from '../../src/application/services.js';
-import { Repository } from '../../src/infrastructure/repository.js';
+
+import { Repository, Services } from '@activity-sampling/backend';
 import { Application } from '../../src/ui/application.js';
 
 const filename = new URL('../../data/activity-log.test.csv', import.meta.url)

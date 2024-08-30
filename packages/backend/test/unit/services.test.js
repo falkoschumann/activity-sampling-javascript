@@ -1,6 +1,7 @@
 import { describe, expect, test } from '@jest/globals';
 
 import { Duration } from '@activity-sampling/utils';
+
 import { Services } from '../../src/application/services.js';
 import { ActivityLogged } from '../../src/domain/domain.js';
 import { Repository } from '../../src/infrastructure/repository.js';

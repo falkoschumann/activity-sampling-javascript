@@ -1,9 +1,9 @@
 import express from 'express';
 
+import { Services } from '@activity-sampling/backend';
 import { Logger, ValidationError } from '@activity-sampling/utils';
 import { reply } from '@activity-sampling/utils/src/express.js';
 
-import { Services } from '../application/services.js';
 import { ActivitiesController } from './activities-controller.js';
 
 export class Application {

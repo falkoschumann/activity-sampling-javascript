@@ -4,7 +4,7 @@ import { LogActivity, RecentActivitiesQuery } from '@activity-sampling/domain';
 import { reply, runSafe } from '@activity-sampling/utils/src/express.js';
 
 /**
- * @import { Services } from '../application/services.js'
+ * @import { Services } from '@activity-sampling/backend'
  */
 
 export class ActivitiesController {
