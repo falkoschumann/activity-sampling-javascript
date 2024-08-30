@@ -34,6 +34,9 @@ start: build
 start-desktop: prepare
 	npm run start --workspace @activity-sampling/desktop
 
+start-desktop2: prepare
+	npm run start --workspace @activity-sampling/desktop2
+
 # TODO Do not run desktop in dev mode, because hot reload is not working
 dev: prepare
 	npx concurrently \
