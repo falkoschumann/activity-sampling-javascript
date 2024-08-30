@@ -1,1 +1,1 @@
-import '@activity-sampling/webcomponents';
+import '../../frontend/src';

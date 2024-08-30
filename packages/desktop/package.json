@@ -18,7 +18,7 @@
     "dev": "electron-forge start"
   },
   "dependencies": {
-    "@activity-sampling/webcomponents": "0.1.0"
+    "@activity-sampling/frontend": "0.1.0"
   },
   "devDependencies": {
     "@electron-forge/cli": "7.4.0",
