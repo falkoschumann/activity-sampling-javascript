@@ -41,8 +41,8 @@ start-desktop2: prepare
 dev: prepare
 	npx concurrently \
 		"npm run dev --workspace @activity-sampling/webserver" \
-		"npm run dev --workspace @activity-sampling/webclient"
-#		"npm run dev --workspace @activity-sampling/desktop"
+		"npm run dev --workspace @activity-sampling/webclient" \
+		"npm run dev --workspace @activity-sampling/desktop2"
 
 test: prepare
 	npm test
