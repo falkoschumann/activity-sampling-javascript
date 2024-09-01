@@ -1,5 +1,6 @@
-appId: com.electron.app
-productName: desktop2
+appId: de.muspellheim.activitysampling
+productName: Activity Sampling
+artifactName: activitysampling-${version}-${os}-${arch}.${ext}
 directories:
   buildResources: build
 files:
@@ -11,13 +12,18 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: desktop2
-nsis:
-  artifactName: ${name}-${version}-setup.${ext}
-  shortcutName: ${productName}
-  uninstallDisplayName: ${productName}
-  createDesktopShortcut: always
+  executableName: activitysampling
+  target:
+    - target: zip
+      arch:
+        - x64
+        - arm64
 mac:
+  target:
+    - target: zip
+      arch:
+        - x64
+        - arm64
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:
     - NSCameraUsageDescription:
@@ -29,18 +35,12 @@ mac:
     - NSDownloadsFolderUsageDescription:
         Application requests access to the user's Downloads folder.
   notarize: false
-dmg:
-  artifactName: ${name}-${version}.${ext}
 linux:
+  executableName: activitysampling
   target:
-    - AppImage
-    - snap
-    - deb
-  maintainer: electronjs.org
+    - target: zip
+      arch:
+        - x64
+        - arm64
+  maintainer: muspellheim.de
   category: Utility
-appImage:
-  artifactName: ${name}-${version}.${ext}
-npmRebuild: false
-publish:
-  provider: generic
-  url: https://example.com/auto-updates

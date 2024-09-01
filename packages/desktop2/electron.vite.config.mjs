@@ -8,11 +8,6 @@ export default defineConfig({
     plugins: [externalizeDepsPlugin()],
   },
   renderer: {
-    //build: {
-    //  rollupOptions: {
-    //    external: ['node:fs/promises'],
-    //  },
-    //},
     server: {
       proxy: {
         '/api': {
