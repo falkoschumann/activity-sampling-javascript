@@ -11,7 +11,7 @@
   "scripts": {
     "start": "electron-forge start",
     "test": "NODE_OPTIONS=\"--experimental-global-customevent --experimental-vm-modules\" npx jest",
-    "build": "npm run build:linux && npm run build:mac && npm run build:win",
+    "build2": "npm run build:linux && npm run build:mac && npm run build:win",
     "build:linux": "electron-forge make --platform=linux --arch=x64",
     "build:mac": "electron-forge make --platform=darwin --arch=x64",
     "build:win": "electron-forge make --platform=win32 --arch=x64",
