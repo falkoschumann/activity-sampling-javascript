@@ -13,6 +13,7 @@ asarUnpack:
   - resources/**
 win:
   executableName: activitysampling
+  signAndEditExecutable: false
   target:
     - target: zip
       arch:
