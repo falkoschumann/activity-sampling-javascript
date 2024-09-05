@@ -11,12 +11,13 @@
   "scripts": {
     "start": "electron-vite preview",
     "build": "npm run build:linux && npm run build:mac && npm run build:win",
+    "prebuild": "electron-vite build",
     "postinstall": "electron-builder install-app-deps",
     "build:unpack": "electron-vite build && electron-builder --dir",
     "build:linux": "electron-vite build && electron-builder --linux",
     "build:mac": "electron-vite build && electron-builder --mac",
     "build:win": "electron-vite build && electron-builder --win",
-    "dev": "electron-vite dev"
+    "dev": "electron-vite dev --watch"
   },
   "dependencies": {
     "@activity-sampling/frontend": "0.1.0",
