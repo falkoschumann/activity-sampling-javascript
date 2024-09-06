@@ -1,7 +1,6 @@
 import * as path from 'node:path';
 import * as url from 'node:url';
 import { net, protocol } from 'electron';
-import { is } from '@electron-toolkit/utils';
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -14,33 +13,23 @@ protocol.registerSchemesAsPrivileged([
   },
 ]);
 
-const bundlePath = path.join(__dirname, '../renderer');
-
 export function createProtocolHandler() {
   protocol.handle('app', (req) => {
     const { host, pathname } = new URL(req.url);
     if (host === 'bundle') {
       if (pathname.startsWith('/api/')) {
-        return handleBackendRequests(req);
+        return handleBackendRequest(req);
       }
 
-      return handleFrontendRequests(req);
+      return handleFrontendRequest(req);
     }
 
     return handleNotFound();
   });
 }
 
-// HMR for renderer base on electron-vite cli.
-// Load the remote URL for development or the local html file for production.
-//if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-//  mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
-//} else {
-//  mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
-//}
-
-function handleFrontendRequests(/** @type {Request} */ request) {
-  // TODO Handle API requests locally (prod) or remotely (dev)
+function handleFrontendRequest(/** @type {Request} */ request) {
+  const bundlePath = path.join(__dirname, '../renderer');
 
   const { pathname } = new URL(request.url);
   if (pathname === '/') {
@@ -68,7 +57,7 @@ function handleFrontendRequests(/** @type {Request} */ request) {
   return net.fetch(url.pathToFileURL(pathToServe).toString());
 }
 
-function handleBackendRequests(/** @type {Request} */ request) {
+function handleBackendRequest(/** @type {Request} */ request) {
   // TODO Handle API requests locally (prod) or remotely (dev)
 
   const { pathname } = new URL(request.url);
