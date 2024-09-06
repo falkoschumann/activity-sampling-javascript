@@ -2,6 +2,9 @@ import * as path from 'node:path';
 import * as url from 'node:url';
 import { net, protocol } from 'electron';
 
+import { LogActivity } from '@activity-sampling/domain';
+import { Services } from '@activity-sampling/backend';
+
 protocol.registerSchemesAsPrivileged([
   {
     scheme: 'app',
@@ -24,7 +27,7 @@ export function createProtocolHandler() {
       return handleFrontendRequest(req);
     }
 
-    return handleNotFound();
+    return responseNotFound();
   });
 }
 
@@ -57,18 +60,33 @@ function handleFrontendRequest(/** @type {Request} */ request) {
   return net.fetch(url.pathToFileURL(pathToServe).toString());
 }
 
-function handleBackendRequest(/** @type {Request} */ request) {
-  // TODO Handle API requests locally (prod) or remotely (dev)
+const services = Services.create();
 
-  const { pathname } = new URL(request.url);
-  return net.fetch(`http://localhost:${process.env.PORT ?? 3000}${pathname}`, {
-    method: request.method,
-    headers: request.headers,
-    body: request.body,
-  });
+async function handleBackendRequest(/** @type {Request} */ request) {
+  const { pathname, search } = new URL(request.url);
+
+  if (request.method === 'POST' && pathname.startsWith('/api/log-activity')) {
+    const dto = await request.json();
+    const logActivity = LogActivity.create(dto).validate();
+    await services.logActivity(logActivity);
+    return new Response(null, { status: 204 });
+  }
+
+  if (
+    request.method === 'GET' &&
+    pathname.startsWith('/api/recent-activities')
+  ) {
+    const { today } = search;
+    const activities = await services.selectRecentActivities({ today });
+    return new Response(JSON.stringify(activities), {
+      headers: { 'content-type': 'application/json' },
+    });
+  }
+
+  return responseNotFound();
 }
 
-function handleNotFound() {
+function responseNotFound() {
   return new Response('Not Found', {
     status: 404,
     headers: { 'content-type': 'text/plain' },

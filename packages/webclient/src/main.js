@@ -1,1 +1,1 @@
-import '../../frontend/src';
+import '@activity-sampling/frontend';
