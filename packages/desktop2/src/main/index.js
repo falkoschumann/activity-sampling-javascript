@@ -56,61 +56,42 @@ app.whenReady().then(() => {
     // TODO Handle API requests locally (prod) or remotely (dev)
 
     const { host, pathname } = new URL(req.url);
-    console.log('app protocol,', 'host:', host, 'pathname:', pathname);
     if (host === 'bundle') {
       if (pathname.startsWith('/api/')) {
-        return net.fetch('http://localhost:3000' + pathname, {
-          method: req.method,
-          headers: req.headers,
-          body: req.body,
-        });
+        return net.fetch(
+          `http://localhost:${process.env.PORT ?? 3000}${pathname}`,
+          {
+            method: req.method,
+            headers: req.headers,
+            body: req.body,
+          },
+        );
       }
 
-      const publicPath = path.join(__dirname, '../renderer');
+      const bundlePath = path.join(__dirname, '../renderer');
       if (pathname === '/') {
-        //return new Response('<h1>Hello, World!</h1>', {
-        //  headers: { 'content-type': 'text/html' },
-        //});
-        const index = path.join(publicPath, 'index.html');
-        console.log('app protocol, serve:', index);
+        const index = path.join(bundlePath, 'index.html');
         return net.fetch(url.pathToFileURL(index).toString());
       }
 
       // NB, this checks for paths that escape the bundle, e.g.
       // app://bundle/../../secret_file.txt
       const pathToServe = path.isAbsolute(pathname)
-        ? publicPath + pathname
-        : path.resolve(publicPath, pathname);
-      const relativePath = path.relative(publicPath, pathToServe);
+        ? bundlePath + pathname
+        : path.resolve(bundlePath, pathname);
+      const relativePath = path.relative(bundlePath, pathToServe);
       const isSafe =
         relativePath &&
         !relativePath.startsWith('..') &&
         !path.isAbsolute(relativePath);
-      console.log(
-        'app protocol,',
-        'working directory:',
-        publicPath,
-        'pathToServe:',
-        pathToServe,
-        ',relativePath:',
-        relativePath,
-        ',isSafe:',
-        isSafe,
-      );
       if (!isSafe) {
-        return new Response('bad', {
+        return new Response('Bad Request', {
           status: 400,
-          headers: { 'content-type': 'text/html' },
+          headers: { 'content-type': 'text/plain' },
         });
       }
 
       return net.fetch(url.pathToFileURL(pathToServe).toString());
-    } else if (host === 'api') {
-      return net.fetch('https://api.my-server.com/' + pathname, {
-        method: req.method,
-        headers: req.headers,
-        body: req.body,
-      });
     } else {
       return new Response('Not Found', {
         status: 404,
