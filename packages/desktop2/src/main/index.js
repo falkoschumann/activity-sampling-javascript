@@ -48,57 +48,75 @@ function createWindow() {
   mainWindow.loadURL('app://bundle/');
 }
 
+const bundlePath = path.join(__dirname, '../renderer');
+
+function createProtocolHandler() {
+  protocol.handle('app', (req) => {
+    const { host, pathname } = new URL(req.url);
+    if (host === 'bundle') {
+      if (pathname.startsWith('/api/')) {
+        return handleBackendRequests(req);
+      }
+
+      return handleFrontendRequests(req);
+    }
+
+    return handleNotFound();
+  });
+}
+
+function handleFrontendRequests(/** @type {Request} */ request) {
+  // TODO Handle API requests locally (prod) or remotely (dev)
+
+  const { pathname } = new URL(request.url);
+  if (pathname === '/') {
+    const index = path.join(bundlePath, 'index.html');
+    return net.fetch(url.pathToFileURL(index).toString());
+  }
+
+  // NB, this checks for paths that escape the bundle, e.g.
+  // app://bundle/../../secret_file.txt
+  const pathToServe = path.isAbsolute(pathname)
+    ? bundlePath + pathname
+    : path.resolve(bundlePath, pathname);
+  const relativePath = path.relative(bundlePath, pathToServe);
+  const isSafe =
+    relativePath &&
+    !relativePath.startsWith('..') &&
+    !path.isAbsolute(relativePath);
+  if (!isSafe) {
+    return new Response('Bad Request', {
+      status: 400,
+      headers: { 'content-type': 'text/plain' },
+    });
+  }
+
+  return net.fetch(url.pathToFileURL(pathToServe).toString());
+}
+
+function handleBackendRequests(/** @type {Request} */ request) {
+  // TODO Handle API requests locally (prod) or remotely (dev)
+
+  const { pathname } = new URL(request.url);
+  return net.fetch(`http://localhost:${process.env.PORT ?? 3000}${pathname}`, {
+    method: request.method,
+    headers: request.headers,
+    body: request.body,
+  });
+}
+
+function handleNotFound() {
+  return new Response('Not Found', {
+    status: 404,
+    headers: { 'content-type': 'text/plain' },
+  });
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  protocol.handle('app', (req) => {
-    // TODO Handle API requests locally (prod) or remotely (dev)
-
-    const { host, pathname } = new URL(req.url);
-    if (host === 'bundle') {
-      if (pathname.startsWith('/api/')) {
-        return net.fetch(
-          `http://localhost:${process.env.PORT ?? 3000}${pathname}`,
-          {
-            method: req.method,
-            headers: req.headers,
-            body: req.body,
-          },
-        );
-      }
-
-      const bundlePath = path.join(__dirname, '../renderer');
-      if (pathname === '/') {
-        const index = path.join(bundlePath, 'index.html');
-        return net.fetch(url.pathToFileURL(index).toString());
-      }
-
-      // NB, this checks for paths that escape the bundle, e.g.
-      // app://bundle/../../secret_file.txt
-      const pathToServe = path.isAbsolute(pathname)
-        ? bundlePath + pathname
-        : path.resolve(bundlePath, pathname);
-      const relativePath = path.relative(bundlePath, pathToServe);
-      const isSafe =
-        relativePath &&
-        !relativePath.startsWith('..') &&
-        !path.isAbsolute(relativePath);
-      if (!isSafe) {
-        return new Response('Bad Request', {
-          status: 400,
-          headers: { 'content-type': 'text/plain' },
-        });
-      }
-
-      return net.fetch(url.pathToFileURL(pathToServe).toString());
-    } else {
-      return new Response('Not Found', {
-        status: 404,
-        headers: { 'content-type': 'text/plain' },
-      });
-    }
-  });
+  createProtocolHandler();
 
   // Set app user model id for windows
   electronApp.setAppUserModelId('de.muspellheim.activitysampling');
@@ -133,5 +151,5 @@ app.on('window-all-closed', () => {
   }
 });
 
-// In this file you can include the rest of your app"s specific main process
+// In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
