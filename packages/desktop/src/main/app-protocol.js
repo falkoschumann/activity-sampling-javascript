@@ -1,6 +1,7 @@
 import * as path from 'node:path';
 import * as url from 'node:url';
-import { net, protocol } from 'electron';
+import { app, net, protocol } from 'electron';
+import { is } from '@electron-toolkit/utils';
 
 import { LogActivity } from '@activity-sampling/domain';
 import { Services } from '@activity-sampling/backend';
@@ -60,30 +61,41 @@ function handleFrontendRequest(/** @type {Request} */ request) {
   return net.fetch(url.pathToFileURL(pathToServe).toString());
 }
 
-const services = Services.create();
+const activityLogFile = is.dev
+  ? undefined
+  : path.resolve(app.getPath('home'), 'activity-log-electron.csv');
+const services = Services.create({ activityLogFile });
 
 async function handleBackendRequest(/** @type {Request} */ request) {
-  const { pathname, search } = new URL(request.url);
-
+  const { pathname } = new URL(request.url);
   if (request.method === 'POST' && pathname.startsWith('/api/log-activity')) {
-    const dto = await request.json();
-    const logActivity = LogActivity.create(dto).validate();
-    await services.logActivity(logActivity);
-    return new Response(null, { status: 204 });
+    return runSafe(() => logActivity(request));
   }
 
   if (
     request.method === 'GET' &&
     pathname.startsWith('/api/recent-activities')
   ) {
-    const { today } = search;
-    const activities = await services.selectRecentActivities({ today });
-    return new Response(JSON.stringify(activities), {
-      headers: { 'content-type': 'application/json' },
-    });
+    return runSafe(() => getRecentActivities(request));
   }
 
   return responseNotFound();
+}
+
+async function logActivity(/** @type {Request} */ request) {
+  const dto = await request.json();
+  const command = LogActivity.create(dto).validate();
+  await services.logActivity(command);
+  return new Response(null, { status: 204 });
+}
+
+async function getRecentActivities(/** @type {Request} */ request) {
+  const { search } = new URL(request.url);
+  const query = { today: search.today };
+  const activities = await services.selectRecentActivities(query);
+  return new Response(JSON.stringify(activities), {
+    headers: { 'content-type': 'application/json' },
+  });
 }
 
 function responseNotFound() {
@@ -91,4 +103,15 @@ function responseNotFound() {
     status: 404,
     headers: { 'content-type': 'text/plain' },
   });
+}
+
+async function runSafe(func) {
+  try {
+    return await func();
+  } catch (error) {
+    return new Response('Internal Server Error: ' + error, {
+      status: 500,
+      headers: { 'content-type': 'text/plain' },
+    });
+  }
 }

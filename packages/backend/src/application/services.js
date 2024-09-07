@@ -7,8 +7,8 @@ import { Repository } from '../infrastructure/repository.js';
  */
 
 export class Services {
-  static create() {
-    return new Services(Repository.create());
+  static create({ activityLogFile } = {}) {
+    return new Services(Repository.create({ filename: activityLogFile }));
   }
 
   static createNull() {
