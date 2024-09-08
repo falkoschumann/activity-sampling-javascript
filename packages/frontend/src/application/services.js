@@ -51,6 +51,7 @@ export class Services {
   }
 
   async logActivity() {
+    // TODO Handle request failure
     let activity = this.#store.getState().currentActivity.activity;
     activity = { ...activity, timestamp: this.#clock.date() };
     console.debug('Log activity:', activity);
@@ -60,6 +61,7 @@ export class Services {
   }
 
   async selectRecentActivities() {
+    // TODO Handle request failure
     console.debug('Select recent activities');
     const recentActivities = await this.#api.selectRecentActivities();
     this.#store.dispatch({

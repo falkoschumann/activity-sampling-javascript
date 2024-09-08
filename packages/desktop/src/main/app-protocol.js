@@ -28,7 +28,7 @@ export function createProtocolHandler() {
       return handleFrontendRequest(req);
     }
 
-    return responseNotFound();
+    return reply({ status: 404 });
   });
 }
 
@@ -52,10 +52,7 @@ function handleFrontendRequest(/** @type {Request} */ request) {
     !relativePath.startsWith('..') &&
     !path.isAbsolute(relativePath);
   if (!isSafe) {
-    return new Response('Bad Request', {
-      status: 400,
-      headers: { 'content-type': 'text/plain' },
-    });
+    return reply({ status: 400 });
   }
 
   return net.fetch(url.pathToFileURL(pathToServe).toString());
@@ -79,29 +76,23 @@ async function handleBackendRequest(/** @type {Request} */ request) {
     return runSafe(() => getRecentActivities(request));
   }
 
-  return responseNotFound();
+  return reply({ status: 404 });
 }
 
 async function logActivity(/** @type {Request} */ request) {
-  const dto = await request.json();
-  const command = LogActivity.create(dto).validate();
+  const body = await request.json();
+  const command = LogActivity.create(body).validate();
   await services.logActivity(command);
-  return new Response(null, { status: 204 });
+  return reply({ status: 204 });
 }
 
 async function getRecentActivities(/** @type {Request} */ request) {
   const { search } = new URL(request.url);
   const query = { today: search.today };
   const activities = await services.selectRecentActivities(query);
-  return new Response(JSON.stringify(activities), {
+  return reply({
     headers: { 'content-type': 'application/json' },
-  });
-}
-
-function responseNotFound() {
-  return new Response('Not Found', {
-    status: 404,
-    headers: { 'content-type': 'text/plain' },
+    body: activities,
   });
 }
 
@@ -109,9 +100,15 @@ async function runSafe(func) {
   try {
     return await func();
   } catch (error) {
-    return new Response('Internal Server Error: ' + error, {
-      status: 500,
-      headers: { 'content-type': 'text/plain' },
-    });
+    return reply({ status: 500, body: String(error) });
   }
+}
+
+export function reply({
+  status = 200,
+  headers = { 'Content-Type': 'text/plain' },
+  body,
+} = {}) {
+  const bodyString = body != null ? JSON.stringify(body) : null;
+  return new Response(bodyString, { status, headers });
 }

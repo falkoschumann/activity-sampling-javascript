@@ -27,8 +27,8 @@ export class ActivitiesController {
     /** @type {express.Request} */ request,
     /** @type {express.Response} */ response,
   ) {
-    const logActivity = LogActivity.create(request.body).validate();
-    await this.#services.logActivity(logActivity);
+    const command = LogActivity.create(request.body).validate();
+    await this.#services.logActivity(command);
     reply(response, { status: 204 });
   }
 
@@ -36,8 +36,8 @@ export class ActivitiesController {
     /** @type {express.Request} */ request,
     /** @type {express.Response} */ response,
   ) {
-    const { today } = RecentActivitiesQuery.create(request.query).validate();
-    const body = await this.#services.selectRecentActivities({ today });
+    const query = RecentActivitiesQuery.create(request.query).validate();
+    const body = await this.#services.selectRecentActivities(query);
     reply(response, { headers: { 'Content-Type': 'application/json' }, body });
   }
 }
