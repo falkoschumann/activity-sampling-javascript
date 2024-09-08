@@ -1,8 +1,8 @@
-import * as handler from './handler.js';
-
 /**
  * @import * as express from 'express'
  */
+
+import * as handler from './handler.js';
 
 export class LongPolling {
   #version = 0;

@@ -1,10 +1,10 @@
-import * as handler from './handler.js';
-
 /**
  * @import { Services } from '../application/services.js'
  * @import { HealthRegistry } from '../util/health.js'
  * @import * as express from 'express'
  */
+
+import * as handler from './handler.js';
 
 export class ActuatorController {
   #services;

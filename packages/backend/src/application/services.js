@@ -1,10 +1,10 @@
-import { ActivityLogged, determineRecentActivities } from '../domain/domain.js';
-import { Repository } from '../infrastructure/repository.js';
-
 /**
  * @import { LogActivity } from '@activity-sampling/domain'
  * @import { RecentActivitiesQuery } from '@activity-sampling/domain'
  */
+
+import { ActivityLogged, determineRecentActivities } from '../domain/domain.js';
+import { Repository } from '../infrastructure/repository.js';
 
 export class Services {
   static create({ activityLogFile } = {}) {
