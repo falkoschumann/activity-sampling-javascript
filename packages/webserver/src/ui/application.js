@@ -7,9 +7,9 @@ import { reply } from '@activity-sampling/utils/src/express.js';
 import { ActivitiesController } from './activities-controller.js';
 
 export class Application {
-  static create() {
+  static create({ activityLogFile } = {}) {
     return new Application(
-      Services.create(),
+      Services.create({ activityLogFile }),
       Logger.getLogger('Application'),
       express(),
     );
