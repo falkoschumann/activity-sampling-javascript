@@ -31,9 +31,6 @@ format:
 start: build
 	npm run start --workspace @activity-sampling/webserver
 
-start-desktop: prepare
-	npm run start --workspace @activity-sampling/desktop
-
 dev: prepare
 	npx concurrently \
 		"npm run dev --workspace @activity-sampling/webserver" \
