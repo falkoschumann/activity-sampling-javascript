@@ -15,9 +15,9 @@
   "scripts": {
     "start": "electron-forge start",
     "build": "npm run build:linux && npm run build:mac && npm run build:win",
-    "build:linux": "electron-forge make --arch=x64,arm64 --platform=linux",
-    "build:mac": "electron-forge make --arch=x64,arm64 --platform=darwin",
-    "build:win": "electron-forge make --arch=x64,arm64 --platform=win32",
+    "build:linux": "electron-forge make --arch=x64 --platform=linux",
+    "build:mac": "electron-forge make --arch=x64 --platform=darwin",
+    "build:win": "electron-forge make --arch=x64 --platform=win32",
     "dev": "electron-forge start"
   },
   "dependencies": {
