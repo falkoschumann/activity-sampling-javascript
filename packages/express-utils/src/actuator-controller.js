@@ -1,6 +1,5 @@
 /**
- * @import { Services } from '../application/services.js'
- * @import { HealthRegistry } from '../util/health.js'
+ * @import { HealthRegistry } from '@activity-sampling/utils'
  * @import * as express from 'express'
  */
 
@@ -11,7 +10,7 @@ export class ActuatorController {
   #healthRegistry;
 
   constructor(
-    /** @type {Services} */ services,
+    services, // FIXME Services is not defined in library
     /** @type {HealthRegistry} */ healthRegistry,
     /** @type {express.Express} */ app,
   ) {

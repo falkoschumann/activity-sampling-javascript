@@ -5,7 +5,7 @@
 import express from 'express';
 
 import { LogActivity, RecentActivitiesQuery } from '@activity-sampling/domain';
-import { reply, runSafe } from '@activity-sampling/utils/src/express.js';
+import { reply, runSafe } from '@activity-sampling/express-utils';
 
 export class ActivitiesController {
   #services;

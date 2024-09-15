@@ -3,10 +3,10 @@ import express from 'express';
 import { describe, expect, test } from '@jest/globals';
 import request from 'supertest';
 
-import { Duration, Level, Logger } from '@activity-sampling/utils';
-import { Activity, LogActivity } from '@activity-sampling/domain';
-
 import { Repository, Services } from '@activity-sampling/backend';
+import { Activity, LogActivity } from '@activity-sampling/domain';
+import { Duration, Level, Logger } from '@activity-sampling/utils';
+
 import { Application } from '../../src/ui/application.js';
 
 const filename = new URL('../../data/activity-log.test.csv', import.meta.url)
