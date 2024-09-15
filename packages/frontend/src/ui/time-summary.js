@@ -1,6 +1,6 @@
 import { html } from 'lit-html';
 
-import { Container } from '@activity-sampling/utils/src/browser.js';
+import { Container } from '@activity-sampling/browser-utils';
 
 import './time-summary.css';
 

@@ -1,5 +1,8 @@
 /**
- * @import {Store} from './store.js';
+ * @typedef {Object} Store
+ * @property {()=>any} getState
+ * @property {(action:any)=>void} dispatch
+ * @property {(listener:()=>void)=>()=>void} subscribe
  */
 
 import { html, render } from 'lit-html';

@@ -2,7 +2,8 @@ import { html } from 'lit-html';
 import { classMap } from 'lit-html/directives/class-map.js';
 import { createRef, ref } from 'lit-html/directives/ref.js';
 
-import { Container } from '@activity-sampling/utils/src/browser.js';
+import { Container } from '@activity-sampling/browser-utils';
+
 import { Services } from '../application/services.js';
 
 class CurrentActivityComponent extends Container {

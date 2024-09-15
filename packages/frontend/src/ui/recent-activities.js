@@ -1,6 +1,6 @@
 import { html } from 'lit-html';
 
-import { Container } from '@activity-sampling/utils/src/browser.js';
+import { Container } from '@activity-sampling/browser-utils';
 
 import './recent-activities.css';
 import { Services } from '../application/services.js';

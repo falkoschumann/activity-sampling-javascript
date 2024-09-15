@@ -1,6 +1,6 @@
 import { html } from 'lit-html';
 
-import { Component } from '@activity-sampling/utils/src/components.js';
+import { Component } from '@activity-sampling/browser-utils/';
 
 import { Services } from '../application/services.js';
 import { Duration } from '@activity-sampling/utils';
