@@ -1,9 +1,9 @@
 import { html } from 'lit-html';
 
-import { Component } from '@activity-sampling/utils/src/browser';
+import { Component } from '@muspellheim/utils/src/browser';
 
 import { Services } from '../application/services.js';
-import { Duration } from '@activity-sampling/utils';
+import { Duration } from '@muspellheim/utils';
 
 class MainMenuComponent extends Component {
   // TODO replace <a> with <button>

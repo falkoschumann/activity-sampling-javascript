@@ -1,4 +1,4 @@
-import { createStore } from '@activity-sampling/utils';
+import { createStore } from '@muspellheim/utils';
 
 import { reducer } from '../domain/reducer.js';
 

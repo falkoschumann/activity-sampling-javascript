@@ -1,6 +1,6 @@
 import { describe, expect, test } from '@jest/globals';
 
-import { Duration } from '@activity-sampling/utils';
+import { Duration } from '@muspellheim/utils';
 import { Activity } from '@activity-sampling/domain';
 
 import {

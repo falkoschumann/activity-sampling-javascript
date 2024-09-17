@@ -2,7 +2,7 @@ import { html } from 'lit-html';
 import { classMap } from 'lit-html/directives/class-map.js';
 import { createRef, ref } from 'lit-html/directives/ref.js';
 
-import { Container } from '@activity-sampling/utils/src/browser';
+import { Container } from '@muspellheim/utils/src/browser';
 
 import { Services } from '../application/services.js';
 

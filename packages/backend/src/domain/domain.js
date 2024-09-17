@@ -1,9 +1,9 @@
-import { Duration } from '@activity-sampling/utils';
+import { Duration } from '@muspellheim/utils';
 import { RecentActivities, TimeSummary } from '@activity-sampling/domain';
 import {
   ensureNonEmpty,
   ensureType,
-} from '@activity-sampling/utils/src/validation.js';
+} from '@muspellheim/utils/src/validation.js';
 
 export function determineRecentActivities(activities, today = new Date()) {
   const workingDays = determineWorkingDays(activities, today);

@@ -4,7 +4,7 @@
 
 import { describe, expect, test } from '@jest/globals';
 
-import { Clock, createStore, Duration, Timer } from '@activity-sampling/utils';
+import { Clock, createStore, Duration, Timer } from '@muspellheim/utils';
 import { Activity } from '@activity-sampling/domain';
 
 import { Services } from '../../src/application/services.js';

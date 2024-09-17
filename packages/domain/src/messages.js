@@ -1,4 +1,4 @@
-import { Duration, ensureNonEmpty, ensureType } from '@activity-sampling/utils';
+import { Duration, ensureNonEmpty, ensureType } from '@muspellheim/utils';
 
 export class LogActivity {
   static create({ timestamp, duration, client, project, task, notes } = {}) {

@@ -1,4 +1,4 @@
-import { OutputTracker } from '@activity-sampling/utils';
+import { OutputTracker } from '@muspellheim/utils';
 
 const NOTIFICATION_SHOWN_EVENT = 'notification-shown';
 const NOTIFICATION_CLOSED_EVENT = 'notification-closed';

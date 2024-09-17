@@ -2,7 +2,7 @@
  * @import { LogActivity } from '@activity-sampling/domain'
  */
 
-import { ConfigurableResponses, OutputTracker } from '@activity-sampling/utils';
+import { ConfigurableResponses, OutputTracker } from '@muspellheim/utils';
 import { RecentActivities } from '@activity-sampling/domain';
 
 export const ACTIVITY_LOGGED_EVENT = 'activity-logged';

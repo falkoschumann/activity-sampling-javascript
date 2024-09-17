@@ -1,6 +1,6 @@
 import { html } from 'lit-html';
 
-import { Component, Container } from '@activity-sampling/utils/src/browser';
+import { Component, Container } from '@muspellheim/utils/src/browser';
 
 import { Services } from '../application/services.js';
 import { store } from '../application/store.js';

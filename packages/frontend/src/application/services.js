@@ -1,8 +1,8 @@
 /**
- * @import {Store} from '@activity-sampling/utils';
+ * @import {Store} from '@muspellheim/utils';
  */
 
-import { Clock, Duration, Timer } from '@activity-sampling/utils';
+import { Clock, Duration, Timer } from '@muspellheim/utils';
 
 import { Api } from '../infrastructure/api.js';
 import { NotificationAdapter } from '../infrastructure/notification-adapter.js';

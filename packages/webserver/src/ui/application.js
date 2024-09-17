@@ -1,8 +1,8 @@
 import express from 'express';
 
 import { Services } from '@activity-sampling/backend';
-import { Logger, ValidationError } from '@activity-sampling/utils';
-import { reply } from '@activity-sampling/utils/src/express/handler.js';
+import { Logger, ValidationError } from '@muspellheim/utils';
+import { reply } from '@muspellheim/utils/src/express/handler.js';
 
 import { ActivitiesController } from './activities-controller.js';
 

@@ -1,4 +1,4 @@
-import { Duration } from '@activity-sampling/utils';
+import { Duration } from '@muspellheim/utils';
 
 export const initialState = {
   currentActivity: {

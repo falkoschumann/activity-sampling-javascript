@@ -5,7 +5,7 @@ import request from 'supertest';
 
 import { Repository, Services } from '@activity-sampling/backend';
 import { Activity, LogActivity } from '@activity-sampling/domain';
-import { Duration, Level, Logger } from '@activity-sampling/utils';
+import { Duration, Level, Logger } from '@muspellheim/utils';
 
 import { Application } from '../../src/ui/application.js';
 

@@ -3,7 +3,7 @@ import path from 'node:path';
 import stream from 'node:stream';
 import * as csv from 'csv';
 
-import { Duration, OutputTracker } from '@activity-sampling/utils';
+import { Duration, OutputTracker } from '@muspellheim/utils';
 
 import { ActivityLogged } from '../domain/domain.js';
 
