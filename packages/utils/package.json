@@ -11,6 +11,10 @@
   "scripts": {
     "test": "NODE_OPTIONS=\"--experimental-global-customevent --experimental-vm-modules\" npx jest"
   },
+  "peerDependencies": {
+    "express": "^4.20.0",
+    "lit-html": "^3.2.0"
+  },
   "devDependencies": {
     "@jest/globals": "29.7.0",
     "jest": "29.7.0"

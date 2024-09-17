@@ -1,7 +1,7 @@
 import events from 'node:events';
 import { describe, expect, test } from '@jest/globals';
 
-import { SseEmitter } from '../src/sse-emitter.js';
+import { SseEmitter } from '@activity-sampling/utils/src/express/sse-emitter';
 
 describe('SSE emitter', () => {
   test('Initializes response', () => {
