@@ -17,7 +17,7 @@ describe('Activity Sampling App', () => {
     const { application, log } = await configure();
     const loggedMessages = log.trackMessagesLogged();
 
-    await application.start({ port: 3333 });
+    await application.start({ port: 0 });
     await application.stop();
 
     expect(loggedMessages.data).toEqual([
@@ -25,7 +25,7 @@ describe('Activity Sampling App', () => {
         timestamp: expect.any(Date),
         loggerName: 'null-logger',
         level: Level.INFO,
-        message: ['Server is listening on port 3333.'],
+        message: ['Server is listening on port 0.'],
       },
       {
         timestamp: expect.any(Date),
