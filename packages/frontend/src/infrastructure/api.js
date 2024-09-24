@@ -59,7 +59,7 @@ class ResponseStub {
   #body;
 
   constructor({ body }) {
-    this.#body = body != null ? JSON.stringify(body) : body;
+    this.#body = JSON.stringify(body);
   }
 
   json() {

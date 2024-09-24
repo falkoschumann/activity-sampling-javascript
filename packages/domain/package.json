@@ -12,7 +12,7 @@
     "test": "NODE_OPTIONS=\"--experimental-global-customevent --experimental-vm-modules\" npx jest"
   },
   "dependencies": {
-    "@muspellheim/utils": "falkoschumann/muspellheim-utils-javascript#vdab8ff9"
+    "@muspellheim/utils": "falkoschumann/muspellheim-utils-javascript"
   },
   "devDependencies": {
     "@jest/globals": "29.7.0",
