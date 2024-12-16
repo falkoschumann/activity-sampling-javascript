@@ -1,0 +1,39 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_LEFT_RIGHT()
+
+title "Container Diagram for Activity Sampling System"
+
+Container(webClient, "Web Client")
+Container(webServer, "Web Server")
+Container(desktopMobile, "Desktop/Mobile Client", "", "Send messages to the web server or directly uses the backend.")
+Lay_Down(webClient, desktopMobile)
+Lay_Down(webServer, desktopMobile)
+
+Component(frontend, "Frontend")
+Component(domain, "Domain", "", "Defines messages.")
+Component(backend, "Backend")
+Component(utilities, "Utilities", "", "Implements missing features.")
+Lay_Right(frontend, domain)
+Lay_Left(backend, domain)
+Lay_Right(backend, utilities)
+
+Container_Ext(fileSystem, "File System")
+
+Rel_Right(webClient, webServer, "Send messages", "HTTPS, REST")
+Rel(desktopMobile, webServer, "Send messages", "HTTPS, REST")
+
+Rel(webClient, frontend, "Uses")
+Rel(webServer, backend, "Uses")
+Rel(desktopMobile, frontend, "Uses")
+Rel(desktopMobile, backend, "Uses")
+
+Rel_Right(frontend, domain, "Uses")
+Rel_Left(backend, domain, "Uses")
+
+Rel(backend, fileSystem, "Load and store", "CSV file")
+
+SHOW_FLOATING_LEGEND()
+Lay_Left(LEGEND(), fileSystem)
+@enduml

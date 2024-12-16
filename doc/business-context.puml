@@ -1,0 +1,20 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_LEFT_RIGHT()
+
+title "System Context Diagram for Activity Sampling System"
+
+Person(softwareDeveloper, "Software Developer")
+Person(productOwner, "Product Owner")
+System(activitySampling, "Activity Sampling")
+
+System_Ext(csvFile, "CSV File")
+
+Rel(softwareDeveloper, activitySampling, "Log activity")
+Rel(productOwner, activitySampling, "Analyze effort")
+Rel(activitySampling, csvFile, "Store protocol")
+
+SHOW_FLOATING_LEGEND()
+Lay_Left(LEGEND(), csvFile)
+@enduml
