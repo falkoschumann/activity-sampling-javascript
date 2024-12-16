@@ -15,7 +15,7 @@
   "dependencies": {
     "@activity-sampling/backend": "0.1.0",
     "csv": "6.3.11",
-    "express": "4.21.1"
+    "express": "4.21.2"
   },
   "devDependencies": {
     "@types/express": "5.0.0",
